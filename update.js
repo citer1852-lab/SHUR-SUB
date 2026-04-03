@@ -3,9 +3,9 @@ const fs = require('fs').promises;
 const path = require('path');
 
 // ==================== НАСТРОЙКИ ====================
-// Внешние подписки (можно менять, добавлять, удалять)
+// Внешние подписки (пока оставьте пустым, так как ссылка 404)
 const EXTERNAL_SOURCES = [
-    "https://raw.githubusercontent.com/whoahaow/rjsxrd/main/default/6.txt"
+    // "https://raw.githubusercontent.com/whoahaow/rjsxrd/main/default/6.txt" // временно отключено
 ];
 
 // Папка с вашими локальными файлами
@@ -29,14 +29,20 @@ async function fetchUrl(url) {
     return text;
 }
 
-function convertOutboundToURI(out) {
+/**
+ * Преобразует outbound из Xray-конфига в строку URI с названием
+ * Название берётся из поля "remarks" (если есть) или из "tag"
+ */
+function convertOutboundToURI(out, globalRemarks = '') {
     if (out.protocol === 'vless') {
         const vnext = out.settings?.vnext?.[0];
         if (!vnext) return null;
         const user = vnext.users?.[0];
         if (!user) return null;
+        
         let uri = `vless://${user.id}@${vnext.address}:${vnext.port}?encryption=${user.encryption || 'none'}`;
         if (user.flow) uri += `&flow=${user.flow}`;
+        
         const stream = out.streamSettings;
         if (stream) {
             if (stream.security === 'reality') {
@@ -56,12 +62,22 @@ function convertOutboundToURI(out) {
                 uri += `&type=tcp`;
             }
         }
-        uri += `#${encodeURIComponent(out.tag || 'node')}`;
+        
+        // Добавляем название сервера (приоритет: out.tag, затем globalRemarks)
+        let nodeName = out.tag || '';
+        if (!nodeName && globalRemarks) nodeName = globalRemarks;
+        if (nodeName) uri += `#${encodeURIComponent(nodeName)}`;
+        
         return uri;
     }
+    
+    // Для vmess, trojan, ss можно добавить аналогичную логику
     return null;
 }
 
+/**
+ * Обрабатывает локальный файл и извлекает URI с названиями
+ */
 async function processLocalFile(filePath) {
     const content = await fs.readFile(filePath, 'utf-8');
     const ext = path.extname(filePath).toLowerCase();
@@ -69,12 +85,26 @@ async function processLocalFile(filePath) {
     if (ext === '.json') {
         try {
             const json = JSON.parse(content);
-            return { type: 'json', content: json };
+            const uris = [];
+            
+            // Извлекаем глобальное название конфига (если есть)
+            const globalRemarks = json.remarks || json.name || '';
+            
+            // Обрабатываем outbounds
+            if (json.outbounds && Array.isArray(json.outbounds)) {
+                for (const out of json.outbounds) {
+                    const uri = convertOutboundToURI(out, globalRemarks);
+                    if (uri) uris.push(uri);
+                }
+            }
+            
+            return { type: 'uri', lines: uris };
         } catch (e) {
             console.error(`❌ Ошибка парсинга JSON в файле ${filePath}: ${e.message}`);
-            return null;
+            return { type: 'uri', lines: [] };
         }
     } else {
+        // Для .txt файлов — просто строки (названия уже могут быть в конце через #)
         const lines = content.split('\n').filter(l => l.trim().length > 0);
         return { type: 'uri', lines };
     }
@@ -82,8 +112,8 @@ async function processLocalFile(filePath) {
 
 async function collectAllLines() {
     const allUris = [];
-    const allJsonConfigs = [];
 
+    // Внешние источники (пока отключены)
     for (const url of EXTERNAL_SOURCES) {
         try {
             console.log(`📡 Загрузка: ${url}`);
@@ -96,36 +126,33 @@ async function collectAllLines() {
         }
     }
 
+    // Локальные файлы из папки sources
     try {
         const files = await fs.readdir(LOCAL_SOURCES_DIR);
         for (const file of files) {
+            if (file === '.gitkeep') continue;
             const filePath = path.join(LOCAL_SOURCES_DIR, file);
             const stat = await fs.stat(filePath);
-            if (stat.isFile() && file !== '.gitkeep') {
-                console.log(`📁 Обработка локального файла: ${file}`);
+            if (stat.isFile()) {
+                console.log(`📁 Обработка: ${file}`);
                 const result = await processLocalFile(filePath);
-                if (result) {
-                    if (result.type === 'uri') {
-                        allUris.push(...result.lines);
-                        console.log(`   → добавлено ${result.lines.length} строк (URI)`);
-                    } else if (result.type === 'json') {
-                        allJsonConfigs.push(result.content);
-                        console.log(`   → добавлен 1 JSON-конфиг`);
-                    }
+                if (result && result.lines.length > 0) {
+                    allUris.push(...result.lines);
+                    console.log(`   → добавлено ${result.lines.length} URI`);
                 }
             }
         }
     } catch (err) {
         if (err.code !== 'ENOENT') {
-            console.error(`Ошибка при чтении локальной папки: ${err.message}`);
+            console.error(`Ошибка: ${err.message}`);
+        } else {
+            console.log(`📁 Папка ${LOCAL_SOURCES_DIR} не найдена`);
         }
     }
     
-    const uniqueUris = [...new Map(allUris.map(line => [line, line])).values()];
-    console.log(`\n📊 Итого уникальных URI: ${uniqueUris.length}`);
-    console.log(`📊 Итого JSON-конфигов: ${allJsonConfigs.length}`);
-    
-    return { uris: uniqueUris, jsonConfigs: allJsonConfigs };
+    const uniqueUris = [...new Map(allUris.map(uri => [uri, uri])).values()];
+    console.log(`\n📊 Итого URI: ${uniqueUris.length}`);
+    return uniqueUris;
 }
 
 function toBase64(text) {
@@ -135,29 +162,31 @@ function toBase64(text) {
 async function main() {
     console.log('🚀 Начинаем сборку подписки...\n');
     try {
-        const { uris, jsonConfigs } = await collectAllLines();
+        const uris = await collectAllLines();
+        
+        if (uris.length === 0) {
+            console.log('⚠️ Внимание: не найдено ни одного конфига!');
+            console.log('   Добавьте файлы в папку sources/ и запустите снова.');
+            return;
+        }
+        
+        const plainText = uris.join('\n');
+        const base64Data = toBase64(plainText);
+        
+        await fs.writeFile(OUTPUT_TXT, base64Data);
         
         const outputJson = {
             lastUpdated: new Date().toISOString(),
             totalUris: uris.length,
-            totalJsonConfigs: jsonConfigs.length,
-            sources: {
-                external: EXTERNAL_SOURCES,
-                local: `files in ${LOCAL_SOURCES_DIR}`
-            },
-            configs: uris.join('\n'),
-            jsonConfigs: jsonConfigs,
-            configsBase64: toBase64(uris.join('\n'))
+            configsBase64: base64Data,
+            configsPlain: plainText
         };
-        
         await fs.writeFile(OUTPUT_JSON, JSON.stringify(outputJson, null, 2));
         
-        const base64ForHapp = toBase64(uris.join('\n'));
-        await fs.writeFile(OUTPUT_TXT, base64ForHapp);
-        
-        console.log(`\n✅ Подписка сохранена:`);
-        console.log(`   - ${OUTPUT_JSON}`);
-        console.log(`   - ${OUTPUT_TXT}`);
+        console.log(`\n✅ Подписка создана!`);
+        console.log(`📄 sub.txt (${base64Data.length} символов)`);
+        console.log(`\n🔗 Ссылка для HApp:`);
+        console.log(`   https://raw.githubusercontent.com/citer1852-lab/SHUR-SUB/main/sub.txt`);
     } catch (error) {
         console.error('❌ Критическая ошибка:', error);
         process.exit(1);
