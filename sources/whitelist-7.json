@@ -1,205 +1,202 @@
 {
-    "dns": {
-        "port": 53,
-        "queryStrategy": "UseIPv4",
-        "servers": [
-            "8.8.4.4",
-            "8.8.8.8"
-        ]
-    },
-    "inbounds": [
-        {
-            "listen": "127.0.0.1",
-            "port": 10808,
-            "protocol": "socks",
-            "settings": {
-                "auth": "noauth",
-                "udp": true
-            },
-            "sniffing": {
-                "destOverride": [
-                    "http",
-                    "tls",
-                    "quic"
-                ],
-                "enabled": true,
-                "routeOnly": false
-            },
-            "tag": "socks"
-        },
-        {
-            "listen": "127.0.0.1",
-            "port": 10809,
-            "protocol": "http",
-            "settings": {
-                "allowTransparent": false
-            },
-            "sniffing": {
-                "destOverride": [
-                    "http",
-                    "tls",
-                    "quic"
-                ],
-                "enabled": true,
-                "routeOnly": false
-            },
-            "tag": "http"
-        }
+  "dns": {
+    "port": 53,
+    "servers": [
+      "8.8.4.4",
+      "8.8.8.8"
     ],
-    "meta": null,
-    "observatory": {
-        "enableConcurrency": true,
-        "probeInterval": "1m",
-        "probeUrl": "https://www.google.com/generate_204",
-        "subjectSelector": [
-            "grp-35-1-0vi39gt0p5o",
-            "grp-35-2-drb005013v8"
+    "queryStrategy": "UseIPv4"
+  },
+  "inbounds": [
+    {
+      "tag": "socks",
+      "port": 10808,
+      "listen": "127.0.0.1",
+      "protocol": "socks",
+      "settings": {
+        "udp": true,
+        "auth": "noauth"
+      },
+      "sniffing": {
+        "enabled": true,
+        "routeOnly": false,
+        "destOverride": [
+          "http",
+          "tls",
+          "quic"
         ]
+      }
     },
-    "outbounds": [
-        {
-            "protocol": "vless",
-            "settings": {
-                "vnext": [
-                    {
-                        "address": "test.fox-marsh.test-cdn-kkk.com",
-                        "port": 9443,
-                        "users": [
-                            {
-                                "encryption": "none",
-                                "flow": "xtls-rprx-vision",
-                                "id": "0fa827e5-349f-40cc-8daf-c6952a9fa64c"
-                            }
-                        ]
-                    }
-                ]
-            },
-            "streamSettings": {
-                "network": "tcp",
-                "realitySettings": {
-                    "fingerprint": "qq",
-                    "publicKey": "-tePObR3oZwGAUOb5kqTYkNWl6rtUKl0RFuzuu06wgw",
-                    "serverName": "ads.x5.ru",
-                    "shortId": "50",
-                    "show": false
-                },
-                "security": "reality",
-                "tcpSettings": {
-                }
-            },
-            "tag": "grp-35-1-0vi39gt0p5o"
-        },
-        {
-            "protocol": "vless",
-            "settings": {
-                "vnext": [
-                    {
-                        "address": "test.grey-lance.test-cdn-kkk.com",
-                        "port": 443,
-                        "users": [
-                            {
-                                "encryption": "none",
-                                "flow": "xtls-rprx-vision",
-                                "id": "0fa827e5-349f-40cc-8daf-c6952a9fa64c"
-                            }
-                        ]
-                    }
-                ]
-            },
-            "streamSettings": {
-                "network": "tcp",
-                "realitySettings": {
-                    "fingerprint": "qq",
-                    "publicKey": "-tePObR3oZwGAUOb5kqTYkNWl6rtUKl0RFuzuu06wgw",
-                    "serverName": "tradingview.com",
-                    "shortId": "50",
-                    "show": false
-                },
-                "security": "reality",
-                "tcpSettings": {
-                }
-            },
-            "tag": "grp-35-2-drb005013v8"
-        },
-        {
-            "protocol": "freedom",
-            "tag": "direct"
-        },
-        {
-            "protocol": "blackhole",
-            "tag": "block"
-        }
-    ],
-    "remarks": "🇫🇮 LTE №7",
-    "routing": {
-        "balancers": [
-            {
-                "fallbackTag": "grp-35-1-0vi39gt0p5o",
-                "selector": [
-                    "grp-35-2-drb005013v8"
-                ],
-                "strategy": {
-                    "settings": {
-                        "baselines": [
-                            "4s"
-                        ],
-                        "costs": [
-                            {
-                                "match": "grp-35-1-0vi39gt0p5o",
-                                "regexp": false,
-                                "value": 1000000
-                            },
-                            {
-                                "match": "grp-35-2-drb005013v8",
-                                "regexp": false,
-                                "value": 1
-                            }
-                        ],
-                        "expected": 1,
-                        "maxRTT": "6s"
-                    },
-                    "type": "leastLoad"
-                },
-                "tag": "bal_35"
-            }
-        ],
-        "domainMatcher": "hybrid",
-        "domainStrategy": "IPIfNonMatch",
-        "rules": [
-            {
-                "outboundTag": "block",
-                "protocol": [
-                    "bittorrent"
-                ],
-                "type": "field"
-            },
-            {
-                "domain": [
-                    "domain:mtalk.google.com",
-                    "domain:push.apple.com",
-                    "domain:api.push.apple.com",
-                    "domain:push-apple.com.akadns.net",
-                    "domain:*-courier.push.apple.com"
-                ],
-                "outboundTag": "direct",
-                "type": "field"
-            },
-            {
-                "ip": [
-                    "17.0.0.0/8"
-                ],
-                "outboundTag": "direct",
-                "type": "field"
-            },
-            {
-                "balancerTag": "bal_35",
-                "inboundTag": [
-                    "socks",
-                    "http"
-                ],
-                "network": "tcp,udp",
-                "type": "field"
-            }
+    {
+      "tag": "http",
+      "port": 10809,
+      "listen": "127.0.0.1",
+      "protocol": "http",
+      "settings": {
+        "allowTransparent": false
+      },
+      "sniffing": {
+        "enabled": true,
+        "routeOnly": false,
+        "destOverride": [
+          "http",
+          "tls",
+          "quic"
         ]
+      }
     }
+  ],
+  "observatory": {
+    "enableConcurrency": true,
+    "probeInterval": "1m",
+    "probeUrl": "https://www.google.com/generate_204",
+    "subjectSelector": [
+      "grp-35-1-i0tpucb0djo",
+      "grp-35-2-kq5crvt2os8"
+    ]
+  },
+  "outbounds": [
+    {
+      "tag": "grp-35-1-i0tpucb0djo",
+      "protocol": "vless",
+      "settings": {
+        "vnext": [
+          {
+            "address": "test.fox-marsh.test-cdn-kkk.com",
+            "port": 9443,
+            "users": [
+              {
+                "id": "5ae46adf-322d-4e8a-8c28-3f71ce56cd9d",
+                "encryption": "none",
+                "flow": "xtls-rprx-vision"
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "tcpSettings": {},
+        "security": "reality",
+        "realitySettings": {
+          "serverName": "ads.x5.ru",
+          "show": false,
+          "publicKey": "-tePObR3oZwGAUOb5kqTYkNWl6rtUKl0RFuzuu06wgw",
+          "shortId": "50",
+          "fingerprint": "qq"
+        }
+      }
+    },
+    {
+      "tag": "grp-35-2-kq5crvt2os8",
+      "protocol": "vless",
+      "settings": {
+        "vnext": [
+          {
+            "address": "test.grey-lance.test-cdn-kkk.com",
+            "port": 443,
+            "users": [
+              {
+                "id": "5ae46adf-322d-4e8a-8c28-3f71ce56cd9d",
+                "encryption": "none",
+                "flow": "xtls-rprx-vision"
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "tcpSettings": {},
+        "security": "reality",
+        "realitySettings": {
+          "serverName": "tradingview.com",
+          "show": false,
+          "publicKey": "-tePObR3oZwGAUOb5kqTYkNWl6rtUKl0RFuzuu06wgw",
+          "shortId": "50",
+          "fingerprint": "qq"
+        }
+      }
+    },
+    {
+      "tag": "direct",
+      "protocol": "freedom"
+    },
+    {
+      "tag": "block",
+      "protocol": "blackhole"
+    }
+  ],
+  "remarks": "🇫🇮 LTE #7",
+  "routing": {
+    "domainMatcher": "hybrid",
+    "domainStrategy": "IPIfNonMatch",
+    "balancers": [
+      {
+        "tag": "bal_35",
+        "selector": [
+          "grp-35-2-kq5crvt2os8"
+        ],
+        "fallbackTag": "grp-35-1-i0tpucb0djo",
+        "strategy": {
+          "type": "leastLoad",
+          "settings": {
+            "baselines": [
+              "4s"
+            ],
+            "costs": [
+              {
+                "match": "grp-35-1-i0tpucb0djo",
+                "regexp": false,
+                "value": 1000000
+              },
+              {
+                "match": "grp-35-2-kq5crvt2os8",
+                "regexp": false,
+                "value": 1
+              }
+            ],
+            "expected": 1,
+            "maxRTT": "6s"
+          }
+        }
+      }
+    ],
+    "rules": [
+      {
+        "type": "field",
+        "protocol": [
+          "bittorrent"
+        ],
+        "outboundTag": "block"
+      },
+      {
+        "domain": [
+          "domain:mtalk.google.com",
+          "domain:push.apple.com",
+          "domain:api.push.apple.com",
+          "domain:push-apple.com.akadns.net",
+          "domain:*-courier.push.apple.com"
+        ],
+        "outboundTag": "direct",
+        "type": "field"
+      },
+      {
+        "ip": [
+          "17.0.0.0/8"
+        ],
+        "outboundTag": "direct",
+        "type": "field"
+      },
+      {
+        "type": "field",
+        "inboundTag": [
+          "socks",
+          "http"
+        ],
+        "network": "tcp,udp",
+        "balancerTag": "bal_35"
+      }
+    ]
+  }
 }
