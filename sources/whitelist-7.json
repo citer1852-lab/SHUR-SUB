@@ -127,7 +127,7 @@
       "protocol": "blackhole"
     }
   ],
-  "remarks": "🇫🇮 LTE #7",
+  "remarks": "🇫🇮 LTE №7",
   "routing": {
     "domainMatcher": "hybrid",
     "domainStrategy": "IPIfNonMatch",
