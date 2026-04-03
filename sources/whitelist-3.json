@@ -175,7 +175,7 @@
             "statsOutboundUplink": true
         }
     },
-    "remarks": "LTE #10",
+    "remarks": "🇫🇮 LTE №10",
     "routing": {
         "domainStrategy": "IPIfNonMatch",
         "rules": [
