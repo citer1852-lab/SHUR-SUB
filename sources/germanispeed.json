@@ -1,242 +1,240 @@
 {
-    "dns": {
-        "port": 53,
-        "queryStrategy": "UseIPv4",
-        "servers": [
-            "8.8.4.4",
-            "8.8.8.8"
-        ]
-    },
-    "inbounds": [
-        {
-            "listen": "127.0.0.1",
-            "port": 10808,
-            "protocol": "socks",
-            "settings": {
-                "auth": "noauth",
-                "udp": true
-            },
-            "sniffing": {
-                "destOverride": [
-                    "http",
-                    "tls",
-                    "quic"
-                ],
-                "enabled": true,
-                "routeOnly": false
-            },
-            "tag": "socks"
-        },
-        {
-            "listen": "127.0.0.1",
-            "port": 10809,
-            "protocol": "http",
-            "settings": {
-                "allowTransparent": false
-            },
-            "sniffing": {
-                "destOverride": [
-                    "http",
-                    "tls",
-                    "quic"
-                ],
-                "enabled": true,
-                "routeOnly": false
-            },
-            "tag": "http"
-        }
+  "dns": {
+    "port": 53,
+    "servers": [
+      "8.8.4.4",
+      "8.8.8.8"
     ],
-    "meta": null,
-    "observatory": {
-        "enableConcurrency": true,
-        "probeInterval": "1m",
-        "probeUrl": "https://www.google.com/generate_204",
-        "subjectSelector": [
-            "grp-26-1-dhbm43e52bs",
-            "grp-26-2-9rnblqoi3fg",
-            "grp-26-3-5ttv06s4edg"
+    "queryStrategy": "UseIPv4"
+  },
+  "inbounds": [
+    {
+      "tag": "socks",
+      "port": 10808,
+      "listen": "127.0.0.1",
+      "protocol": "socks",
+      "settings": {
+        "udp": true,
+        "auth": "noauth"
+      },
+      "sniffing": {
+        "enabled": true,
+        "routeOnly": false,
+        "destOverride": [
+          "http",
+          "tls",
+          "quic"
         ]
+      }
     },
-    "outbounds": [
-        {
-            "protocol": "vless",
-            "settings": {
-                "vnext": [
-                    {
-                        "address": "test.grey-lance.test-cdn-kkk.com",
-                        "port": 443,
-                        "users": [
-                            {
-                                "encryption": "none",
-                                "flow": "xtls-rprx-vision",
-                                "id": "0fa827e5-349f-40cc-8daf-c6952a9fa64c"
-                            }
-                        ]
-                    }
-                ]
-            },
-            "streamSettings": {
-                "network": "tcp",
-                "realitySettings": {
-                    "fingerprint": "qq",
-                    "publicKey": "-tePObR3oZwGAUOb5kqTYkNWl6rtUKl0RFuzuu06wgw",
-                    "serverName": "tradingview.com",
-                    "shortId": "50",
-                    "show": false
-                },
-                "security": "reality",
-                "tcpSettings": {
-                }
-            },
-            "tag": "grp-26-1-dhbm43e52bs"
-        },
-        {
-            "protocol": "vless",
-            "settings": {
-                "vnext": [
-                    {
-                        "address": "test.grey-lance.test-cdn-kkk.com",
-                        "port": 1443,
-                        "users": [
-                            {
-                                "encryption": "none",
-                                "flow": "",
-                                "id": "0fa827e5-349f-40cc-8daf-c6952a9fa64c"
-                            }
-                        ]
-                    }
-                ]
-            },
-            "streamSettings": {
-                "grpcSettings": {
-                    "authority": "",
-                    "mode": false,
-                    "serviceName": "de.eu-ffast.com"
-                },
-                "network": "grpc",
-                "realitySettings": {
-                    "publicKey": "-tePObR3oZwGAUOb5kqTYkNWl6rtUKl0RFuzuu06wgw",
-                    "serverName": "de.eu-ffast.com",
-                    "shortId": "50",
-                    "show": false
-                },
-                "security": "reality"
-            },
-            "tag": "grp-26-2-9rnblqoi3fg"
-        },
-        {
-            "protocol": "vless",
-            "settings": {
-                "vnext": [
-                    {
-                        "address": "test.grey-lance.test-cdn-kkk.com",
-                        "port": 448,
-                        "users": [
-                            {
-                                "encryption": "mlkem768x25519plus.native.0rtt.v-7SQRHD1uQ1dFudMkXoGqHrisnsnYjzICLWmc3l1iY.lvV9jnuFV8xkhxwDmGQOWHEHyepeTsN4YkHDWQTIN6I6uxkufqgnC-rEZICW6SgltNO2FjanZLepI4iosvaDl0teXhGnZEEJpWN0PWspNvtWCuRsQfA4MvnE_XcMabIcunASPtV2jhVXFsvNZTkM31hSLwFvSdGet3YShvJS7pmkddiAXmiyghiSCwvBpsB0uRIpFPgrx0mTtYe7gbG08hKoGveHq4lfDRUX-ImV3nqLmmKCU3GU7ZOSbhQs_ZwZ7UkEREXN2dESt8Qz4YFw3WifW3utOiF70xqO5TZ0EShHqNFms7elmzlhtEEkbfbAAvWbt3ab93pQSAgGYNsIiHgJc2F1CmgzWpA2p7uFSpqBpZE_HhxE4qA2gEFDT2lV8OyF4QtJ88PCkFqIGXEXn1SfHEGOESG6YIa31xI6pflx56EnizqlqEfDTHWTiCUQA1qjsShvhcq_FaJTthRXOmElOAcQc-e4NfK5vlkcroPIqIYnkccaXlsWw1Sa48pOc0U1N6GmMtB3WeoJtygap_elcISRPZq15Thj1eGP_0BRjfQe9RaYz6Qj8Sl2L2JrrvRElpYPq4qGNUvAHjBJBzWmzrU70tfPTLdyddE3OrAjOOJBYkhzVewlzsxBTWikZPsrrXhpk0QeuctIBHjJiHgLRxurlaN3t8ZRMhyi1PlQgPQX1ZtMqmaCDaRn8QFn1WlJgCoLIFZv_MMOvbJFcWx5OeSXsLxokEmoZtsYOWjDdggcqTtNgXpM1wuj7-eIq4xzjlccIeig43fK-7JLcQESVasA_EA-Kyx-jIkyl6FEoxhM5EJMEwt9-7wB6Hi6vTJRDVmJLQDHlxqTS3haAOcLZxI7ooCjuUmKh3Oyedx1HVHA0lBKl_YwdFMYApwWmHklSTQnHAItPUtTw7vNIEFBygStijW4Z6CpnuFGdlGkzdkiaLw-1Ea4MRO3tISScXAXGlmOLIhOlrSk04I5H1OApehNv1IS1PYkMzYSUJUCMGRk5XC7RVh32MhdSjKALDU2tcJjSHk2cGpKhPuBELFhvLpoYEl9A4C4OMnJkCKi22qMuikbA0kUrLBH50M1_6G_7rJFAgtLP-mU6JnOw4kVWUDE_Mly62Mr07ys1BUIl8edGzI8PYSzIpx_tvF6twF6QTUX65d2hSsezLQ3uIFtgfYgIKWZUuN7UqHG4_YPVZxLhAAlUwuEqYeh49ZjTbsMZDxSCiigMsWidpmIqjJkTdHD0iS2WpoDv0qUPZpIwoUNznU9iDRxPfQgSkuSONOiEiMq16K9yPy2z_CM-JFtnHJ6TpFKbjGZJ9dBPIFEapCOxeBgaANmA2nMfXdu1vRAy8ZbayYHSNhL1rBEC2N-5JZkfKQ7X9FEpKGk2-E2vwuNbxYc4jYeQtlUKNK7F7MTiFx2UXLMiqAU3fYsAXYxSgMG1RpzLthre-YngMTK5ioK4HEBHFYu39cp9KRnqbcGZfWvUdYzUmypQbYR4iQtH4U0YhXHnfV_cPkNowo70xOTluMFXTBQP9cRz0I0JVpD1z-0eXl-JU7ncW_9g3FSl9Fi5nxzklkhj4SGKwc",
-                                "flow": "",
-                                "id": "0fa827e5-349f-40cc-8daf-c6952a9fa64c"
-                            }
-                        ]
-                    }
-                ]
-            },
-            "streamSettings": {
-                "network": "ws",
-                "wsSettings": {
-                    "headers": {
-                        "Host": ""
-                    },
-                    "path": "/api"
-                }
-            },
-            "tag": "grp-26-3-5ttv06s4edg"
-        },
-        {
-            "protocol": "freedom",
-            "tag": "direct"
-        },
-        {
-            "protocol": "blackhole",
-            "tag": "block"
-        }
-    ],
-    "remarks": "🇩🇪 SPEED GERMANY 🇩🇪",
-    "routing": {
-        "balancers": [
-            {
-                "fallbackTag": "grp-26-2-9rnblqoi3fg",
-                "selector": [
-                    "grp-26-1-dhbm43e52bs",
-                    "grp-26-3-5ttv06s4edg"
-                ],
-                "strategy": {
-                    "settings": {
-                        "baselines": [
-                            "2000ms"
-                        ],
-                        "costs": [
-                            {
-                                "match": "grp-26-1-dhbm43e52bs",
-                                "regexp": false,
-                                "value": 1
-                            },
-                            {
-                                "match": "grp-26-2-9rnblqoi3fg",
-                                "regexp": false,
-                                "value": 1000000
-                            },
-                            {
-                                "match": "grp-26-3-5ttv06s4edg",
-                                "regexp": false,
-                                "value": 500000
-                            }
-                        ],
-                        "expected": 1,
-                        "maxRTT": "2s"
-                    },
-                    "type": "leastLoad"
-                },
-                "tag": "bal_26"
-            }
-        ],
-        "domainMatcher": "hybrid",
-        "domainStrategy": "IPIfNonMatch",
-        "rules": [
-            {
-                "outboundTag": "block",
-                "protocol": [
-                    "bittorrent"
-                ],
-                "type": "field"
-            },
-            {
-                "domain": [
-                    "domain:mtalk.google.com",
-                    "domain:push.apple.com",
-                    "domain:api.push.apple.com",
-                    "domain:push-apple.com.akadns.net",
-                    "domain:*-courier.push.apple.com"
-                ],
-                "outboundTag": "direct",
-                "type": "field"
-            },
-            {
-                "ip": [
-                    "17.0.0.0/8"
-                ],
-                "outboundTag": "direct",
-                "type": "field"
-            },
-            {
-                "balancerTag": "bal_26",
-                "inboundTag": [
-                    "socks",
-                    "http"
-                ],
-                "network": "tcp,udp",
-                "type": "field"
-            }
+    {
+      "tag": "http",
+      "port": 10809,
+      "listen": "127.0.0.1",
+      "protocol": "http",
+      "settings": {
+        "allowTransparent": false
+      },
+      "sniffing": {
+        "enabled": true,
+        "routeOnly": false,
+        "destOverride": [
+          "http",
+          "tls",
+          "quic"
         ]
+      }
     }
+  ],
+  "observatory": {
+    "enableConcurrency": true,
+    "probeInterval": "1m",
+    "probeUrl": "https://www.google.com/generate_204",
+    "subjectSelector": [
+      "grp-26-1-4v5vjbmti9g",
+      "grp-26-2-munor5dtkvg",
+      "grp-26-3-l7uhsspi8ik"
+    ]
+  },
+  "outbounds": [
+    {
+      "tag": "grp-26-1-4v5vjbmti9g",
+      "protocol": "vless",
+      "settings": {
+        "vnext": [
+          {
+            "address": "test.grey-lance.test-cdn-kkk.com",
+            "port": 443,
+            "users": [
+              {
+                "id": "5ae46adf-322d-4e8a-8c28-3f71ce56cd9d",
+                "encryption": "none",
+                "flow": "xtls-rprx-vision"
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "tcpSettings": {},
+        "security": "reality",
+        "realitySettings": {
+          "serverName": "tradingview.com",
+          "show": false,
+          "publicKey": "-tePObR3oZwGAUOb5kqTYkNWl6rtUKl0RFuzuu06wgw",
+          "shortId": "50",
+          "fingerprint": "qq"
+        }
+      }
+    },
+    {
+      "tag": "grp-26-2-munor5dtkvg",
+      "protocol": "vless",
+      "settings": {
+        "vnext": [
+          {
+            "address": "test.grey-lance.test-cdn-kkk.com",
+            "port": 1443,
+            "users": [
+              {
+                "id": "5ae46adf-322d-4e8a-8c28-3f71ce56cd9d",
+                "encryption": "none",
+                "flow": ""
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "grpc",
+        "grpcSettings": {
+          "serviceName": "de.eu-ffast.com",
+          "authority": "",
+          "mode": false
+        },
+        "security": "reality",
+        "realitySettings": {
+          "serverName": "de.eu-ffast.com",
+          "show": false,
+          "publicKey": "-tePObR3oZwGAUOb5kqTYkNWl6rtUKl0RFuzuu06wgw",
+          "shortId": "50"
+        }
+      }
+    },
+    {
+      "tag": "grp-26-3-l7uhsspi8ik",
+      "protocol": "vless",
+      "settings": {
+        "vnext": [
+          {
+            "address": "test.grey-lance.test-cdn-kkk.com",
+            "port": 448,
+            "users": [
+              {
+                "id": "5ae46adf-322d-4e8a-8c28-3f71ce56cd9d",
+                "encryption": "mlkem768x25519plus.native.0rtt.v-7SQRHD1uQ1dFudMkXoGqHrisnsnYjzICLWmc3l1iY.lvV9jnuFV8xkhxwDmGQOWHEHyepeTsN4YkHDWQTIN6I6uxkufqgnC-rEZICW6SgltNO2FjanZLepI4iosvaDl0teXhGnZEEJpWN0PWspNvtWCuRsQfA4MvnE_XcMabIcunASPtV2jhVXFsvNZTkM31hSLwFvSdGet3YShvJS7pmkddiAXmiyghiSCwvBpsB0uRIpFPgrx0mTtYe7gbG08hKoGveHq4lfDRUX-ImV3nqLmmKCU3GU7ZOSbhQs_ZwZ7UkEREXN2dESt8Qz4YFw3WifW3utOiF70xqO5TZ0EShHqNFms7elmzlhtEEkbfbAAvWbt3ab93pQSAgGYNsIiHgJc2F1CmgzWpA2p7uFSpqBpZE_HhxE4qA2gEFDT2lV8OyF4QtJ88PCkFqIGXEXn1SfHEGOESG6YIa31xI6pflx56EnizqlqEfDTHWTiCUQA1qjsShvhcq_FaJTthRXOmElOAcQc-e4NfK5vlkcroPIqIYnkccaXlsWw1Sa48pOc0U1N6GmMtB3WeoJtygap_elcISRPZq15Thj1eGP_0BRjfQe9RaYz6Qj8Sl2L2JrrvRElpYPq4qGNUvAHjBJBzWmzrU70tfPTLdyddE3OrAjOOJBYkhzVewlzsxBTWikZPsrrXhpk0QeuctIBHjJiHgLRxurlaN3t8ZRMhyi1PlQgPQX1ZtMqmaCDaRn8QFn1WlJgCoLIFZv_MMOvbJFcWx5OeSXsLxokEmoZtsYOWjDdggcqTtNgXpM1wuj7-eIq4xzjlccIeig43fK-7JLcQESVasA_EA-Kyx-jIkyl6FEoxhM5EJMEwt9-7wB6Hi6vTJRDVmJLQDHlxqTS3haAOcLZxI7ooCjuUmKh3Oyedx1HVHA0lBKl_YwdFMYApwWmHklSTQnHAItPUtTw7vNIEFBygStijW4Z6CpnuFGdlGkzdkiaLw-1Ea4MRO3tISScXAXGlmOLIhOlrSk04I5H1OApehNv1IS1PYkMzYSUJUCMGRk5XC7RVh32MhdSjKALDU2tcJjSHk2cGpKhPuBELFhvLpoYEl9A4C4OMnJkCKi22qMuikbA0kUrLBH50M1_6G_7rJFAgtLP-mU6JnOw4kVWUDE_Mly62Mr07ys1BUIl8edGzI8PYSzIpx_tvF6twF6QTUX65d2hSsezLQ3uIFtgfYgIKWZUuN7UqHG4_YPVZxLhAAlUwuEqYeh49ZjTbsMZDxSCiigMsWidpmIqjJkTdHD0iS2WpoDv0qUPZpIwoUNznU9iDRxPfQgSkuSONOiEiMq16K9yPy2z_CM-JFtnHJ6TpFKbjGZJ9dBPIFEapCOxeBgaANmA2nMfXdu1vRAy8ZbayYHSNhL1rBEC2N-5JZkfKQ7X9FEpKGk2-E2vwuNbxYc4jYeQtlUKNK7F7MTiFx2UXLMiqAU3fYsAXYxSgMG1RpzLthre-YngMTK5ioK4HEBHFYu39cp9KRnqbcGZfWvUdYzUmypQbYR4iQtH4U0YhXHnfV_cPkNowo70xOTluMFXTBQP9cRz0I0JVpD1z-0eXl-JU7ncW_9g3FSl9Fi5nxzklkhj4SGKwc",
+                "flow": ""
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "ws",
+        "wsSettings": {
+          "path": "/api",
+          "headers": {
+            "Host": ""
+          }
+        }
+      }
+    },
+    {
+      "tag": "direct",
+      "protocol": "freedom"
+    },
+    {
+      "tag": "block",
+      "protocol": "blackhole"
+    }
+  ],
+  "remarks": "🇩🇪 SPEED GERMANY",
+  "routing": {
+    "domainMatcher": "hybrid",
+    "domainStrategy": "IPIfNonMatch",
+    "balancers": [
+      {
+        "tag": "bal_26",
+        "selector": [
+          "grp-26-1-4v5vjbmti9g",
+          "grp-26-3-l7uhsspi8ik"
+        ],
+        "fallbackTag": "grp-26-2-munor5dtkvg",
+        "strategy": {
+          "type": "leastLoad",
+          "settings": {
+            "baselines": [
+              "2000ms"
+            ],
+            "costs": [
+              {
+                "match": "grp-26-1-4v5vjbmti9g",
+                "regexp": false,
+                "value": 1
+              },
+              {
+                "match": "grp-26-2-munor5dtkvg",
+                "regexp": false,
+                "value": 1000000
+              },
+              {
+                "match": "grp-26-3-l7uhsspi8ik",
+                "regexp": false,
+                "value": 500000
+              }
+            ],
+            "expected": 1,
+            "maxRTT": "2s"
+          }
+        }
+      }
+    ],
+    "rules": [
+      {
+        "type": "field",
+        "protocol": [
+          "bittorrent"
+        ],
+        "outboundTag": "block"
+      },
+      {
+        "domain": [
+          "domain:mtalk.google.com",
+          "domain:push.apple.com",
+          "domain:api.push.apple.com",
+          "domain:push-apple.com.akadns.net",
+          "domain:*-courier.push.apple.com"
+        ],
+        "outboundTag": "direct",
+        "type": "field"
+      },
+      {
+        "ip": [
+          "17.0.0.0/8"
+        ],
+        "outboundTag": "direct",
+        "type": "field"
+      },
+      {
+        "type": "field",
+        "inboundTag": [
+          "socks",
+          "http"
+        ],
+        "network": "tcp,udp",
+        "balancerTag": "bal_26"
+      }
+    ]
+  }
 }
