@@ -175,7 +175,7 @@
             "statsOutboundUplink": true
         }
     },
-    "remarks": "[FREE] ТОЛЬКО TG БОТ + САЙТ",
+    "remarks": "🇫🇮 FREE server",
     "routing": {
         "domainStrategy": "IPIfNonMatch",
         "rules": [
