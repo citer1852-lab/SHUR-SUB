@@ -3,18 +3,10 @@ const fs = require('fs').promises;
 const path = require('path');
 
 // ==================== НАСТРОЙКИ ====================
-// Внешние подписки (пока оставьте пустым, так как ссылка 404)
-const EXTERNAL_SOURCES = [
-    // "https://raw.githubusercontent.com/whoahaow/rjsxrd/main/default/6.txt" // временно отключено
-];
-
-// Папка с вашими локальными файлами
+const EXTERNAL_SOURCES = []; // пока пусто
 const LOCAL_SOURCES_DIR = './sources';
-
-// Выходные файлы
 const OUTPUT_JSON = 'subscription.json';
 const OUTPUT_TXT = 'sub.txt';
-
 // ===================================================
 
 async function fetchUrl(url) {
@@ -30,8 +22,7 @@ async function fetchUrl(url) {
 }
 
 /**
- * Преобразует outbound из Xray-конфига в строку URI с названием
- * Название берётся из поля "remarks" (если есть) или из "tag"
+ * Преобразует outbound в URI с названием из remarks или tag
  */
 function convertOutboundToURI(out, globalRemarks = '') {
     if (out.protocol === 'vless') {
@@ -63,20 +54,22 @@ function convertOutboundToURI(out, globalRemarks = '') {
             }
         }
         
-        // Добавляем название сервера (приоритет: out.tag, затем globalRemarks)
+        // ✅ Добавляем название: приоритет у out.tag, затем у globalRemarks
         let nodeName = out.tag || '';
-        if (!nodeName && globalRemarks) nodeName = globalRemarks;
-        if (nodeName) uri += `#${encodeURIComponent(nodeName)}`;
+        if ((!nodeName || nodeName === 'proxy') && globalRemarks) {
+            nodeName = globalRemarks;
+        }
+        if (nodeName && nodeName !== 'proxy') {
+            uri += `#${encodeURIComponent(nodeName)}`;
+        }
         
         return uri;
     }
-    
-    // Для vmess, trojan, ss можно добавить аналогичную логику
     return null;
 }
 
 /**
- * Обрабатывает локальный файл и извлекает URI с названиями
+ * Обрабатывает локальный JSON-файл и извлекает URI с названиями
  */
 async function processLocalFile(filePath) {
     const content = await fs.readFile(filePath, 'utf-8');
@@ -87,10 +80,10 @@ async function processLocalFile(filePath) {
             const json = JSON.parse(content);
             const uris = [];
             
-            // Извлекаем глобальное название конфига (если есть)
+            // ✅ Берём глобальное название из поля "remarks"
             const globalRemarks = json.remarks || json.name || '';
+            console.log(`   📝 Название конфига: "${globalRemarks}"`);
             
-            // Обрабатываем outbounds
             if (json.outbounds && Array.isArray(json.outbounds)) {
                 for (const out of json.outbounds) {
                     const uri = convertOutboundToURI(out, globalRemarks);
@@ -100,11 +93,10 @@ async function processLocalFile(filePath) {
             
             return { type: 'uri', lines: uris };
         } catch (e) {
-            console.error(`❌ Ошибка парсинга JSON в файле ${filePath}: ${e.message}`);
+            console.error(`❌ Ошибка парсинга JSON: ${e.message}`);
             return { type: 'uri', lines: [] };
         }
     } else {
-        // Для .txt файлов — просто строки (названия уже могут быть в конце через #)
         const lines = content.split('\n').filter(l => l.trim().length > 0);
         return { type: 'uri', lines };
     }
@@ -113,7 +105,6 @@ async function processLocalFile(filePath) {
 async function collectAllLines() {
     const allUris = [];
 
-    // Внешние источники (пока отключены)
     for (const url of EXTERNAL_SOURCES) {
         try {
             console.log(`📡 Загрузка: ${url}`);
@@ -126,7 +117,6 @@ async function collectAllLines() {
         }
     }
 
-    // Локальные файлы из папки sources
     try {
         const files = await fs.readdir(LOCAL_SOURCES_DIR);
         for (const file of files) {
