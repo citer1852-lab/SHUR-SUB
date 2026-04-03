@@ -175,7 +175,7 @@
             "statsOutboundUplink": true
         }
     },
-    "remarks": "LTE #3",
+    "remarks": "🇫🇮 LTE №3",
     "routing": {
         "domainStrategy": "IPIfNonMatch",
         "rules": [
