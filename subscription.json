@@ -1,0 +1,6 @@
+{
+  "lastUpdated": "2026-04-03T18:52:41.640Z",
+  "totalUris": 2,
+  "configsBase64": "dmxlc3M6Ly9leGFtcGxlQGV4YW1wbGUuY29tOjQ0Mz9lbmNyeXB0aW9uPW5vbmUjVGVzdDEKdHJvamFuOi8vcGFzc3dvcmRAZXhhbXBsZS5jb206NDQzP3NlY3VyaXR5PXRscyNUZXN0Mg==",
+  "configsPlain": "vless://example@example.com:443?encryption=none#Test1\ntrojan://password@example.com:443?security=tls#Test2"
+}
