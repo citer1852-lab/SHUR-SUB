@@ -173,7 +173,7 @@
             "statsOutboundUplink": true
         }
     },
-    "remarks": "CA-Trojan2",
+    "remarks": "SPEED",
     "routing": {
         "domainStrategy": "IPIfNonMatch",
         "rules": [
