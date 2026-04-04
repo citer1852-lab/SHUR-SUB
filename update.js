@@ -11,7 +11,7 @@ const EXTERNAL_SOURCES = [
     "vless://6d0e9ded-d23d-4ffb-b165-7bc757be84d3@89.124.79.248:443?security=reality&flow=xtls-rprx-vision&sni=www.google.com&type=tcp&fp=chrome&pbk=VFzQg-tlMPhO7wBJNQJD8M82zPxnCTy_Y2oHWgsFbzQ&sid=10402c47a7e61563#🇳🇱_NL_REALITY_2",
     "vless://0ca855d9-7c03-40eb-929b-919f934abdc3@104.16.30.239:80?encryption=none&security=none&type=ws&host=amirvpn.amirhm00100.workers.dev&path=%2F%3Fed%3D2048#🇨🇦_CA_WORKERS"
 ]; 
-const LOCAL_SOURCES_DIR = './sources1';
+const LOCAL_SOURCES_DIR = './sources';
 const OUTPUT_JSON = 'subscription.json';
 const OUTPUT_TXT = 'sub.txt';
 // ===================================================
