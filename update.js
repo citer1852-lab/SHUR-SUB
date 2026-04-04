@@ -29,54 +29,65 @@ async function fetchUrl(url) {
 }
 
 /**
- * Преобразует outbound в URI с названием из remarks или tag
+ * Преобразует outbound в URI с названием из remarks или tag.
+ * Возвращает null, если outbound невалиден (нет address, port или uuid).
  */
 function convertOutboundToURI(out, globalRemarks = '') {
-    if (out.protocol === 'vless') {
-        const vnext = out.settings?.vnext?.[0];
-        if (!vnext) return null;
-        const user = vnext.users?.[0];
-        if (!user) return null;
-        
-        let uri = `vless://${user.id}@${vnext.address}:${vnext.port}?encryption=${user.encryption || 'none'}`;
-        if (user.flow) uri += `&flow=${user.flow}`;
-        
-        const stream = out.streamSettings;
-        if (stream) {
-            if (stream.security === 'reality') {
-                const r = stream.realitySettings || {};
-                uri += `&security=reality&sni=${encodeURIComponent(r.serverName || '')}&pbk=${r.publicKey || ''}`;
-                if (r.shortId) uri += `&sid=${r.shortId}`;
-                if (r.fingerprint) uri += `&fp=${r.fingerprint}`;
-            } else if (stream.security === 'tls') {
-                uri += `&security=tls&sni=${encodeURIComponent(stream.tlsSettings?.serverName || '')}`;
-            }
-            if (stream.network === 'ws') {
-                uri += `&type=ws&path=${encodeURIComponent(stream.wsSettings?.path || '/')}`;
-                if (stream.wsSettings?.headers?.Host) uri += `&host=${encodeURIComponent(stream.wsSettings.headers.Host)}`;
-            } else if (stream.network === 'grpc') {
-                uri += `&type=grpc&serviceName=${encodeURIComponent(stream.grpcSettings?.serviceName || '')}`;
-            } else if (stream.network === 'tcp') {
-                uri += `&type=tcp`;
-            }
-        }
-        
-        // ✅ Добавляем название: приоритет у out.tag, затем у globalRemarks
-        let nodeName = out.tag || '';
-        if ((!nodeName || nodeName === 'proxy') && globalRemarks) {
-            nodeName = globalRemarks;
-        }
-        if (nodeName && nodeName !== 'proxy') {
-            uri += `#${encodeURIComponent(nodeName)}`;
-        }
-        
-        return uri;
+    if (out.protocol !== 'vless') return null;
+    
+    const vnext = out.settings?.vnext?.[0];
+    if (!vnext) return null;
+    
+    const user = vnext.users?.[0];
+    if (!user) return null;
+    
+    // Проверка обязательных полей
+    const address = vnext.address;
+    const port = vnext.port;
+    const uuid = user.id;
+    if (!address || !port || !uuid) {
+        console.log(`   ⚠️ Пропущен outbound: не хватает address/port/uuid`);
+        return null;
     }
-    return null;
+    
+    let uri = `vless://${uuid}@${address}:${port}?encryption=${user.encryption || 'none'}`;
+    if (user.flow) uri += `&flow=${user.flow}`;
+    
+    const stream = out.streamSettings;
+    if (stream) {
+        if (stream.security === 'reality') {
+            const r = stream.realitySettings || {};
+            uri += `&security=reality&sni=${encodeURIComponent(r.serverName || '')}&pbk=${r.publicKey || ''}`;
+            if (r.shortId) uri += `&sid=${r.shortId}`;
+            if (r.fingerprint) uri += `&fp=${r.fingerprint}`;
+        } else if (stream.security === 'tls') {
+            uri += `&security=tls&sni=${encodeURIComponent(stream.tlsSettings?.serverName || '')}`;
+        }
+        if (stream.network === 'ws') {
+            uri += `&type=ws&path=${encodeURIComponent(stream.wsSettings?.path || '/')}`;
+            if (stream.wsSettings?.headers?.Host) uri += `&host=${encodeURIComponent(stream.wsSettings.headers.Host)}`;
+        } else if (stream.network === 'grpc') {
+            uri += `&type=grpc&serviceName=${encodeURIComponent(stream.grpcSettings?.serviceName || '')}`;
+        } else if (stream.network === 'tcp') {
+            uri += `&type=tcp`;
+        }
+    }
+    
+    // Добавляем название
+    let nodeName = out.tag || '';
+    if ((!nodeName || nodeName === 'proxy') && globalRemarks) {
+        nodeName = globalRemarks;
+    }
+    if (nodeName && nodeName !== 'proxy') {
+        uri += `#${encodeURIComponent(nodeName)}`;
+    }
+    
+    return uri;
 }
 
 /**
- * Обрабатывает локальный JSON-файл и извлекает URI с названиями
+ * Обрабатывает локальный JSON-файл и извлекает URI с названиями.
+ * Пропускает невалидные outbound'ы.
  */
 async function processLocalFile(filePath) {
     const content = await fs.readFile(filePath, 'utf-8');
@@ -87,14 +98,17 @@ async function processLocalFile(filePath) {
             const json = JSON.parse(content);
             const uris = [];
             
-            // ✅ Берём глобальное название из поля "remarks"
             const globalRemarks = json.remarks || json.name || '';
             console.log(`   📝 Название конфига: "${globalRemarks}"`);
             
             if (json.outbounds && Array.isArray(json.outbounds)) {
                 for (const out of json.outbounds) {
                     const uri = convertOutboundToURI(out, globalRemarks);
-                    if (uri) uris.push(uri);
+                    if (uri) {
+                        uris.push(uri);
+                    } else {
+                        console.log(`   ⚠️ Пропущен невалидный outbound: ${out.tag || 'без тега'}`);
+                    }
                 }
             }
             
@@ -114,7 +128,6 @@ async function collectAllLines() {
 
     for (const item of EXTERNAL_SOURCES) {
         if (item.startsWith('vless://') || item.startsWith('vmess://') || item.startsWith('trojan://') || item.startsWith('ss://')) {
-            // Это уже готовый URI, добавляем как есть
             allUris.push(item);
             console.log(`   → добавлен URI: ${item.substring(0, 50)}...`);
         } else {
