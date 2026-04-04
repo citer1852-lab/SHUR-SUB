@@ -29,6 +29,23 @@ async function fetchUrl(url) {
 }
 
 /**
+ * Нормализует vless:// URI: сортирует параметры запроса, чтобы одинаковые конфиги имели одинаковую строку.
+ */
+function normalizeVlessUri(uri) {
+    try {
+        const urlObj = new URL(uri);
+        const params = new URLSearchParams(urlObj.search);
+        // Сортируем параметры по ключу
+        const sorted = Array.from(params.entries()).sort((a, b) => a[0].localeCompare(b[0]));
+        urlObj.search = new URLSearchParams(sorted).toString();
+        return urlObj.toString();
+    } catch (e) {
+        // Если не удалось распарсить, возвращаем исходную строку
+        return uri;
+    }
+}
+
+/**
  * Преобразует outbound в URI с названием из remarks или tag.
  * Возвращает null, если outbound невалиден (нет address, port или uuid).
  */
@@ -41,7 +58,6 @@ function convertOutboundToURI(out, globalRemarks = '') {
     const user = vnext.users?.[0];
     if (!user) return null;
     
-    // Проверка обязательных полей
     const address = vnext.address;
     const port = vnext.port;
     const uuid = user.id;
@@ -73,7 +89,6 @@ function convertOutboundToURI(out, globalRemarks = '') {
         }
     }
     
-    // Добавляем название
     let nodeName = out.tag || '';
     if ((!nodeName || nodeName === 'proxy') && globalRemarks) {
         nodeName = globalRemarks;
@@ -87,7 +102,6 @@ function convertOutboundToURI(out, globalRemarks = '') {
 
 /**
  * Обрабатывает локальный JSON-файл и извлекает URI с названиями.
- * Пропускает невалидные outbound'ы.
  */
 async function processLocalFile(filePath) {
     const content = await fs.readFile(filePath, 'utf-8');
@@ -97,7 +111,6 @@ async function processLocalFile(filePath) {
         try {
             const json = JSON.parse(content);
             const uris = [];
-            
             const globalRemarks = json.remarks || json.name || '';
             console.log(`   📝 Название конфига: "${globalRemarks}"`);
             
@@ -111,7 +124,6 @@ async function processLocalFile(filePath) {
                     }
                 }
             }
-            
             return { type: 'uri', lines: uris };
         } catch (e) {
             console.error(`❌ Ошибка парсинга JSON: ${e.message}`);
@@ -126,6 +138,7 @@ async function processLocalFile(filePath) {
 async function collectAllLines() {
     const allUris = [];
 
+    // 1. Обрабатываем готовые URI из EXTERNAL_SOURCES
     for (const item of EXTERNAL_SOURCES) {
         if (item.startsWith('vless://') || item.startsWith('vmess://') || item.startsWith('trojan://') || item.startsWith('ss://')) {
             allUris.push(item);
@@ -143,6 +156,7 @@ async function collectAllLines() {
         }
     }
 
+    // 2. Обрабатываем локальные файлы из папки sources1
     try {
         const files = await fs.readdir(LOCAL_SOURCES_DIR);
         for (const file of files) {
@@ -166,8 +180,19 @@ async function collectAllLines() {
         }
     }
     
-    const uniqueUris = [...new Map(allUris.map(uri => [uri, uri])).values()];
-    console.log(`\n📊 Итого URI: ${uniqueUris.length}`);
+    // 3. Нормализуем все URI (сортируем параметры) и удаляем дубликаты
+    const normalizedMap = new Map();
+    for (const uri of allUris) {
+        const normalized = normalizeVlessUri(uri);
+        // Сохраняем только первое вхождение (можно также проверять по чему-то ещё, но достаточно)
+        if (!normalizedMap.has(normalized)) {
+            normalizedMap.set(normalized, uri);
+        } else {
+            console.log(`   ⚠️ Дубликат удалён: ${normalized.substring(0, 80)}...`);
+        }
+    }
+    const uniqueUris = Array.from(normalizedMap.values());
+    console.log(`\n📊 Итого уникальных URI после нормализации: ${uniqueUris.length}`);
     return uniqueUris;
 }
 
