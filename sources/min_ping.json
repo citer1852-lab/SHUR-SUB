@@ -1,9 +1,8 @@
 {
-  "log": { "loglevel": "warning" },
-
+  "remarks": "⚡ Fast EU",
   "outbounds": [
     {
-      "tag": "fast-nl",
+      "tag": "🇳🇱 NL Low Ping",
       "protocol": "shadowsocks",
       "settings": {
         "servers": [
@@ -17,7 +16,7 @@
       }
     },
     {
-      "tag": "fast-de",
+      "tag": "🇩🇪 DE Backup",
       "protocol": "shadowsocks",
       "settings": {
         "servers": [
@@ -29,35 +28,6 @@
           }
         ]
       }
-    },
-    {
-      "tag": "fallback",
-      "protocol": "shadowsocks",
-      "settings": {
-        "servers": [
-          {
-            "address": "148.113.139.160",
-            "port": 46534,
-            "method": "chacha20-ietf-poly1305",
-            "password": "7a106afc33eaa261"
-          }
-        ]
-      }
     }
-  ],
-
-  "routing": {
-    "balancers": [
-      {
-        "tag": "fastest",
-        "selector": ["fast-nl", "fast-de", "fallback"]
-      }
-    ],
-    "rules": [
-      {
-        "type": "field",
-        "balancerTag": "fastest"
-      }
-    ]
-  }
+  ]
 }
