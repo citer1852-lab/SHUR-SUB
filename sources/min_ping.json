@@ -1,0 +1,63 @@
+{
+  "log": { "loglevel": "warning" },
+
+  "outbounds": [
+    {
+      "tag": "fast-nl",
+      "protocol": "shadowsocks",
+      "settings": {
+        "servers": [
+          {
+            "address": "193.29.139.157",
+            "port": 8080,
+            "method": "chacha20-ietf-poly1305",
+            "password": "4a2rfixophdjffa8KVA4Aa"
+          }
+        ]
+      }
+    },
+    {
+      "tag": "fast-de",
+      "protocol": "shadowsocks",
+      "settings": {
+        "servers": [
+          {
+            "address": "57.129.95.45",
+            "port": 11201,
+            "method": "chacha20-ietf-poly1305",
+            "password": "6675cbf62d6a3a4f"
+          }
+        ]
+      }
+    },
+    {
+      "tag": "fallback",
+      "protocol": "shadowsocks",
+      "settings": {
+        "servers": [
+          {
+            "address": "148.113.139.160",
+            "port": 46534,
+            "method": "chacha20-ietf-poly1305",
+            "password": "7a106afc33eaa261"
+          }
+        ]
+      }
+    }
+  ],
+
+  "routing": {
+    "balancers": [
+      {
+        "tag": "fastest",
+        "selector": ["fast-nl", "fast-de", "fallback"]
+      }
+    ],
+    "rules": [
+      {
+        "type": "field",
+        "balancerTag": "fastest"
+      }
+    ]
+  }
+}
