@@ -173,7 +173,7 @@
             "statsOutboundUplink": true
         }
     },
-    "remarks": "SPEED",
+    "remarks": "🇫🇮 SPEED",
     "routing": {
         "domainStrategy": "IPIfNonMatch",
         "rules": [
