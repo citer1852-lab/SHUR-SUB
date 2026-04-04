@@ -1,0 +1,76 @@
+{
+  "log": { "loglevel": "warning" },
+
+  "outbounds": [
+    { "tag": "direct", "protocol": "freedom" },
+    { "tag": "block", "protocol": "blackhole" },
+
+    {
+      "tag": "proxy-nl",
+      "protocol": "shadowsocks",
+      "settings": {
+        "servers": [
+          {
+            "address": "193.29.139.157",
+            "port": 8080,
+            "method": "chacha20-ietf-poly1305",
+            "password": "4a2rfixophdjffa8KVA4Aa"
+          }
+        ]
+      }
+    },
+    {
+      "tag": "proxy-de",
+      "protocol": "shadowsocks",
+      "settings": {
+        "servers": [
+          {
+            "address": "57.129.95.45",
+            "port": 11201,
+            "method": "chacha20-ietf-poly1305",
+            "password": "6675cbf62d6a3a4f"
+          }
+        ]
+      }
+    },
+    {
+      "tag": "proxy-sg",
+      "protocol": "shadowsocks",
+      "settings": {
+        "servers": [
+          {
+            "address": "194.233.73.51",
+            "port": 14453,
+            "method": "chacha20-ietf-poly1305",
+            "password": "764a4d8c1c76eb50"
+          }
+        ]
+      }
+    }
+  ],
+
+  "routing": {
+    "balancers": [
+      {
+        "tag": "proxy-auto",
+        "selector": ["proxy-nl", "proxy-de", "proxy-sg"]
+      }
+    ],
+    "rules": [
+      {
+        "type": "field",
+        "domain": ["geoip:private"],
+        "outboundTag": "direct"
+      },
+      {
+        "type": "field",
+        "domain": ["geosite:category-ru"],
+        "outboundTag": "direct"
+      },
+      {
+        "type": "field",
+        "balancerTag": "proxy-auto"
+      }
+    ]
+  }
+}
