@@ -28,25 +28,43 @@ async function fetchUrl(url) {
 }
 
 /**
- * Преобразует outbound в URI с названием из remarks или tag.
- * Возвращает null, если outbound невалиден (нет address, port или uuid).
+ * Конвертирует outbound Shadowsocks в ss:// URI
  */
-function convertOutboundToURI(out, globalRemarks = '') {
-    if (out.protocol !== 'vless') return null;
+function convertShadowsocksToURI(out, globalRemarks = '') {
+    const servers = out.settings?.servers;
+    if (!servers || !servers.length) return null;
+    const s = servers[0];
+    const address = s.address;
+    const port = s.port;
+    const method = s.method;
+    const password = s.password;
+    if (!address || !port || !method || !password) return null;
     
+    // Кодируем метод:пароль в base64
+    const userinfo = `${method}:${password}`;
+    const encoded = Buffer.from(userinfo).toString('base64');
+    let uri = `ss://${encoded}@${address}:${port}`;
+    
+    // Добавляем тег
+    let tag = out.tag || '';
+    if ((!tag || tag === 'proxy') && globalRemarks) tag = globalRemarks;
+    if (!tag) tag = `${address}:${port}`;
+    uri += `#${encodeURIComponent(tag)}`;
+    return uri;
+}
+
+/**
+ * Конвертирует outbound VLESS в vless:// URI
+ */
+function convertVlessToURI(out, globalRemarks = '') {
     const vnext = out.settings?.vnext?.[0];
     if (!vnext) return null;
-    
     const user = vnext.users?.[0];
     if (!user) return null;
-    
     const address = vnext.address;
     const port = vnext.port;
     const uuid = user.id;
-    if (!address || !port || !uuid) {
-        console.log(`   ⚠️ Пропущен outbound: не хватает address/port/uuid`);
-        return null;
-    }
+    if (!address || !port || !uuid) return null;
     
     let uri = `vless://${uuid}@${address}:${port}?encryption=${user.encryption || 'none'}`;
     if (user.flow) uri += `&flow=${user.flow}`;
@@ -71,95 +89,94 @@ function convertOutboundToURI(out, globalRemarks = '') {
         }
     }
     
-    let nodeName = out.tag || '';
-    if ((!nodeName || nodeName === 'proxy') && globalRemarks) {
-        nodeName = globalRemarks;
-    }
-    // Если имя пустое, генерируем по адресу:порту
-    if (!nodeName || nodeName === 'proxy') {
-        nodeName = `${address}:${port}`;
-    }
-    uri += `#${encodeURIComponent(nodeName)}`;
-    
+    let tag = out.tag || '';
+    if ((!tag || tag === 'proxy') && globalRemarks) tag = globalRemarks;
+    if (!tag) tag = `${address}:${port}`;
+    uri += `#${encodeURIComponent(tag)}`;
     return uri;
 }
 
 /**
- * Рекурсивно обходит папку и обрабатывает все файлы.
+ * Извлекает все реальные outbound'ы из JSON-объекта (рекурсивно)
  */
-async function processDirectory(dir, allUris, processedFiles = new Set()) {
-    try {
-        const entries = await fs.readdir(dir, { withFileTypes: true });
-        for (const entry of entries) {
-            const fullPath = path.join(dir, entry.name);
-            if (entry.isDirectory()) {
-                await processDirectory(fullPath, allUris, processedFiles);
-            } else if (entry.isFile()) {
-                if (processedFiles.has(fullPath)) continue;
-                processedFiles.add(fullPath);
-                
-                const ext = path.extname(entry.name).toLowerCase();
-                console.log(`📁 Обработка: ${fullPath}`);
-                
-                if (ext === '.json') {
-                    try {
-                        const content = await fs.readFile(fullPath, 'utf-8');
-                        const json = JSON.parse(content);
-                        const globalRemarks = json.remarks || json.name || path.basename(entry.name, '.json');
-                        let outboundCount = 0;
-                        
-                        if (json.outbounds && Array.isArray(json.outbounds)) {
-                            for (const out of json.outbounds) {
-                                const uri = convertOutboundToURI(out, globalRemarks);
-                                if (uri) {
-                                    allUris.push(uri);
-                                    outboundCount++;
-                                } else {
-                                    console.log(`   ⚠️ Пропущен outbound: ${out.tag || 'без тега'}`);
-                                }
-                            }
-                        }
-                        console.log(`   → добавлено ${outboundCount} URI из JSON`);
-                    } catch (e) {
-                        console.error(`   ❌ Ошибка парсинга JSON: ${e.message}`);
-                    }
-                } else {
-                    // Текстовый файл: читаем строки, ищем vless://
-                    const content = await fs.readFile(fullPath, 'utf-8');
-                    const lines = content.split('\n');
-                    let added = 0;
-                    for (let line of lines) {
-                        line = line.trim();
-                        if (line.startsWith('vless://')) {
-                            allUris.push(line);
-                            added++;
-                        }
-                    }
-                    console.log(`   → добавлено ${added} URI из текстового файла`);
-                }
-            }
+function extractOutbounds(obj, results = []) {
+    if (!obj || typeof obj !== 'object') return results;
+    
+    // Если это массив outbounds
+    if (Array.isArray(obj)) {
+        for (const item of obj) {
+            extractOutbounds(item, results);
         }
-    } catch (err) {
-        console.error(`Ошибка чтения папки ${dir}: ${err.message}`);
+        return results;
     }
+    
+    // Если объект похож на outbound (есть protocol и settings)
+    if (obj.protocol && (obj.protocol === 'shadowsocks' || obj.protocol === 'vless')) {
+        results.push(obj);
+    }
+    
+    // Рекурсивно обходим все свойства
+    for (const key in obj) {
+        if (obj.hasOwnProperty(key) && typeof obj[key] === 'object') {
+            extractOutbounds(obj[key], results);
+        }
+    }
+    return results;
 }
 
+/**
+ * Обрабатывает один JSON-файл и возвращает массив URI
+ */
+async function processJsonFile(filePath, fileName) {
+    const content = await fs.readFile(filePath, 'utf-8');
+    let json;
+    try {
+        json = JSON.parse(content);
+    } catch (e) {
+        console.error(`❌ Ошибка парсинга JSON в ${fileName}: ${e.message}`);
+        return [];
+    }
+    
+    const globalRemarks = json.remarks || json.name || path.basename(fileName, '.json');
+    const outbounds = extractOutbounds(json);
+    const uris = [];
+    
+    for (const out of outbounds) {
+        let uri = null;
+        if (out.protocol === 'shadowsocks') {
+            uri = convertShadowsocksToURI(out, globalRemarks);
+        } else if (out.protocol === 'vless') {
+            uri = convertVlessToURI(out, globalRemarks);
+        }
+        if (uri) {
+            uris.push(uri);
+        } else {
+            console.log(`   ⚠️ Пропущен outbound (неподдерживаемый протокол или ошибка): ${out.tag || 'без тега'}`);
+        }
+    }
+    return uris;
+}
+
+/**
+ * Рекурсивно обходит папку sources и собирает URI из всех JSON и текстовых файлов
+ */
 async function collectAllLines() {
     const allUris = [];
 
-    // 1. Обрабатываем готовые URI из EXTERNAL_SOURCES
+    // 1. Внешние источники (URI и URL)
     for (const item of EXTERNAL_SOURCES) {
-        if (item.startsWith('vless://') || item.startsWith('vmess://') || item.startsWith('trojan://') || item.startsWith('ss://')) {
+        if (item.startsWith('vless://') || item.startsWith('ss://') || item.startsWith('vmess://') || item.startsWith('trojan://')) {
             allUris.push(item);
-            console.log(`   → добавлен URI: ${item.substring(0, 50)}...`);
+            console.log(`   → добавлен URI: ${item.substring(0, 60)}...`);
         } else {
             try {
                 console.log(`📡 Загрузка: ${item}`);
                 const content = await fetchUrl(item);
                 const lines = content.split('\n').filter(l => l.trim().length > 0);
                 for (const line of lines) {
-                    if (line.trim().startsWith('vless://')) {
-                        allUris.push(line.trim());
+                    const trimmed = line.trim();
+                    if (trimmed.startsWith('vless://') || trimmed.startsWith('ss://') || trimmed.startsWith('vmess://') || trimmed.startsWith('trojan://')) {
+                        allUris.push(trimmed);
                     }
                 }
                 console.log(`   → добавлено ${lines.length} строк (URI)`);
@@ -169,36 +186,62 @@ async function collectAllLines() {
         }
     }
 
-    // 2. Рекурсивно обрабатываем локальную папку sources
+    // 2. Локальная папка sources (рекурсивно)
+    async function walkDir(dir) {
+        try {
+            const entries = await fs.readdir(dir, { withFileTypes: true });
+            for (const entry of entries) {
+                const fullPath = path.join(dir, entry.name);
+                if (entry.isDirectory()) {
+                    await walkDir(fullPath);
+                } else if (entry.isFile()) {
+                    const ext = path.extname(entry.name).toLowerCase();
+                    console.log(`📁 Обработка: ${fullPath}`);
+                    if (ext === '.json') {
+                        const uris = await processJsonFile(fullPath, entry.name);
+                        allUris.push(...uris);
+                        console.log(`   → добавлено ${uris.length} URI`);
+                    } else {
+                        // Текстовый файл: читаем строки, ищем URI
+                        const content = await fs.readFile(fullPath, 'utf-8');
+                        const lines = content.split('\n');
+                        let added = 0;
+                        for (let line of lines) {
+                            line = line.trim();
+                            if (line.startsWith('vless://') || line.startsWith('ss://') || line.startsWith('vmess://') || line.startsWith('trojan://')) {
+                                allUris.push(line);
+                                added++;
+                            }
+                        }
+                        console.log(`   → добавлено ${added} URI из текстового файла`);
+                    }
+                }
+            }
+        } catch (err) {
+            console.error(`Ошибка чтения ${dir}: ${err.message}`);
+        }
+    }
+    
     try {
-        await processDirectory(LOCAL_SOURCES_DIR, allUris);
+        await walkDir(LOCAL_SOURCES_DIR);
     } catch (err) {
-        if (err.code !== 'ENOENT') {
-            console.error(`Ошибка: ${err.message}`);
-        } else {
-            console.log(`📁 Папка ${LOCAL_SOURCES_DIR} не найдена`);
-        }
+        if (err.code !== 'ENOENT') console.error(err);
+        else console.log(`📁 Папка ${LOCAL_SOURCES_DIR} не найдена`);
     }
     
-    // Убираем дубликаты? – Оставляем как есть, если нужно, раскомментировать.
-    // Но чтобы не терять конфиги, лучше не удалять.
-    // Можно просто вывести предупреждение о дубликатах.
-    const unique = new Set();
-    const duplicates = [];
+    // Опционально: удаляем дубликаты (но оставляем выбор)
+    const unique = new Map();
     for (const uri of allUris) {
-        if (unique.has(uri)) {
-            duplicates.push(uri);
+        // Простой ключ – весь URI (можно улучшить, но для начала ok)
+        if (!unique.has(uri)) {
+            unique.set(uri, uri);
         } else {
-            unique.add(uri);
+            console.log(`   ⚠️ Дубликат пропущен: ${uri.substring(0, 60)}...`);
         }
     }
-    if (duplicates.length > 0) {
-        console.log(`\n⚠️ Найдено ${duplicates.length} дублирующихся URI. Они будут сохранены, но Happ может их объединить.`);
-        // Если хотите удалить дубликаты – замените allUris на Array.from(unique)
-    }
-    
-    console.log(`\n📊 Итого собрано URI: ${allUris.length}`);
-    return allUris;
+    const finalUris = Array.from(unique.values());
+    console.log(`\n📊 Итого уникальных URI: ${finalUris.length} (изначально было ${allUris.length})`);
+    return finalUris;
 }
 
 function toBase64(text) {
@@ -206,13 +249,12 @@ function toBase64(text) {
 }
 
 async function main() {
-    console.log('🚀 Начинаем сборку подписки (сохраняем ВСЕ конфиги)...\n');
+    console.log('🚀 Сборка подписки с поддержкой Shadowsocks и VLESS...\n');
     try {
         const uris = await collectAllLines();
         
         if (uris.length === 0) {
-            console.log('⚠️ Внимание: не найдено ни одного конфига!');
-            console.log('   Добавьте файлы в папку sources/ и запустите снова.');
+            console.log('⚠️ Не найдено ни одного сервера. Проверьте папку sources/ и внешние источники.');
             return;
         }
         
@@ -220,7 +262,6 @@ async function main() {
         const base64Data = toBase64(plainText);
         
         await fs.writeFile(OUTPUT_TXT, base64Data);
-        
         const outputJson = {
             lastUpdated: new Date().toISOString(),
             totalUris: uris.length,
@@ -232,12 +273,9 @@ async function main() {
         console.log(`\n✅ Подписка создана!`);
         console.log(`📄 sub.txt (${base64Data.length} символов)`);
         console.log(`📄 subscription.json`);
-        console.log(`\n🔗 Ссылка для Happ:`);
+        console.log(`\n🔗 Ссылка для Happ (импортируйте sub.txt как подписку):`);
         console.log(`   https://raw.githubusercontent.com/citer1852-lab/SHUR-SUB/main/sub.txt`);
-        console.log(`\n💡 Если Happ показывает не все серверы, проверьте:`);
-        console.log(`   1. Что каждый JSON-файл содержит массив outbounds.`);
-        console.log(`   2. Что нет дублирующихся тегов (tag) внутри одного файла.`);
-        console.log(`   3. Что все серверы имеют address, port и uuid.`);
+        console.log(`\n💡 Теперь в Happ должно отображаться ${uris.length} серверов.`);
     } catch (error) {
         console.error('❌ Критическая ошибка:', error);
         process.exit(1);
