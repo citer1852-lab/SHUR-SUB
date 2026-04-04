@@ -111,17 +111,43 @@ async function filterWorking(uris) {
 
 // ==================== СОРТИРОВКА ====================
 
-function detectCountryPriority(uri) {
-    const decoded = decodeURIComponent(uri).toUpperCase();
+function extractTag(uri) {
+    try {
+        const decoded = decodeURIComponent(uri);
+        const parts = decoded.split('#');
+        return parts[1] || '';
+    } catch {
+        return '';
+    }
+}
 
-    const map = [
-        'RU','UA','KZ','BY',
-        'DE','NL','FR','PL',
-        'GB','US','CA','JP','SG'
+function detectCountryPriority(uri) {
+    const tag = extractTag(uri).toUpperCase();
+
+    const countryMap = [
+        { keys: ['🇷🇺', 'RU', 'RUSSIA', 'MOSCOW'], priority: 1 },
+        { keys: ['🇺🇦', 'UA', 'UKRAINE', 'KYIV'], priority: 2 },
+        { keys: ['🇰🇿', 'KZ', 'KAZAKHSTAN'], priority: 3 },
+        { keys: ['🇧🇾', 'BY', 'BELARUS'], priority: 4 },
+
+        { keys: ['🇩🇪', 'DE', 'GERMANY', 'FRANKFURT'], priority: 5 },
+        { keys: ['🇳🇱', 'NL', 'NETHERLANDS', 'AMSTERDAM'], priority: 6 },
+        { keys: ['🇫🇷', 'FR', 'FRANCE', 'PARIS'], priority: 7 },
+        { keys: ['🇵🇱', 'PL', 'POLAND'], priority: 8 },
+
+        { keys: ['🇬🇧', 'GB', 'UK', 'LONDON'], priority: 9 },
+        { keys: ['🇺🇸', 'US', 'USA', 'AMERICA', 'NEW YORK'], priority: 10 },
+        { keys: ['🇨🇦', 'CA', 'CANADA'], priority: 11 },
+        { keys: ['🇯🇵', 'JP', 'JAPAN', 'TOKYO'], priority: 12 },
+        { keys: ['🇸🇬', 'SG', 'SINGAPORE'], priority: 13 }
     ];
 
-    for (let i = 0; i < map.length; i++) {
-        if (decoded.includes(map[i])) return i;
+    for (const country of countryMap) {
+        for (const key of country.keys) {
+            if (tag.includes(key)) {
+                return country.priority;
+            }
+        }
     }
 
     return 999;
@@ -202,8 +228,14 @@ async function main() {
     working.sort((a, b) => {
         const pa = detectCountryPriority(a);
         const pb = detectCountryPriority(b);
+
         if (pa !== pb) return pa - pb;
-        return a.localeCompare(b);
+
+        // сортировка внутри страны по tag
+        const ta = extractTag(a);
+        const tb = extractTag(b);
+
+        return ta.localeCompare(tb);
     });
 
     const plain = working.join('\n');
