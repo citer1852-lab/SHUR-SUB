@@ -1,40 +1,8 @@
 {
-  "log": { "loglevel": "warning" },
-
+  "remarks": "🎬 Streaming Mode",
   "outbounds": [
-    { "tag": "direct", "protocol": "freedom" },
-    { "tag": "block", "protocol": "blackhole" },
-
     {
-      "tag": "proxy-nl",
-      "protocol": "shadowsocks",
-      "settings": {
-        "servers": [
-          {
-            "address": "193.29.139.157",
-            "port": 8080,
-            "method": "chacha20-ietf-poly1305",
-            "password": "4a2rfixophdjffa8KVA4Aa"
-          }
-        ]
-      }
-    },
-    {
-      "tag": "proxy-de",
-      "protocol": "shadowsocks",
-      "settings": {
-        "servers": [
-          {
-            "address": "57.129.95.45",
-            "port": 11201,
-            "method": "chacha20-ietf-poly1305",
-            "password": "6675cbf62d6a3a4f"
-          }
-        ]
-      }
-    },
-    {
-      "tag": "proxy-sg",
+      "tag": "🇸🇬 SG Netflix",
       "protocol": "shadowsocks",
       "settings": {
         "servers": [
@@ -46,31 +14,20 @@
           }
         ]
       }
+    },
+    {
+      "tag": "🇭🇰 HK YouTube",
+      "protocol": "shadowsocks",
+      "settings": {
+        "servers": [
+          {
+            "address": "hkt1.07c06051-81fd-4aa4-a94e-a0860315df8f.org",
+            "port": 14999,
+            "method": "2022-blake3-aes-256-gcm",
+            "password": "mtMkp+1FttkSLmDOF9blnNMLigcCRacprQS3ry0nf3o"
+          }
+        ]
+      }
     }
-  ],
-
-  "routing": {
-    "balancers": [
-      {
-        "tag": "proxy-auto",
-        "selector": ["proxy-nl", "proxy-de", "proxy-sg"]
-      }
-    ],
-    "rules": [
-      {
-        "type": "field",
-        "domain": ["geoip:private"],
-        "outboundTag": "direct"
-      },
-      {
-        "type": "field",
-        "domain": ["geosite:category-ru"],
-        "outboundTag": "direct"
-      },
-      {
-        "type": "field",
-        "balancerTag": "proxy-auto"
-      }
-    ]
-  }
+  ]
 }
