@@ -1,0 +1,117 @@
+{
+  "log": { "loglevel": "warning" },
+
+  "outbounds": [
+    {
+      "tag": "auto",
+      "protocol": "freedom"
+    },
+
+    {
+      "tag": "proxy-de",
+      "protocol": "shadowsocks",
+      "settings": {
+        "servers": [
+          {
+            "address": "57.129.95.45",
+            "port": 11201,
+            "method": "chacha20-ietf-poly1305",
+            "password": "6675cbf62d6a3a4f"
+          }
+        ]
+      }
+    },
+    {
+      "tag": "proxy-nl",
+      "protocol": "shadowsocks",
+      "settings": {
+        "servers": [
+          {
+            "address": "193.29.139.157",
+            "port": 8080,
+            "method": "chacha20-ietf-poly1305",
+            "password": "4a2rfixophdjffa8KVA4Aa"
+          }
+        ]
+      }
+    },
+    {
+      "tag": "proxy-fi",
+      "protocol": "shadowsocks",
+      "settings": {
+        "servers": [
+          {
+            "address": "185.5.38.111",
+            "port": 55988,
+            "method": "chacha20-ietf-poly1305",
+            "password": "4ju873evpjeaAi8Zq12YoRHWp63o5exdnZ71aUg1YEC"
+          }
+        ]
+      }
+    },
+    {
+      "tag": "proxy-sg",
+      "protocol": "shadowsocks",
+      "settings": {
+        "servers": [
+          {
+            "address": "194.233.73.51",
+            "port": 14453,
+            "method": "chacha20-ietf-poly1305",
+            "password": "764a4d8c1c76eb50"
+          }
+        ]
+      }
+    },
+    {
+      "tag": "proxy-hk",
+      "protocol": "shadowsocks",
+      "settings": {
+        "servers": [
+          {
+            "address": "hkt1.07c06051-81fd-4aa4-a94e-a0860315df8f.org",
+            "port": 14999,
+            "method": "2022-blake3-aes-256-gcm",
+            "password": "mtMkp+1FttkSLmDOF9blnNMLigcCRacprQS3ry0nf3o"
+          }
+        ]
+      }
+    },
+    {
+      "tag": "proxy-ca",
+      "protocol": "shadowsocks",
+      "settings": {
+        "servers": [
+          {
+            "address": "148.113.139.160",
+            "port": 46534,
+            "method": "chacha20-ietf-poly1305",
+            "password": "7a106afc33eaa261"
+          }
+        ]
+      }
+    }
+  ],
+
+  "routing": {
+    "balancers": [
+      {
+        "tag": "auto-balance",
+        "selector": [
+          "proxy-de",
+          "proxy-nl",
+          "proxy-fi",
+          "proxy-sg",
+          "proxy-hk",
+          "proxy-ca"
+        ]
+      }
+    ],
+    "rules": [
+      {
+        "type": "field",
+        "balancerTag": "auto-balance"
+      }
+    ]
+  }
+}
