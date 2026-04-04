@@ -1,0 +1,32 @@
+{
+  "log": { "loglevel": "warning" },
+  "inbounds": [{
+    "port": 10808,
+    "listen": "127.0.0.1",
+    "protocol": "socks",
+    "settings": { "udp": true }
+  }],
+  "outbounds": [{
+    "protocol": "vless",
+    "settings": {
+      "vnext": [{
+        "address": "104.21.72.198",
+        "port": 443,
+        "users": [{
+          "id": "a7f3e1c2-6d9a-4b2e-91c3-5a7c2d9e1f44",
+          "encryption": "none"
+        }]
+      }]
+    },
+    "streamSettings": {
+      "network": "ws",
+      "security": "tls",
+      "wsSettings": {
+        "path": "/vless",
+        "headers": {
+          "Host": "cdnjs.cloudflare.com"
+        }
+      }
+    }
+  }]
+}
