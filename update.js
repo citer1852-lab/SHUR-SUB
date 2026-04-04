@@ -1,4 +1,3 @@
-// update.js
 const fs = require('fs').promises;
 const path = require('path');
 
@@ -10,7 +9,7 @@ const EXTERNAL_SOURCES = [
     "vless://4c3a2f39-dc52-4322-ac66-83010d12bfc0@85.239.33.76:4354?security=reality&encryption=none&pbk=SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc&headerType=none&fp=chrome&type=tcp&flow=xtls-rprx-vision&sni=apple.com#🇫🇷_FR_REALITY",
     "vless://6d0e9ded-d23d-4ffb-b165-7bc757be84d3@89.124.79.248:443?security=reality&flow=xtls-rprx-vision&sni=www.google.com&type=tcp&fp=chrome&pbk=VFzQg-tlMPhO7wBJNQJD8M82zPxnCTy_Y2oHWgsFbzQ&sid=10402c47a7e61563#🇳🇱_NL_REALITY_2",
     "vless://0ca855d9-7c03-40eb-929b-919f934abdc3@104.16.30.239:80?encryption=none&security=none&type=ws&host=amirvpn.amirhm00100.workers.dev&path=%2F%3Fed%3D2048#🇨🇦_CA_WORKERS"
-]; 
+];
 const LOCAL_SOURCES_DIR = './sources';
 const OUTPUT_JSON = 'subscription.json';
 const OUTPUT_TXT = 'sub.txt';
@@ -26,23 +25,6 @@ async function fetchUrl(url) {
         } catch (e) {}
     }
     return text;
-}
-
-/**
- * Нормализует vless:// URI: сортирует параметры запроса, чтобы одинаковые конфиги имели одинаковую строку.
- */
-function normalizeVlessUri(uri) {
-    try {
-        const urlObj = new URL(uri);
-        const params = new URLSearchParams(urlObj.search);
-        // Сортируем параметры по ключу
-        const sorted = Array.from(params.entries()).sort((a, b) => a[0].localeCompare(b[0]));
-        urlObj.search = new URLSearchParams(sorted).toString();
-        return urlObj.toString();
-    } catch (e) {
-        // Если не удалось распарсить, возвращаем исходную строку
-        return uri;
-    }
 }
 
 /**
@@ -93,45 +75,72 @@ function convertOutboundToURI(out, globalRemarks = '') {
     if ((!nodeName || nodeName === 'proxy') && globalRemarks) {
         nodeName = globalRemarks;
     }
-    if (nodeName && nodeName !== 'proxy') {
-        uri += `#${encodeURIComponent(nodeName)}`;
+    // Если имя пустое, генерируем по адресу:порту
+    if (!nodeName || nodeName === 'proxy') {
+        nodeName = `${address}:${port}`;
     }
+    uri += `#${encodeURIComponent(nodeName)}`;
     
     return uri;
 }
 
 /**
- * Обрабатывает локальный JSON-файл и извлекает URI с названиями.
+ * Рекурсивно обходит папку и обрабатывает все файлы.
  */
-async function processLocalFile(filePath) {
-    const content = await fs.readFile(filePath, 'utf-8');
-    const ext = path.extname(filePath).toLowerCase();
-    
-    if (ext === '.json') {
-        try {
-            const json = JSON.parse(content);
-            const uris = [];
-            const globalRemarks = json.remarks || json.name || '';
-            console.log(`   📝 Название конфига: "${globalRemarks}"`);
-            
-            if (json.outbounds && Array.isArray(json.outbounds)) {
-                for (const out of json.outbounds) {
-                    const uri = convertOutboundToURI(out, globalRemarks);
-                    if (uri) {
-                        uris.push(uri);
-                    } else {
-                        console.log(`   ⚠️ Пропущен невалидный outbound: ${out.tag || 'без тега'}`);
+async function processDirectory(dir, allUris, processedFiles = new Set()) {
+    try {
+        const entries = await fs.readdir(dir, { withFileTypes: true });
+        for (const entry of entries) {
+            const fullPath = path.join(dir, entry.name);
+            if (entry.isDirectory()) {
+                await processDirectory(fullPath, allUris, processedFiles);
+            } else if (entry.isFile()) {
+                if (processedFiles.has(fullPath)) continue;
+                processedFiles.add(fullPath);
+                
+                const ext = path.extname(entry.name).toLowerCase();
+                console.log(`📁 Обработка: ${fullPath}`);
+                
+                if (ext === '.json') {
+                    try {
+                        const content = await fs.readFile(fullPath, 'utf-8');
+                        const json = JSON.parse(content);
+                        const globalRemarks = json.remarks || json.name || path.basename(entry.name, '.json');
+                        let outboundCount = 0;
+                        
+                        if (json.outbounds && Array.isArray(json.outbounds)) {
+                            for (const out of json.outbounds) {
+                                const uri = convertOutboundToURI(out, globalRemarks);
+                                if (uri) {
+                                    allUris.push(uri);
+                                    outboundCount++;
+                                } else {
+                                    console.log(`   ⚠️ Пропущен outbound: ${out.tag || 'без тега'}`);
+                                }
+                            }
+                        }
+                        console.log(`   → добавлено ${outboundCount} URI из JSON`);
+                    } catch (e) {
+                        console.error(`   ❌ Ошибка парсинга JSON: ${e.message}`);
                     }
+                } else {
+                    // Текстовый файл: читаем строки, ищем vless://
+                    const content = await fs.readFile(fullPath, 'utf-8');
+                    const lines = content.split('\n');
+                    let added = 0;
+                    for (let line of lines) {
+                        line = line.trim();
+                        if (line.startsWith('vless://')) {
+                            allUris.push(line);
+                            added++;
+                        }
+                    }
+                    console.log(`   → добавлено ${added} URI из текстового файла`);
                 }
             }
-            return { type: 'uri', lines: uris };
-        } catch (e) {
-            console.error(`❌ Ошибка парсинга JSON: ${e.message}`);
-            return { type: 'uri', lines: [] };
         }
-    } else {
-        const lines = content.split('\n').filter(l => l.trim().length > 0);
-        return { type: 'uri', lines };
+    } catch (err) {
+        console.error(`Ошибка чтения папки ${dir}: ${err.message}`);
     }
 }
 
@@ -148,7 +157,11 @@ async function collectAllLines() {
                 console.log(`📡 Загрузка: ${item}`);
                 const content = await fetchUrl(item);
                 const lines = content.split('\n').filter(l => l.trim().length > 0);
-                allUris.push(...lines);
+                for (const line of lines) {
+                    if (line.trim().startsWith('vless://')) {
+                        allUris.push(line.trim());
+                    }
+                }
                 console.log(`   → добавлено ${lines.length} строк (URI)`);
             } catch (err) {
                 console.error(`   → ошибка: ${err.message}`);
@@ -156,22 +169,9 @@ async function collectAllLines() {
         }
     }
 
-    // 2. Обрабатываем локальные файлы из папки sources1
+    // 2. Рекурсивно обрабатываем локальную папку sources
     try {
-        const files = await fs.readdir(LOCAL_SOURCES_DIR);
-        for (const file of files) {
-            if (file === '.gitkeep') continue;
-            const filePath = path.join(LOCAL_SOURCES_DIR, file);
-            const stat = await fs.stat(filePath);
-            if (stat.isFile()) {
-                console.log(`📁 Обработка: ${file}`);
-                const result = await processLocalFile(filePath);
-                if (result && result.lines.length > 0) {
-                    allUris.push(...result.lines);
-                    console.log(`   → добавлено ${result.lines.length} URI`);
-                }
-            }
-        }
+        await processDirectory(LOCAL_SOURCES_DIR, allUris);
     } catch (err) {
         if (err.code !== 'ENOENT') {
             console.error(`Ошибка: ${err.message}`);
@@ -180,20 +180,25 @@ async function collectAllLines() {
         }
     }
     
-    // 3. Нормализуем все URI (сортируем параметры) и удаляем дубликаты
-    const normalizedMap = new Map();
+    // Убираем дубликаты? – Оставляем как есть, если нужно, раскомментировать.
+    // Но чтобы не терять конфиги, лучше не удалять.
+    // Можно просто вывести предупреждение о дубликатах.
+    const unique = new Set();
+    const duplicates = [];
     for (const uri of allUris) {
-        const normalized = normalizeVlessUri(uri);
-        // Сохраняем только первое вхождение (можно также проверять по чему-то ещё, но достаточно)
-        if (!normalizedMap.has(normalized)) {
-            normalizedMap.set(normalized, uri);
+        if (unique.has(uri)) {
+            duplicates.push(uri);
         } else {
-            console.log(`   ⚠️ Дубликат удалён: ${normalized.substring(0, 80)}...`);
+            unique.add(uri);
         }
     }
-    const uniqueUris = Array.from(normalizedMap.values());
-    console.log(`\n📊 Итого уникальных URI после нормализации: ${uniqueUris.length}`);
-    return uniqueUris;
+    if (duplicates.length > 0) {
+        console.log(`\n⚠️ Найдено ${duplicates.length} дублирующихся URI. Они будут сохранены, но Happ может их объединить.`);
+        // Если хотите удалить дубликаты – замените allUris на Array.from(unique)
+    }
+    
+    console.log(`\n📊 Итого собрано URI: ${allUris.length}`);
+    return allUris;
 }
 
 function toBase64(text) {
@@ -201,7 +206,7 @@ function toBase64(text) {
 }
 
 async function main() {
-    console.log('🚀 Начинаем сборку подписки...\n');
+    console.log('🚀 Начинаем сборку подписки (сохраняем ВСЕ конфиги)...\n');
     try {
         const uris = await collectAllLines();
         
@@ -226,8 +231,13 @@ async function main() {
         
         console.log(`\n✅ Подписка создана!`);
         console.log(`📄 sub.txt (${base64Data.length} символов)`);
-        console.log(`\n🔗 Ссылка для HApp:`);
+        console.log(`📄 subscription.json`);
+        console.log(`\n🔗 Ссылка для Happ:`);
         console.log(`   https://raw.githubusercontent.com/citer1852-lab/SHUR-SUB/main/sub.txt`);
+        console.log(`\n💡 Если Happ показывает не все серверы, проверьте:`);
+        console.log(`   1. Что каждый JSON-файл содержит массив outbounds.`);
+        console.log(`   2. Что нет дублирующихся тегов (tag) внутри одного файла.`);
+        console.log(`   3. Что все серверы имеют address, port и uuid.`);
     } catch (error) {
         console.error('❌ Критическая ошибка:', error);
         process.exit(1);
