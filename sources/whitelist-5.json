@@ -19,12 +19,7 @@
       },
       "sniffing": {
         "enabled": true,
-        "routeOnly": false,
-        "destOverride": [
-          "http",
-          "tls",
-          "quic"
-        ]
+        "destOverride": ["http", "tls", "quic"]
       }
     },
     {
@@ -37,31 +32,30 @@
       },
       "sniffing": {
         "enabled": true,
-        "routeOnly": false,
-        "destOverride": [
-          "http",
-          "tls",
-          "quic"
-        ]
+        "destOverride": ["http", "tls", "quic"]
       }
     }
   ],
-  "observatory": {
-    "enableConcurrency": true,
-    "probeInterval": "1m",
-    "probeUrl": "https://www.google.com/generate_204",
-    "subjectSelector": [
-      "grp-28-1-ts7nfolrqo4",
-      "grp-28-2-ijdtj92j4rk",
-      "grp-28-3-h6tdd0n10gg",
-      "grp-28-4-q9f9sl3j15g",
-      "grp-28-5-c0bn8tv64b4",
-      "grp-28-6-f3ocv5biv48"
-    ]
-  },
   "outbounds": [
     {
-      "tag": "grp-28-1-ts7nfolrqo4",
+      "tag": "auto",
+      "protocol": "urltest",
+      "settings": {
+        "url": "http://www.gstatic.com/generate_204",
+        "interval": 300,
+        "tolerance": 50,
+        "selector": [
+          "grp-28-1",
+          "grp-28-2",
+          "grp-28-3",
+          "grp-28-4",
+          "grp-28-5",
+          "grp-28-6"
+        ]
+      }
+    },
+    {
+      "tag": "grp-28-1",
       "protocol": "vless",
       "settings": {
         "vnext": [
@@ -80,19 +74,17 @@
       },
       "streamSettings": {
         "network": "tcp",
-        "tcpSettings": {},
         "security": "reality",
         "realitySettings": {
           "serverName": "tradingview.com",
-          "show": false,
           "publicKey": "-tePObR3oZwGAUOb5kqTYkNWl6rtUKl0RFuzuu06wgw",
           "shortId": "50",
-          "fingerprint": "qq"
+          "fingerprint": "chrome"
         }
       }
     },
     {
-      "tag": "grp-28-2-ijdtj92j4rk",
+      "tag": "grp-28-2",
       "protocol": "vless",
       "settings": {
         "vnext": [
@@ -111,19 +103,17 @@
       },
       "streamSettings": {
         "network": "tcp",
-        "tcpSettings": {},
         "security": "reality",
         "realitySettings": {
           "serverName": "ads.x5.ru",
-          "show": false,
           "publicKey": "-tePObR3oZwGAUOb5kqTYkNWl6rtUKl0RFuzuu06wgw",
           "shortId": "50",
-          "fingerprint": "qq"
+          "fingerprint": "chrome"
         }
       }
     },
     {
-      "tag": "grp-28-3-h6tdd0n10gg",
+      "tag": "grp-28-3",
       "protocol": "vless",
       "settings": {
         "vnext": [
@@ -142,19 +132,17 @@
       },
       "streamSettings": {
         "network": "tcp",
-        "tcpSettings": {},
         "security": "reality",
         "realitySettings": {
           "serverName": "io.ozone.ru",
-          "show": false,
           "publicKey": "-tePObR3oZwGAUOb5kqTYkNWl6rtUKl0RFuzuu06wgw",
           "shortId": "50",
-          "fingerprint": "qq"
+          "fingerprint": "chrome"
         }
       }
     },
     {
-      "tag": "grp-28-4-q9f9sl3j15g",
+      "tag": "grp-28-4",
       "protocol": "vless",
       "settings": {
         "vnext": [
@@ -173,19 +161,17 @@
       },
       "streamSettings": {
         "network": "tcp",
-        "tcpSettings": {},
         "security": "reality",
         "realitySettings": {
           "serverName": "sun6-21.userapi.com",
-          "show": false,
           "publicKey": "-tePObR3oZwGAUOb5kqTYkNWl6rtUKl0RFuzuu06wgw",
           "shortId": "50",
-          "fingerprint": "qq"
+          "fingerprint": "chrome"
         }
       }
     },
     {
-      "tag": "grp-28-5-c0bn8tv64b4",
+      "tag": "grp-28-5",
       "protocol": "vless",
       "settings": {
         "vnext": [
@@ -204,11 +190,9 @@
       },
       "streamSettings": {
         "network": "tcp",
-        "tcpSettings": {},
         "security": "reality",
         "realitySettings": {
           "serverName": "ads.x5.ru",
-          "show": false,
           "publicKey": "-tePObR3oZwGAUOb5kqTYkNWl6rtUKl0RFuzuu06wgw",
           "shortId": "50",
           "fingerprint": "random"
@@ -216,7 +200,7 @@
       }
     },
     {
-      "tag": "grp-28-6-f3ocv5biv48",
+      "tag": "grp-28-6",
       "protocol": "vless",
       "settings": {
         "vnext": [
@@ -235,14 +219,12 @@
       },
       "streamSettings": {
         "network": "tcp",
-        "tcpSettings": {},
         "security": "reality",
         "realitySettings": {
           "serverName": "ads.x5.ru",
-          "show": false,
           "publicKey": "-tePObR3oZwGAUOb5kqTYkNWl6rtUKl0RFuzuu06wgw",
           "shortId": "50",
-          "fingerprint": "qq"
+          "fingerprint": "chrome"
         }
       }
     },
@@ -255,71 +237,14 @@
       "protocol": "blackhole"
     }
   ],
-  "remarks": "🇫🇮 LTE АВТО",
+  "remarks": "🇫🇮 LTE АВТО (исправлен)",
   "routing": {
     "domainMatcher": "hybrid",
     "domainStrategy": "IPIfNonMatch",
-    "balancers": [
-      {
-        "tag": "bal_28",
-        "selector": [
-          "grp-28-1-ts7nfolrqo4",
-          "grp-28-2-ijdtj92j4rk",
-          "grp-28-4-q9f9sl3j15g",
-          "grp-28-5-c0bn8tv64b4",
-          "grp-28-6-f3ocv5biv48"
-        ],
-        "fallbackTag": "grp-28-3-h6tdd0n10gg",
-        "strategy": {
-          "type": "leastLoad",
-          "settings": {
-            "baselines": [
-              "4s"
-            ],
-            "costs": [
-              {
-                "match": "grp-28-1-ts7nfolrqo4",
-                "regexp": false,
-                "value": 1
-              },
-              {
-                "match": "grp-28-2-ijdtj92j4rk",
-                "regexp": false,
-                "value": 400000000
-              },
-              {
-                "match": "grp-28-3-h6tdd0n10gg",
-                "regexp": false,
-                "value": 500000000
-              },
-              {
-                "match": "grp-28-4-q9f9sl3j15g",
-                "regexp": false,
-                "value": 300000000
-              },
-              {
-                "match": "grp-28-5-c0bn8tv64b4",
-                "regexp": false,
-                "value": 200000000
-              },
-              {
-                "match": "grp-28-6-f3ocv5biv48",
-                "regexp": false,
-                "value": 100000000
-              }
-            ],
-            "expected": 1,
-            "maxRTT": "6s"
-          }
-        }
-      }
-    ],
     "rules": [
       {
         "type": "field",
-        "protocol": [
-          "bittorrent"
-        ],
+        "protocol": ["bittorrent"],
         "outboundTag": "block"
       },
       {
@@ -334,20 +259,15 @@
         "type": "field"
       },
       {
-        "ip": [
-          "17.0.0.0/8"
-        ],
+        "ip": ["17.0.0.0/8"],
         "outboundTag": "direct",
         "type": "field"
       },
       {
         "type": "field",
-        "inboundTag": [
-          "socks",
-          "http"
-        ],
+        "inboundTag": ["socks", "http"],
         "network": "tcp,udp",
-        "balancerTag": "bal_28"
+        "outboundTag": "auto"
       }
     ]
   }
