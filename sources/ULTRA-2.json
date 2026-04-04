@@ -37,7 +37,7 @@
     { "tag": "block", "protocol": "blackhole" },
 
     {
-      "tag": "nl",
+      "tag": "🇳🇱 Netherlands (NL Fast)",
       "protocol": "shadowsocks",
       "settings": {
         "servers": [
@@ -58,7 +58,7 @@
     },
 
     {
-      "tag": "de",
+      "tag": "🇩🇪 Germany (DE Stable)",
       "protocol": "shadowsocks",
       "settings": {
         "servers": [
@@ -73,7 +73,7 @@
     },
 
     {
-      "tag": "sg",
+      "tag": "🇸🇬 Singapore (SG Streaming)",
       "protocol": "shadowsocks",
       "settings": {
         "servers": [
@@ -88,7 +88,7 @@
     },
 
     {
-      "tag": "hk",
+      "tag": "🇭🇰 Hong Kong (HK Bypass)",
       "protocol": "shadowsocks",
       "settings": {
         "servers": [
@@ -109,11 +109,19 @@
     "balancers": [
       {
         "tag": "auto",
-        "selector": ["nl", "de", "sg", "hk"]
+        "selector": [
+          "🇳🇱 Netherlands (NL Fast)",
+          "🇩🇪 Germany (DE Stable)",
+          "🇸🇬 Singapore (SG Streaming)",
+          "🇭🇰 Hong Kong (HK Bypass)"
+        ]
       },
       {
         "tag": "stream",
-        "selector": ["sg", "hk"]
+        "selector": [
+          "🇸🇬 Singapore (SG Streaming)",
+          "🇭🇰 Hong Kong (HK Bypass)"
+        ]
       }
     ],
 
