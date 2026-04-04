@@ -1,32 +1,52 @@
 {
-  "log": { "loglevel": "warning" },
-  "inbounds": [{
-    "port": 10808,
-    "listen": "127.0.0.1",
-    "protocol": "socks",
-    "settings": { "udp": true }
-  }],
-  "outbounds": [{
-    "protocol": "vless",
-    "settings": {
-      "vnext": [{
-        "address": "104.21.72.198",
-        "port": 443,
-        "users": [{
-          "id": "a7f3e1c2-6d9a-4b2e-91c3-5a7c2d9e1f44",
-          "encryption": "none"
-        }]
-      }]
-    },
-    "streamSettings": {
-      "network": "ws",
-      "security": "tls",
-      "wsSettings": {
-        "path": "/vless",
-        "headers": {
-          "Host": "cdnjs.cloudflare.com"
+  "remarks": "🚀 FR VMESS TLS (fallback)",
+  "log": { "loglevel": "error" },
+  "inbounds": [
+    {
+      "tag": "socks-in",
+      "port": 10808,
+      "listen": "127.0.0.1",
+      "protocol": "socks",
+      "settings": { "udp": true }
+    }
+  ],
+  "outbounds": [
+    {
+      "tag": "proxy",
+      "protocol": "vmess",
+      "settings": {
+        "vnext": [
+          {
+            "address": "51.159.111.32",
+            "port": 443,
+            "users": [
+              {
+                "id": "f2a1b3c4-9d8e-4a7b-91c3-8f2d1e5a6b77",
+                "alterId": 0,
+                "security": "auto"
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "ws",
+        "security": "tls",
+        "sockopt": {
+          "tcpFastOpen": true,
+          "tcpNoDelay": true
+        },
+        "wsSettings": {
+          "path": "/",
+          "headers": {
+            "Host": "www.bing.com"
+          }
         }
+      },
+      "mux": {
+        "enabled": true,
+        "concurrency": 8
       }
     }
-  }]
+  ]
 }
