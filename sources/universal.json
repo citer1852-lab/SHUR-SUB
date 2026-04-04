@@ -1,0 +1,183 @@
+{
+  "remarks": "💀 Ultimate AntiBlock 2026",
+  "log": {
+    "loglevel": "error"
+  },
+
+  "dns": {
+    "servers": [
+      "https://1.1.1.1/dns-query",
+      "https://8.8.8.8/dns-query",
+      "1.1.1.1",
+      "8.8.8.8"
+    ]
+  },
+
+  "inbounds": [
+    {
+      "tag": "socks-in",
+      "port": 10808,
+      "listen": "127.0.0.1",
+      "protocol": "socks",
+      "settings": {
+        "udp": true
+      },
+      "sniffing": {
+        "enabled": true,
+        "destOverride": ["http", "tls", "quic"]
+      }
+    }
+  ],
+
+  "outbounds": [
+
+    {
+      "tag": "proxy-main",
+      "protocol": "vless",
+      "settings": {
+        "vnext": [{
+          "address": "88.198.156.23",
+          "port": 443,
+          "users": [{
+            "id": "d4a7c9b2-0a91-4c9d-92c7-7c21f4a9c2f1",
+            "encryption": "none",
+            "flow": "xtls-rprx-vision"
+          }]
+        }]
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "security": "reality",
+        "sockopt": {
+          "tcpFastOpen": true,
+          "tcpNoDelay": true
+        },
+        "realitySettings": {
+          "serverName": "www.cloudflare.com",
+          "publicKey": "hZQz8z9Jx5VQ1wT2rYp6Kz7bF9dX2mL3cQ8wE1R5tY0",
+          "shortId": "a1b2c3d4",
+          "fingerprint": "chrome"
+        }
+      }
+    },
+
+    {
+      "tag": "proxy-backup-1",
+      "protocol": "vless",
+      "settings": {
+        "vnext": [{
+          "address": "104.21.72.198",
+          "port": 443,
+          "users": [{
+            "id": "a7f3e1c2-6d9a-4b2e-91c3-5a7c2d9e1f44",
+            "encryption": "none"
+          }]
+        }]
+      },
+      "streamSettings": {
+        "network": "ws",
+        "security": "tls",
+        "sockopt": {
+          "tcpFastOpen": true,
+          "tcpNoDelay": true
+        },
+        "wsSettings": {
+          "path": "/vless",
+          "headers": {
+            "Host": "cdnjs.cloudflare.com"
+          }
+        }
+      },
+      "mux": { "enabled": true, "concurrency": 8 }
+    },
+
+    {
+      "tag": "proxy-backup-2",
+      "protocol": "vmess",
+      "settings": {
+        "vnext": [{
+          "address": "51.159.111.32",
+          "port": 443,
+          "users": [{
+            "id": "f2a1b3c4-9d8e-4a7b-91c3-8f2d1e5a6b77",
+            "alterId": 0,
+            "security": "auto"
+          }]
+        }]
+      },
+      "streamSettings": {
+        "network": "ws",
+        "security": "tls",
+        "sockopt": {
+          "tcpFastOpen": true,
+          "tcpNoDelay": true
+        },
+        "wsSettings": {
+          "path": "/",
+          "headers": {
+            "Host": "www.bing.com"
+          }
+        }
+      },
+      "mux": { "enabled": true, "concurrency": 8 }
+    },
+
+    {
+      "tag": "direct",
+      "protocol": "freedom"
+    },
+
+    {
+      "tag": "block",
+      "protocol": "blackhole"
+    }
+  ],
+
+  "routing": {
+    "domainStrategy": "IPIfNonMatch",
+    "rules": [
+
+      {
+        "type": "field",
+        "domain": [
+          "geosite:category-ads-all"
+        ],
+        "outboundTag": "block"
+      },
+
+      {
+        "type": "field",
+        "ip": [
+          "geoip:private"
+        ],
+        "outboundTag": "direct"
+      },
+
+      {
+        "type": "field",
+        "domain": [
+          "geosite:ru"
+        ],
+        "outboundTag": "direct"
+      },
+
+      {
+        "type": "field",
+        "domain": [
+          "geosite:category-social",
+          "geosite:google",
+          "geosite:youtube",
+          "geosite:facebook",
+          "geosite:telegram"
+        ],
+        "outboundTag": "proxy-main"
+      },
+
+      {
+        "type": "field",
+        "network": "tcp,udp",
+        "outboundTag": "proxy-main"
+      }
+    ]
+  }
+}
