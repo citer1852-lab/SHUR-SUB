@@ -1,0 +1,29 @@
+{
+  "log": { "loglevel": "warning" },
+  "inbounds": [{
+    "port": 10808,
+    "listen": "127.0.0.1",
+    "protocol": "socks",
+    "settings": { "udp": true }
+  }],
+  "outbounds": [{
+    "protocol": "vless",
+    "settings": {
+      "vnext": [{
+        "address": "45.131.210.12",
+        "port": 443,
+        "users": [{
+          "id": "b1c2d3e4-f5a6-47b8-91c2-3d4e5f6a7b88",
+          "encryption": "none"
+        }]
+      }]
+    },
+    "streamSettings": {
+      "network": "grpc",
+      "security": "tls",
+      "grpcSettings": {
+        "serviceName": "grpc"
+      }
+    }
+  }]
+}
