@@ -1,11 +1,15 @@
 const fs = require('fs').promises;
 const path = require('path');
+const net = require('net');
 
 // ==================== НАСТРОЙКИ ====================
 const EXTERNAL_SOURCES = [];
 const LOCAL_SOURCES_DIR = './sources';
 const OUTPUT_JSON = 'subscription.json';
 const OUTPUT_TXT = 'sub.txt';
+
+const TIMEOUT = 4000; // ms
+const MAX_CONCURRENT = 50; // параллельные проверки
 // ===================================================
 
 async function fetchUrl(url) {
@@ -20,259 +24,199 @@ async function fetchUrl(url) {
     return text;
 }
 
-/**
- * Конвертирует outbound Shadowsocks в ss:// URI
- */
-function convertShadowsocksToURI(out, globalRemarks = '') {
-    const servers = out.settings?.servers;
-    if (!servers || !servers.length) return null;
-    const s = servers[0];
-    const address = s.address;
-    const port = s.port;
-    const method = s.method;
-    const password = s.password;
-    if (!address || !port || !method || !password) return null;
-    
-    // Кодируем метод:пароль в base64
-    const userinfo = `${method}:${password}`;
-    const encoded = Buffer.from(userinfo).toString('base64');
-    let uri = `ss://${encoded}@${address}:${port}`;
-    
-    // Добавляем тег
-    let tag = out.tag || '';
-    if ((!tag || tag === 'proxy') && globalRemarks) tag = globalRemarks;
-    if (!tag) tag = `${address}:${port}`;
-    uri += `#${encodeURIComponent(tag)}`;
-    return uri;
-}
+// ==================== PARSING ====================
 
-/**
- * Конвертирует outbound VLESS в vless:// URI
- */
-function convertVlessToURI(out, globalRemarks = '') {
-    const vnext = out.settings?.vnext?.[0];
-    if (!vnext) return null;
-    const user = vnext.users?.[0];
-    if (!user) return null;
-    const address = vnext.address;
-    const port = vnext.port;
-    const uuid = user.id;
-    if (!address || !port || !uuid) return null;
-    
-    let uri = `vless://${uuid}@${address}:${port}?encryption=${user.encryption || 'none'}`;
-    if (user.flow) uri += `&flow=${user.flow}`;
-    
-    const stream = out.streamSettings;
-    if (stream) {
-        if (stream.security === 'reality') {
-            const r = stream.realitySettings || {};
-            uri += `&security=reality&sni=${encodeURIComponent(r.serverName || '')}&pbk=${r.publicKey || ''}`;
-            if (r.shortId) uri += `&sid=${r.shortId}`;
-            if (r.fingerprint) uri += `&fp=${r.fingerprint}`;
-        } else if (stream.security === 'tls') {
-            uri += `&security=tls&sni=${encodeURIComponent(stream.tlsSettings?.serverName || '')}`;
-        }
-        if (stream.network === 'ws') {
-            uri += `&type=ws&path=${encodeURIComponent(stream.wsSettings?.path || '/')}`;
-            if (stream.wsSettings?.headers?.Host) uri += `&host=${encodeURIComponent(stream.wsSettings.headers.Host)}`;
-        } else if (stream.network === 'grpc') {
-            uri += `&type=grpc&serviceName=${encodeURIComponent(stream.grpcSettings?.serviceName || '')}`;
-        } else if (stream.network === 'tcp') {
-            uri += `&type=tcp`;
-        }
-    }
-    
-    let tag = out.tag || '';
-    if ((!tag || tag === 'proxy') && globalRemarks) tag = globalRemarks;
-    if (!tag) tag = `${address}:${port}`;
-    uri += `#${encodeURIComponent(tag)}`;
-    return uri;
-}
-
-/**
- * Извлекает все реальные outbound'ы из JSON-объекта (рекурсивно)
- */
-function extractOutbounds(obj, results = []) {
-    if (!obj || typeof obj !== 'object') return results;
-    
-    // Если это массив outbounds
-    if (Array.isArray(obj)) {
-        for (const item of obj) {
-            extractOutbounds(item, results);
-        }
-        return results;
-    }
-    
-    // Если объект похож на outbound (есть protocol и settings)
-    if (obj.protocol && (obj.protocol === 'shadowsocks' || obj.protocol === 'vless')) {
-        results.push(obj);
-    }
-    
-    // Рекурсивно обходим все свойства
-    for (const key in obj) {
-        if (obj.hasOwnProperty(key) && typeof obj[key] === 'object') {
-            extractOutbounds(obj[key], results);
-        }
-    }
-    return results;
-}
-
-/**
- * Обрабатывает один JSON-файл и возвращает массив URI
- */
-async function processJsonFile(filePath, fileName) {
-    const content = await fs.readFile(filePath, 'utf-8');
-    let json;
+function parseAddressPort(uri) {
     try {
-        json = JSON.parse(content);
-    } catch (e) {
-        console.error(`❌ Ошибка парсинга JSON в ${fileName}: ${e.message}`);
-        return [];
+        const url = new URL(uri);
+        return {
+            host: url.hostname,
+            port: parseInt(url.port) || 443
+        };
+    } catch {
+        return null;
     }
-    
-    const globalRemarks = json.remarks || json.name || path.basename(fileName, '.json');
-    const outbounds = extractOutbounds(json);
-    const uris = [];
-    
-    for (const out of outbounds) {
-        let uri = null;
-        if (out.protocol === 'shadowsocks') {
-            uri = convertShadowsocksToURI(out, globalRemarks);
-        } else if (out.protocol === 'vless') {
-            uri = convertVlessToURI(out, globalRemarks);
-        }
-        if (uri) {
-            uris.push(uri);
-        } else {
-            console.log(`   ⚠️ Пропущен outbound (неподдерживаемый протокол или ошибка): ${out.tag || 'без тега'}`);
-        }
-    }
-    return uris;
 }
 
-/**
- * Рекурсивно обходит папку sources и собирает URI из всех JSON и текстовых файлов
- */
+// ==================== ПРОВЕРКА РАБОТОСПОСОБНОСТИ ====================
+
+function checkTcp(host, port) {
+    return new Promise((resolve) => {
+        const socket = new net.Socket();
+
+        let done = false;
+
+        socket.setTimeout(TIMEOUT);
+
+        socket.connect(port, host, () => {
+            done = true;
+            socket.destroy();
+            resolve(true);
+        });
+
+        socket.on('error', () => {
+            if (!done) resolve(false);
+        });
+
+        socket.on('timeout', () => {
+            socket.destroy();
+            resolve(false);
+        });
+    });
+}
+
+async function filterWorking(uris) {
+    console.log(`\n🔍 Проверка ${uris.length} нод...\n`);
+
+    const results = [];
+    let active = 0;
+    let index = 0;
+
+    return new Promise((resolve) => {
+        function next() {
+            if (index >= uris.length && active === 0) {
+                return resolve(results);
+            }
+
+            while (active < MAX_CONCURRENT && index < uris.length) {
+                const uri = uris[index++];
+                active++;
+
+                (async () => {
+                    const parsed = parseAddressPort(uri);
+                    if (!parsed) {
+                        active--;
+                        next();
+                        return;
+                    }
+
+                    const ok = await checkTcp(parsed.host, parsed.port);
+
+                    if (ok) {
+                        console.log(`✅ ${parsed.host}:${parsed.port}`);
+                        results.push(uri);
+                    } else {
+                        console.log(`❌ ${parsed.host}:${parsed.port}`);
+                    }
+
+                    active--;
+                    next();
+                })();
+            }
+        }
+
+        next();
+    });
+}
+
+// ==================== СОРТИРОВКА ====================
+
+function detectCountryPriority(uri) {
+    const decoded = decodeURIComponent(uri).toUpperCase();
+
+    const map = [
+        'RU','UA','KZ','BY',
+        'DE','NL','FR','PL',
+        'GB','US','CA','JP','SG'
+    ];
+
+    for (let i = 0; i < map.length; i++) {
+        if (decoded.includes(map[i])) return i;
+    }
+
+    return 999;
+}
+
+// ==================== СБОР ====================
+
 async function collectAllLines() {
     const allUris = [];
 
-    // 1. Внешние источники (URI и URL)
     for (const item of EXTERNAL_SOURCES) {
-        if (item.startsWith('vless://') || item.startsWith('ss://') || item.startsWith('vmess://') || item.startsWith('trojan://')) {
-            allUris.push(item);
-            console.log(`   → добавлен URI: ${item.substring(0, 60)}...`);
-        } else {
-            try {
-                console.log(`📡 Загрузка: ${item}`);
-                const content = await fetchUrl(item);
-                const lines = content.split('\n').filter(l => l.trim().length > 0);
-                for (const line of lines) {
-                    const trimmed = line.trim();
-                    if (trimmed.startsWith('vless://') || trimmed.startsWith('ss://') || trimmed.startsWith('vmess://') || trimmed.startsWith('trojan://')) {
-                        allUris.push(trimmed);
-                    }
+        try {
+            const content = await fetchUrl(item);
+            const lines = content.split('\n');
+
+            for (const line of lines) {
+                const t = line.trim();
+                if (t.startsWith('vless://') || t.startsWith('ss://') || t.startsWith('vmess://') || t.startsWith('trojan://')) {
+                    allUris.push(t);
                 }
-                console.log(`   → добавлено ${lines.length} строк (URI)`);
-            } catch (err) {
-                console.error(`   → ошибка: ${err.message}`);
             }
-        }
+        } catch (e) {}
     }
 
-    // 2. Локальная папка sources (рекурсивно)
-    async function walkDir(dir) {
+    async function walk(dir) {
         try {
-            const entries = await fs.readdir(dir, { withFileTypes: true });
-            for (const entry of entries) {
-                const fullPath = path.join(dir, entry.name);
-                if (entry.isDirectory()) {
-                    await walkDir(fullPath);
-                } else if (entry.isFile()) {
-                    const ext = path.extname(entry.name).toLowerCase();
-                    console.log(`📁 Обработка: ${fullPath}`);
-                    if (ext === '.json') {
-                        const uris = await processJsonFile(fullPath, entry.name);
-                        allUris.push(...uris);
-                        console.log(`   → добавлено ${uris.length} URI`);
-                    } else {
-                        // Текстовый файл: читаем строки, ищем URI
-                        const content = await fs.readFile(fullPath, 'utf-8');
-                        const lines = content.split('\n');
-                        let added = 0;
-                        for (let line of lines) {
-                            line = line.trim();
-                            if (line.startsWith('vless://') || line.startsWith('ss://') || line.startsWith('vmess://') || line.startsWith('trojan://')) {
-                                allUris.push(line);
-                                added++;
-                            }
+            const files = await fs.readdir(dir, { withFileTypes: true });
+
+            for (const f of files) {
+                const full = path.join(dir, f.name);
+
+                if (f.isDirectory()) {
+                    await walk(full);
+                } else {
+                    const content = await fs.readFile(full, 'utf-8');
+                    const lines = content.split('\n');
+
+                    for (const line of lines) {
+                        const t = line.trim();
+                        if (t.startsWith('vless://') || t.startsWith('ss://') || t.startsWith('vmess://') || t.startsWith('trojan://')) {
+                            allUris.push(t);
                         }
-                        console.log(`   → добавлено ${added} URI из текстового файла`);
                     }
                 }
             }
-        } catch (err) {
-            console.error(`Ошибка чтения ${dir}: ${err.message}`);
-        }
+        } catch {}
     }
-    
-    try {
-        await walkDir(LOCAL_SOURCES_DIR);
-    } catch (err) {
-        if (err.code !== 'ENOENT') console.error(err);
-        else console.log(`📁 Папка ${LOCAL_SOURCES_DIR} не найдена`);
-    }
-    
-    // Опционально: удаляем дубликаты (но оставляем выбор)
-    const unique = new Map();
-    for (const uri of allUris) {
-        // Простой ключ – весь URI (можно улучшить, но для начала ok)
-        if (!unique.has(uri)) {
-            unique.set(uri, uri);
-        } else {
-            console.log(`   ⚠️ Дубликат пропущен: ${uri.substring(0, 60)}...`);
-        }
-    }
-    const finalUris = Array.from(unique.values());
-    console.log(`\n📊 Итого уникальных URI: ${finalUris.length} (изначально было ${allUris.length})`);
-    return finalUris;
+
+    await walk(LOCAL_SOURCES_DIR);
+
+    const unique = [...new Set(allUris)];
+    console.log(`📊 Найдено: ${unique.length} уникальных URI`);
+
+    return unique;
 }
 
+// ==================== MAIN ====================
+
 function toBase64(text) {
-    return Buffer.from(text, 'utf-8').toString('base64');
+    return Buffer.from(text).toString('base64');
 }
 
 async function main() {
-    console.log('🚀 Сборка подписки с поддержкой Shadowsocks и VLESS...\n');
-    try {
-        const uris = await collectAllLines();
-        
-        if (uris.length === 0) {
-            console.log('⚠️ Не найдено ни одного сервера. Проверьте папку sources/ и внешние источники.');
-            return;
-        }
-        
-        const plainText = uris.join('\n');
-        const base64Data = toBase64(plainText);
-        
-        await fs.writeFile(OUTPUT_TXT, base64Data);
-        const outputJson = {
-            lastUpdated: new Date().toISOString(),
-            totalUris: uris.length,
-            configsBase64: base64Data,
-            configsPlain: plainText
-        };
-        await fs.writeFile(OUTPUT_JSON, JSON.stringify(outputJson, null, 2));
-        
-        console.log(`\n✅ Подписка создана!`);
-        console.log(`📄 sub.txt (${base64Data.length} символов)`);
-        console.log(`📄 subscription.json`);
-        console.log(`\n🔗 Ссылка для Happ (импортируйте sub.txt как подписку):`);
-        console.log(`   https://raw.githubusercontent.com/citer1852-lab/SHUR-SUB/main/sub.txt`);
-        console.log(`\n💡 Теперь в Happ должно отображаться ${uris.length} серверов.`);
-    } catch (error) {
-        console.error('❌ Критическая ошибка:', error);
-        process.exit(1);
+    console.log('🚀 Ultimate Subscription Builder\n');
+
+    const all = await collectAllLines();
+
+    if (!all.length) {
+        console.log('❌ Нет нод');
+        return;
     }
+
+    const working = await filterWorking(all);
+
+    console.log(`\n⚡ Рабочих: ${working.length}\n`);
+
+    // сортировка
+    working.sort((a, b) => {
+        const pa = detectCountryPriority(a);
+        const pb = detectCountryPriority(b);
+        if (pa !== pb) return pa - pb;
+        return a.localeCompare(b);
+    });
+
+    const plain = working.join('\n');
+    const base64 = toBase64(plain);
+
+    await fs.writeFile(OUTPUT_TXT, base64);
+    await fs.writeFile(OUTPUT_JSON, JSON.stringify({
+        total: working.length,
+        updated: new Date().toISOString(),
+        data: base64
+    }, null, 2));
+
+    console.log(`✅ Готово: ${working.length} рабочих серверов`);
 }
 
 main();
