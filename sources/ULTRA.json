@@ -6,10 +6,7 @@
   "dns": {
     "servers": [
       "fakedns",
-      {
-        "address": "1.1.1.1",
-        "domains": ["geosite:geolocation-!cn"]
-      },
+      "1.1.1.1",
       "8.8.8.8"
     ],
     "queryStrategy": "UseIP",
@@ -21,9 +18,9 @@
 
   "inbounds": [
     {
-      "tag": "socks-in",
+      "tag": "mixed-in",
       "port": 10808,
-      "protocol": "socks",
+      "protocol": "mixed",
       "settings": {
         "udp": true
       },
@@ -32,11 +29,6 @@
         "routeOnly": true,
         "destOverride": ["http", "tls", "quic"]
       }
-    },
-    {
-      "tag": "http-in",
-      "port": 10809,
-      "protocol": "http"
     }
   ],
 
@@ -45,7 +37,7 @@
     { "tag": "block", "protocol": "blackhole" },
 
     {
-      "tag": "nl",
+      "tag": "🇳🇱 Netherlands (NL Fast)",
       "protocol": "shadowsocks",
       "settings": {
         "servers": [
@@ -60,13 +52,13 @@
       "streamSettings": {
         "sockopt": {
           "tcpFastOpen": true,
-          "tcpKeepAliveInterval": 30
+          "tcpKeepAliveInterval": 25
         }
       }
     },
 
     {
-      "tag": "de",
+      "tag": "🇩🇪 Germany (DE Stable)",
       "protocol": "shadowsocks",
       "settings": {
         "servers": [
@@ -81,7 +73,7 @@
     },
 
     {
-      "tag": "sg",
+      "tag": "🇸🇬 Singapore (SG Streaming)",
       "protocol": "shadowsocks",
       "settings": {
         "servers": [
@@ -96,7 +88,7 @@
     },
 
     {
-      "tag": "hk",
+      "tag": "🇭🇰 Hong Kong (HK Bypass)",
       "protocol": "shadowsocks",
       "settings": {
         "servers": [
@@ -117,11 +109,19 @@
     "balancers": [
       {
         "tag": "auto",
-        "selector": ["nl", "de", "sg", "hk"]
+        "selector": [
+          "🇳🇱 Netherlands (NL Fast)",
+          "🇩🇪 Germany (DE Stable)",
+          "🇸🇬 Singapore (SG Streaming)",
+          "🇭🇰 Hong Kong (HK Bypass)"
+        ]
       },
       {
-        "tag": "streaming",
-        "selector": ["sg", "hk", "nl"]
+        "tag": "stream",
+        "selector": [
+          "🇸🇬 Singapore (SG Streaming)",
+          "🇭🇰 Hong Kong (HK Bypass)"
+        ]
       }
     ],
 
@@ -137,6 +137,7 @@
         "ip": ["geoip:private"],
         "outboundTag": "direct"
       },
+
       {
         "type": "field",
         "domain": ["geosite:private"],
@@ -148,6 +149,7 @@
         "domain": ["geosite:category-ru"],
         "outboundTag": "direct"
       },
+
       {
         "type": "field",
         "ip": ["geoip:ru"],
@@ -159,16 +161,9 @@
         "domain": [
           "geosite:youtube",
           "geosite:netflix",
-          "geosite:disney",
           "geosite:openai"
         ],
-        "balancerTag": "streaming"
-      },
-
-      {
-        "type": "field",
-        "domain": ["geosite:google"],
-        "balancerTag": "auto"
+        "balancerTag": "stream"
       },
 
       {
@@ -187,7 +182,5 @@
         "downlinkOnly": 5
       }
     }
-  },
-
-  "stats": {}
+  }
 }
