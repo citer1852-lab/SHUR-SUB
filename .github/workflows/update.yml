@@ -2,7 +2,7 @@ name: Update Subscription
 
 on:
   schedule:
-    - cron: '5 * * * *'
+    - cron: '*/5 * * * *'  # каждые 5 минут
   workflow_dispatch:
 
 jobs:
