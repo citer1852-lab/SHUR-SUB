@@ -1,0 +1,33 @@
+{
+  "log": { "loglevel": "warning" },
+  "inbounds": [{
+    "port": 10808,
+    "listen": "127.0.0.1",
+    "protocol": "socks",
+    "settings": { "udp": true }
+  }],
+  "outbounds": [{
+    "protocol": "vmess",
+    "settings": {
+      "vnext": [{
+        "address": "51.159.111.32",
+        "port": 443,
+        "users": [{
+          "id": "f2a1b3c4-9d8e-4a7b-91c3-8f2d1e5a6b77",
+          "alterId": 0,
+          "security": "auto"
+        }]
+      }]
+    },
+    "streamSettings": {
+      "network": "ws",
+      "security": "tls",
+      "wsSettings": {
+        "path": "/",
+        "headers": {
+          "Host": "www.bing.com"
+        }
+      }
+    }
+  }]
+}
