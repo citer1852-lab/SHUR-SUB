@@ -41,7 +41,7 @@
       }
     },
     {
-      "tag": "ru1",
+      "tag": "🇷🇺 ru1",
       "protocol": "vless",
       "settings": {
         "vnext": [{"address": "194.67.209.220", "port": 443, "users": [{"id": "e37ffcfa-1ab1-4cae-b037-8d909c2e27b5", "encryption": "none", "flow": "xtls-rprx-vision"}]}]
@@ -49,7 +49,7 @@
       "streamSettings": {"network": "tcp", "security": "reality", "realitySettings": {"serverName": "google.com", "publicKey": "5C3dYsPJfG-HHvVJEWujnXG4GtbPPBM72g7dyLb7VnU", "shortId": "a72c0d90", "fingerprint": "chrome"}}
     },
     {
-      "tag": "ru2",
+      "tag": "🇷🇺 ru2",
       "protocol": "vless",
       "settings": {
         "vnext": [{"address": "212.22.79.229", "port": 443, "users": [{"id": "3c4d1b0a-2c17-445d-9b11-50f34c6685c1", "encryption": "none", "flow": "xtls-rprx-vision"}]}]
