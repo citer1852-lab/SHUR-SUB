@@ -1,274 +1,230 @@
+// update.js
 const fs = require('fs').promises;
 const path = require('path');
-const net = require('net');
 
 // ==================== НАСТРОЙКИ ====================
-const EXTERNAL_SOURCES = [];
+const EXTERNAL_SOURCES = []; 
 const LOCAL_SOURCES_DIR = './sources';
 const OUTPUT_JSON = 'subscription.json';
 const OUTPUT_TXT = 'sub.txt';
-
-const TIMEOUT = 4000;
-const MAX_CONCURRENT = 50;
 // ===================================================
 
-// ==================== FETCH ====================
 async function fetchUrl(url) {
-    const res = await fetch(url);
-    let text = await res.text();
-
+    const response = await fetch(url);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    let text = await response.text();
     if (/^[A-Za-z0-9+/=]+$/.test(text.trim())) {
         try {
             text = Buffer.from(text, 'base64').toString('utf-8');
-        } catch {}
+        } catch (e) {}
     }
     return text;
 }
 
-// ==================== UNIVERSAL JSON PARSER ====================
-function extractOutboundsDeep(obj, results = []) {
-    if (!obj || typeof obj !== 'object') return results;
-
-    if (Array.isArray(obj)) {
-        obj.forEach(i => extractOutboundsDeep(i, results));
-        return results;
+/**
+ * Нормализует vless:// URI: сортирует параметры запроса, чтобы одинаковые конфиги имели одинаковую строку.
+ */
+function normalizeVlessUri(uri) {
+    try {
+        const urlObj = new URL(uri);
+        const params = new URLSearchParams(urlObj.search);
+        // Сортируем параметры по ключу
+        const sorted = Array.from(params.entries()).sort((a, b) => a[0].localeCompare(b[0]));
+        urlObj.search = new URLSearchParams(sorted).toString();
+        return urlObj.toString();
+    } catch (e) {
+        // Если не удалось распарсить, возвращаем исходную строку
+        return uri;
     }
+}
 
-    if (obj.protocol && obj.settings) {
-        results.push(obj);
+/**
+ * Преобразует outbound в URI с названием из remarks или tag.
+ * Возвращает null, если outbound невалиден (нет address, port или uuid).
+ */
+function convertOutboundToURI(out, globalRemarks = '') {
+    if (out.protocol !== 'vless') return null;
+    
+    const vnext = out.settings?.vnext?.[0];
+    if (!vnext) return null;
+    
+    const user = vnext.users?.[0];
+    if (!user) return null;
+    
+    const address = vnext.address;
+    const port = vnext.port;
+    const uuid = user.id;
+    if (!address || !port || !uuid) {
+        console.log(`   ⚠️ Пропущен outbound: не хватает address/port/uuid`);
+        return null;
     }
-
-    for (const key in obj) {
-        if (typeof obj[key] === 'object') {
-            extractOutboundsDeep(obj[key], results);
+    
+    let uri = `vless://${uuid}@${address}:${port}?encryption=${user.encryption || 'none'}`;
+    if (user.flow) uri += `&flow=${user.flow}`;
+    
+    const stream = out.streamSettings;
+    if (stream) {
+        if (stream.security === 'reality') {
+            const r = stream.realitySettings || {};
+            uri += `&security=reality&sni=${encodeURIComponent(r.serverName || '')}&pbk=${r.publicKey || ''}`;
+            if (r.shortId) uri += `&sid=${r.shortId}`;
+            if (r.fingerprint) uri += `&fp=${r.fingerprint}`;
+        } else if (stream.security === 'tls') {
+            uri += `&security=tls&sni=${encodeURIComponent(stream.tlsSettings?.serverName || '')}`;
+        }
+        if (stream.network === 'ws') {
+            uri += `&type=ws&path=${encodeURIComponent(stream.wsSettings?.path || '/')}`;
+            if (stream.wsSettings?.headers?.Host) uri += `&host=${encodeURIComponent(stream.wsSettings.headers.Host)}`;
+        } else if (stream.network === 'grpc') {
+            uri += `&type=grpc&serviceName=${encodeURIComponent(stream.grpcSettings?.serviceName || '')}`;
+        } else if (stream.network === 'tcp') {
+            uri += `&type=tcp`;
         }
     }
-
-    return results;
-}
-
-// ==================== COUNTRY DETECTION ====================
-function detectCountry(text) {
-    const t = text.toUpperCase();
-
-    const map = [
-        { keys: ['RUSSIA','MOSCOW','RU','.RU'], flag: '🇷🇺', code: 'RU', p: 1 },
-        { keys: ['UKRAINE','UA'], flag: '🇺🇦', code: 'UA', p: 2 },
-        { keys: ['KAZAKH','KZ'], flag: '🇰🇿', code: 'KZ', p: 3 },
-
-        { keys: ['GERMANY','DE'], flag: '🇩🇪', code: 'DE', p: 4 },
-        { keys: ['NETHERLAND','NL'], flag: '🇳🇱', code: 'NL', p: 5 },
-        { keys: ['FRANCE','FR'], flag: '🇫🇷', code: 'FR', p: 6 },
-
-        { keys: ['USA','US'], flag: '🇺🇸', code: 'US', p: 7 },
-        { keys: ['CANADA','CA'], flag: '🇨🇦', code: 'CA', p: 8 },
-        { keys: ['JAPAN','JP'], flag: '🇯🇵', code: 'JP', p: 9 }
-    ];
-
-    for (const c of map) {
-        if (c.keys.some(k => t.includes(k))) return c;
+    
+    let nodeName = out.tag || '';
+    if ((!nodeName || nodeName === 'proxy') && globalRemarks) {
+        nodeName = globalRemarks;
     }
-
-    return { flag: '🌍', code: 'OTHER', p: 999 };
-}
-
-// ==================== TAG BUILDER ====================
-function buildTag(out, fileName) {
-    const base =
-        out.tag ||
-        out.remarks ||
-        fileName ||
-        'node';
-
-    const country = detectCountry(base + JSON.stringify(out));
-
-    const clean = base.replace(/[^\w\s\-]/g, '').trim();
-
-    return `${country.flag} ${country.code} ${clean}`;
-}
-
-// ==================== CONVERTERS ====================
-function convertVless(out, fileName) {
-    const v = out.settings?.vnext?.[0];
-    const u = v?.users?.[0];
-    if (!v || !u) return null;
-
-    let uri = `vless://${u.id}@${v.address}:${v.port}?encryption=${u.encryption || 'none'}`;
-
-    if (u.flow) uri += `&flow=${u.flow}`;
-
-    const s = out.streamSettings || {};
-
-    if (s.security === 'reality') {
-        const r = s.realitySettings || {};
-        uri += `&security=reality&sni=${r.serverName}&pbk=${r.publicKey}`;
-        if (r.shortId) uri += `&sid=${r.shortId}`;
+    if (nodeName && nodeName !== 'proxy') {
+        uri += `#${encodeURIComponent(nodeName)}`;
     }
-
-    if (s.security === 'tls') {
-        uri += `&security=tls`;
-    }
-
-    if (s.network === 'ws') {
-        uri += `&type=ws&path=${encodeURIComponent(s.wsSettings?.path || '/')}`;
-    }
-
-    if (s.network === 'grpc') {
-        uri += `&type=grpc`;
-    }
-
-    const tag = buildTag(out, fileName);
-    uri += `#${encodeURIComponent(tag)}`;
-
+    
     return uri;
 }
 
-function convertSS(out, fileName) {
-    const s = out.settings?.servers?.[0];
-    if (!s) return null;
-
-    const base = Buffer.from(`${s.method}:${s.password}`).toString('base64');
-    let uri = `ss://${base}@${s.address}:${s.port}`;
-
-    const tag = buildTag(out, fileName);
-    uri += `#${encodeURIComponent(tag)}`;
-
-    return uri;
-}
-
-// ==================== TCP CHECK ====================
-function checkTcp(host, port) {
-    return new Promise(resolve => {
-        const sock = new net.Socket();
-
-        sock.setTimeout(TIMEOUT);
-
-        sock.connect(port, host, () => {
-            sock.destroy();
-            resolve(true);
-        });
-
-        sock.on('error', () => resolve(false));
-        sock.on('timeout', () => {
-            sock.destroy();
-            resolve(false);
-        });
-    });
-}
-
-// ==================== FILTER WORKING ====================
-async function filterWorking(uris) {
-    const results = [];
-    let i = 0;
-    let active = 0;
-
-    return new Promise(resolve => {
-        function next() {
-            if (i >= uris.length && active === 0) return resolve(results);
-
-            while (active < MAX_CONCURRENT && i < uris.length) {
-                const uri = uris[i++];
-                active++;
-
-                (async () => {
-                    try {
-                        const url = new URL(uri);
-                        const ok = await checkTcp(url.hostname, url.port || 443);
-
-                        if (ok) {
-                            console.log(`✅ ${url.hostname}`);
-                            results.push(uri);
-                        } else {
-                            console.log(`❌ ${url.hostname}`);
-                        }
-                    } catch {}
-
-                    active--;
-                    next();
-                })();
-            }
-        }
-        next();
-    });
-}
-
-// ==================== COLLECT ====================
-async function collect() {
-    const list = [];
-
-    async function walk(dir) {
+/**
+ * Обрабатывает локальный JSON-файл и извлекает URI с названиями.
+ */
+async function processLocalFile(filePath) {
+    const content = await fs.readFile(filePath, 'utf-8');
+    const ext = path.extname(filePath).toLowerCase();
+    
+    if (ext === '.json') {
         try {
-            const files = await fs.readdir(dir, { withFileTypes: true });
-
-            for (const f of files) {
-                const full = path.join(dir, f.name);
-
-                if (f.isDirectory()) {
-                    await walk(full);
-                } else {
-                    const content = await fs.readFile(full, 'utf-8');
-
-                    if (f.name.endsWith('.json')) {
-                        const json = JSON.parse(content);
-                        const outs = extractOutboundsDeep(json);
-
-                        for (const o of outs) {
-                            let uri = null;
-
-                            if (o.protocol === 'vless') uri = convertVless(o, f.name);
-                            if (o.protocol === 'shadowsocks') uri = convertSS(o, f.name);
-
-                            if (uri) list.push(uri);
-                        }
+            const json = JSON.parse(content);
+            const uris = [];
+            const globalRemarks = json.remarks || json.name || '';
+            console.log(`   📝 Название конфига: "${globalRemarks}"`);
+            
+            if (json.outbounds && Array.isArray(json.outbounds)) {
+                for (const out of json.outbounds) {
+                    const uri = convertOutboundToURI(out, globalRemarks);
+                    if (uri) {
+                        uris.push(uri);
                     } else {
-                        content.split('\n').forEach(l => {
-                            if (l.startsWith('vless://') || l.startsWith('ss://')) {
-                                list.push(l.trim());
-                            }
-                        });
+                        console.log(`   ⚠️ Пропущен невалидный outbound: ${out.tag || 'без тега'}`);
                     }
                 }
             }
-        } catch {}
+            return { type: 'uri', lines: uris };
+        } catch (e) {
+            console.error(`❌ Ошибка парсинга JSON: ${e.message}`);
+            return { type: 'uri', lines: [] };
+        }
+    } else {
+        const lines = content.split('\n').filter(l => l.trim().length > 0);
+        return { type: 'uri', lines };
     }
-
-    await walk(LOCAL_SOURCES_DIR);
-
-    return [...new Set(list)];
 }
 
-// ==================== MAIN ====================
-(async () => {
-    console.log('🚀 BUILDING SUBSCRIPTION\n');
+async function collectAllLines() {
+    const allUris = [];
 
-    const raw = await collect();
+    // 1. Обрабатываем готовые URI из EXTERNAL_SOURCES
+    for (const item of EXTERNAL_SOURCES) {
+        if (item.startsWith('vless://') || item.startsWith('vmess://') || item.startsWith('trojan://') || item.startsWith('ss://')) {
+            allUris.push(item);
+            console.log(`   → добавлен URI: ${item.substring(0, 50)}...`);
+        } else {
+            try {
+                console.log(`📡 Загрузка: ${item}`);
+                const content = await fetchUrl(item);
+                const lines = content.split('\n').filter(l => l.trim().length > 0);
+                allUris.push(...lines);
+                console.log(`   → добавлено ${lines.length} строк (URI)`);
+            } catch (err) {
+                console.error(`   → ошибка: ${err.message}`);
+            }
+        }
+    }
 
-    console.log(`📊 найдено: ${raw.length}`);
+    // 2. Обрабатываем локальные файлы из папки sources1
+    try {
+        const files = await fs.readdir(LOCAL_SOURCES_DIR);
+        for (const file of files) {
+            if (file === '.gitkeep') continue;
+            const filePath = path.join(LOCAL_SOURCES_DIR, file);
+            const stat = await fs.stat(filePath);
+            if (stat.isFile()) {
+                console.log(`📁 Обработка: ${file}`);
+                const result = await processLocalFile(filePath);
+                if (result && result.lines.length > 0) {
+                    allUris.push(...result.lines);
+                    console.log(`   → добавлено ${result.lines.length} URI`);
+                }
+            }
+        }
+    } catch (err) {
+        if (err.code !== 'ENOENT') {
+            console.error(`Ошибка: ${err.message}`);
+        } else {
+            console.log(`📁 Папка ${LOCAL_SOURCES_DIR} не найдена`);
+        }
+    }
+    
+    // 3. Нормализуем все URI (сортируем параметры) и удаляем дубликаты
+    const normalizedMap = new Map();
+    for (const uri of allUris) {
+        const normalized = normalizeVlessUri(uri);
+        // Сохраняем только первое вхождение (можно также проверять по чему-то ещё, но достаточно)
+        if (!normalizedMap.has(normalized)) {
+            normalizedMap.set(normalized, uri);
+        } else {
+            console.log(`   ⚠️ Дубликат удалён: ${normalized.substring(0, 80)}...`);
+        }
+    }
+    const uniqueUris = Array.from(normalizedMap.values());
+    console.log(`\n📊 Итого уникальных URI после нормализации: ${uniqueUris.length}`);
+    return uniqueUris;
+}
 
-    const working = await filterWorking(raw);
+function toBase64(text) {
+    return Buffer.from(text, 'utf-8').toString('base64');
+}
 
-    console.log(`⚡ рабочих: ${working.length}`);
+async function main() {
+    console.log('🚀 Начинаем сборку подписки...\n');
+    try {
+        const uris = await collectAllLines();
+        
+        if (uris.length === 0) {
+            console.log('⚠️ Внимание: не найдено ни одного конфига!');
+            console.log('   Добавьте файлы в папку sources/ и запустите снова.');
+            return;
+        }
+        
+        const plainText = uris.join('\n');
+        const base64Data = toBase64(plainText);
+        
+        await fs.writeFile(OUTPUT_TXT, base64Data);
+        
+        const outputJson = {
+            lastUpdated: new Date().toISOString(),
+            totalUris: uris.length,
+            configsBase64: base64Data,
+            configsPlain: plainText
+        };
+        await fs.writeFile(OUTPUT_JSON, JSON.stringify(outputJson, null, 2));
+        
+        console.log(`\n✅ Подписка создана!`);
+        console.log(`📄 sub.txt (${base64Data.length} символов)`);
+        console.log(`\n🔗 Ссылка для HApp:`);
+        console.log(`   https://raw.githubusercontent.com/citer1852-lab/SHUR-SUB/main/sub.txt`);
+    } catch (error) {
+        console.error('❌ Критическая ошибка:', error);
+        process.exit(1);
+    }
+}
 
-    working.sort((a, b) => {
-        const ta = decodeURIComponent(a.split('#')[1] || '');
-        const tb = decodeURIComponent(b.split('#')[1] || '');
-
-        const ca = detectCountry(ta);
-        const cb = detectCountry(tb);
-
-        if (ca.p !== cb.p) return ca.p - cb.p;
-
-        return ta.localeCompare(tb);
-    });
-
-    const plain = working.join('\n');
-    const base64 = Buffer.from(plain).toString('base64');
-
-    await fs.writeFile(OUTPUT_TXT, base64);
-    await fs.writeFile(OUTPUT_JSON, JSON.stringify({
-        total: working.length,
-        updated: new Date().toISOString()
-    }, null, 2));
-
-    console.log('\n✅ ГОТОВО');
-})();
+main();
