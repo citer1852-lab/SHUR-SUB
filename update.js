@@ -8,169 +8,193 @@ const LOCAL_SOURCES_DIR = './sources';
 const OUTPUT_JSON = 'subscription.json';
 const OUTPUT_TXT = 'sub.txt';
 
-const TIMEOUT = 4000; // ms
-const MAX_CONCURRENT = 50; // параллельные проверки
+const TIMEOUT = 4000;
+const MAX_CONCURRENT = 50;
 // ===================================================
 
+// ==================== FETCH ====================
 async function fetchUrl(url) {
-    const response = await fetch(url);
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    let text = await response.text();
+    const res = await fetch(url);
+    let text = await res.text();
+
     if (/^[A-Za-z0-9+/=]+$/.test(text.trim())) {
         try {
             text = Buffer.from(text, 'base64').toString('utf-8');
-        } catch (e) {}
+        } catch {}
     }
     return text;
 }
 
-// ==================== PARSING ====================
+// ==================== UNIVERSAL JSON PARSER ====================
+function extractOutboundsDeep(obj, results = []) {
+    if (!obj || typeof obj !== 'object') return results;
 
-function parseAddressPort(uri) {
-    try {
-        const url = new URL(uri);
-        return {
-            host: url.hostname,
-            port: parseInt(url.port) || 443
-        };
-    } catch {
-        return null;
+    if (Array.isArray(obj)) {
+        obj.forEach(i => extractOutboundsDeep(i, results));
+        return results;
     }
+
+    if (obj.protocol && obj.settings) {
+        results.push(obj);
+    }
+
+    for (const key in obj) {
+        if (typeof obj[key] === 'object') {
+            extractOutboundsDeep(obj[key], results);
+        }
+    }
+
+    return results;
 }
 
-// ==================== ПРОВЕРКА РАБОТОСПОСОБНОСТИ ====================
+// ==================== COUNTRY DETECTION ====================
+function detectCountry(text) {
+    const t = text.toUpperCase();
 
+    const map = [
+        { keys: ['RUSSIA','MOSCOW','RU','.RU'], flag: '🇷🇺', code: 'RU', p: 1 },
+        { keys: ['UKRAINE','UA'], flag: '🇺🇦', code: 'UA', p: 2 },
+        { keys: ['KAZAKH','KZ'], flag: '🇰🇿', code: 'KZ', p: 3 },
+
+        { keys: ['GERMANY','DE'], flag: '🇩🇪', code: 'DE', p: 4 },
+        { keys: ['NETHERLAND','NL'], flag: '🇳🇱', code: 'NL', p: 5 },
+        { keys: ['FRANCE','FR'], flag: '🇫🇷', code: 'FR', p: 6 },
+
+        { keys: ['USA','US'], flag: '🇺🇸', code: 'US', p: 7 },
+        { keys: ['CANADA','CA'], flag: '🇨🇦', code: 'CA', p: 8 },
+        { keys: ['JAPAN','JP'], flag: '🇯🇵', code: 'JP', p: 9 }
+    ];
+
+    for (const c of map) {
+        if (c.keys.some(k => t.includes(k))) return c;
+    }
+
+    return { flag: '🌍', code: 'OTHER', p: 999 };
+}
+
+// ==================== TAG BUILDER ====================
+function buildTag(out, fileName) {
+    const base =
+        out.tag ||
+        out.remarks ||
+        fileName ||
+        'node';
+
+    const country = detectCountry(base + JSON.stringify(out));
+
+    const clean = base.replace(/[^\w\s\-]/g, '').trim();
+
+    return `${country.flag} ${country.code} ${clean}`;
+}
+
+// ==================== CONVERTERS ====================
+function convertVless(out, fileName) {
+    const v = out.settings?.vnext?.[0];
+    const u = v?.users?.[0];
+    if (!v || !u) return null;
+
+    let uri = `vless://${u.id}@${v.address}:${v.port}?encryption=${u.encryption || 'none'}`;
+
+    if (u.flow) uri += `&flow=${u.flow}`;
+
+    const s = out.streamSettings || {};
+
+    if (s.security === 'reality') {
+        const r = s.realitySettings || {};
+        uri += `&security=reality&sni=${r.serverName}&pbk=${r.publicKey}`;
+        if (r.shortId) uri += `&sid=${r.shortId}`;
+    }
+
+    if (s.security === 'tls') {
+        uri += `&security=tls`;
+    }
+
+    if (s.network === 'ws') {
+        uri += `&type=ws&path=${encodeURIComponent(s.wsSettings?.path || '/')}`;
+    }
+
+    if (s.network === 'grpc') {
+        uri += `&type=grpc`;
+    }
+
+    const tag = buildTag(out, fileName);
+    uri += `#${encodeURIComponent(tag)}`;
+
+    return uri;
+}
+
+function convertSS(out, fileName) {
+    const s = out.settings?.servers?.[0];
+    if (!s) return null;
+
+    const base = Buffer.from(`${s.method}:${s.password}`).toString('base64');
+    let uri = `ss://${base}@${s.address}:${s.port}`;
+
+    const tag = buildTag(out, fileName);
+    uri += `#${encodeURIComponent(tag)}`;
+
+    return uri;
+}
+
+// ==================== TCP CHECK ====================
 function checkTcp(host, port) {
-    return new Promise((resolve) => {
-        const socket = new net.Socket();
+    return new Promise(resolve => {
+        const sock = new net.Socket();
 
-        let done = false;
+        sock.setTimeout(TIMEOUT);
 
-        socket.setTimeout(TIMEOUT);
-
-        socket.connect(port, host, () => {
-            done = true;
-            socket.destroy();
+        sock.connect(port, host, () => {
+            sock.destroy();
             resolve(true);
         });
 
-        socket.on('error', () => {
-            if (!done) resolve(false);
-        });
-
-        socket.on('timeout', () => {
-            socket.destroy();
+        sock.on('error', () => resolve(false));
+        sock.on('timeout', () => {
+            sock.destroy();
             resolve(false);
         });
     });
 }
 
+// ==================== FILTER WORKING ====================
 async function filterWorking(uris) {
-    console.log(`\n🔍 Проверка ${uris.length} нод...\n`);
-
     const results = [];
+    let i = 0;
     let active = 0;
-    let index = 0;
 
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
         function next() {
-            if (index >= uris.length && active === 0) {
-                return resolve(results);
-            }
+            if (i >= uris.length && active === 0) return resolve(results);
 
-            while (active < MAX_CONCURRENT && index < uris.length) {
-                const uri = uris[index++];
+            while (active < MAX_CONCURRENT && i < uris.length) {
+                const uri = uris[i++];
                 active++;
 
                 (async () => {
-                    const parsed = parseAddressPort(uri);
-                    if (!parsed) {
-                        active--;
-                        next();
-                        return;
-                    }
+                    try {
+                        const url = new URL(uri);
+                        const ok = await checkTcp(url.hostname, url.port || 443);
 
-                    const ok = await checkTcp(parsed.host, parsed.port);
-
-                    if (ok) {
-                        console.log(`✅ ${parsed.host}:${parsed.port}`);
-                        results.push(uri);
-                    } else {
-                        console.log(`❌ ${parsed.host}:${parsed.port}`);
-                    }
+                        if (ok) {
+                            console.log(`✅ ${url.hostname}`);
+                            results.push(uri);
+                        } else {
+                            console.log(`❌ ${url.hostname}`);
+                        }
+                    } catch {}
 
                     active--;
                     next();
                 })();
             }
         }
-
         next();
     });
 }
 
-// ==================== СОРТИРОВКА ====================
-
-function extractTag(uri) {
-    try {
-        const decoded = decodeURIComponent(uri);
-        const parts = decoded.split('#');
-        return parts[1] || '';
-    } catch {
-        return '';
-    }
-}
-
-function detectCountryPriority(uri) {
-    const tag = extractTag(uri).toUpperCase();
-
-    const countryMap = [
-        { keys: ['🇷🇺', 'RU', 'RUSSIA', 'MOSCOW'], priority: 1 },
-        { keys: ['🇺🇦', 'UA', 'UKRAINE', 'KYIV'], priority: 2 },
-        { keys: ['🇰🇿', 'KZ', 'KAZAKHSTAN'], priority: 3 },
-        { keys: ['🇧🇾', 'BY', 'BELARUS'], priority: 4 },
-
-        { keys: ['🇩🇪', 'DE', 'GERMANY', 'FRANKFURT'], priority: 5 },
-        { keys: ['🇳🇱', 'NL', 'NETHERLANDS', 'AMSTERDAM'], priority: 6 },
-        { keys: ['🇫🇷', 'FR', 'FRANCE', 'PARIS'], priority: 7 },
-        { keys: ['🇵🇱', 'PL', 'POLAND'], priority: 8 },
-
-        { keys: ['🇬🇧', 'GB', 'UK', 'LONDON'], priority: 9 },
-        { keys: ['🇺🇸', 'US', 'USA', 'AMERICA', 'NEW YORK'], priority: 10 },
-        { keys: ['🇨🇦', 'CA', 'CANADA'], priority: 11 },
-        { keys: ['🇯🇵', 'JP', 'JAPAN', 'TOKYO'], priority: 12 },
-        { keys: ['🇸🇬', 'SG', 'SINGAPORE'], priority: 13 }
-    ];
-
-    for (const country of countryMap) {
-        for (const key of country.keys) {
-            if (tag.includes(key)) {
-                return country.priority;
-            }
-        }
-    }
-
-    return 999;
-}
-
-// ==================== СБОР ====================
-
-async function collectAllLines() {
-    const allUris = [];
-
-    for (const item of EXTERNAL_SOURCES) {
-        try {
-            const content = await fetchUrl(item);
-            const lines = content.split('\n');
-
-            for (const line of lines) {
-                const t = line.trim();
-                if (t.startsWith('vless://') || t.startsWith('ss://') || t.startsWith('vmess://') || t.startsWith('trojan://')) {
-                    allUris.push(t);
-                }
-            }
-        } catch (e) {}
-    }
+// ==================== COLLECT ====================
+async function collect() {
+    const list = [];
 
     async function walk(dir) {
         try {
@@ -183,13 +207,25 @@ async function collectAllLines() {
                     await walk(full);
                 } else {
                     const content = await fs.readFile(full, 'utf-8');
-                    const lines = content.split('\n');
 
-                    for (const line of lines) {
-                        const t = line.trim();
-                        if (t.startsWith('vless://') || t.startsWith('ss://') || t.startsWith('vmess://') || t.startsWith('trojan://')) {
-                            allUris.push(t);
+                    if (f.name.endsWith('.json')) {
+                        const json = JSON.parse(content);
+                        const outs = extractOutboundsDeep(json);
+
+                        for (const o of outs) {
+                            let uri = null;
+
+                            if (o.protocol === 'vless') uri = convertVless(o, f.name);
+                            if (o.protocol === 'shadowsocks') uri = convertSS(o, f.name);
+
+                            if (uri) list.push(uri);
                         }
+                    } else {
+                        content.split('\n').forEach(l => {
+                            if (l.startsWith('vless://') || l.startsWith('ss://')) {
+                                list.push(l.trim());
+                            }
+                        });
                     }
                 }
             }
@@ -198,57 +234,41 @@ async function collectAllLines() {
 
     await walk(LOCAL_SOURCES_DIR);
 
-    const unique = [...new Set(allUris)];
-    console.log(`📊 Найдено: ${unique.length} уникальных URI`);
-
-    return unique;
+    return [...new Set(list)];
 }
 
 // ==================== MAIN ====================
+(async () => {
+    console.log('🚀 BUILDING SUBSCRIPTION\n');
 
-function toBase64(text) {
-    return Buffer.from(text).toString('base64');
-}
+    const raw = await collect();
 
-async function main() {
-    console.log('🚀 Ultimate Subscription Builder\n');
+    console.log(`📊 найдено: ${raw.length}`);
 
-    const all = await collectAllLines();
+    const working = await filterWorking(raw);
 
-    if (!all.length) {
-        console.log('❌ Нет нод');
-        return;
-    }
+    console.log(`⚡ рабочих: ${working.length}`);
 
-    const working = await filterWorking(all);
-
-    console.log(`\n⚡ Рабочих: ${working.length}\n`);
-
-    // сортировка
     working.sort((a, b) => {
-        const pa = detectCountryPriority(a);
-        const pb = detectCountryPriority(b);
+        const ta = decodeURIComponent(a.split('#')[1] || '');
+        const tb = decodeURIComponent(b.split('#')[1] || '');
 
-        if (pa !== pb) return pa - pb;
+        const ca = detectCountry(ta);
+        const cb = detectCountry(tb);
 
-        // сортировка внутри страны по tag
-        const ta = extractTag(a);
-        const tb = extractTag(b);
+        if (ca.p !== cb.p) return ca.p - cb.p;
 
         return ta.localeCompare(tb);
     });
 
     const plain = working.join('\n');
-    const base64 = toBase64(plain);
+    const base64 = Buffer.from(plain).toString('base64');
 
     await fs.writeFile(OUTPUT_TXT, base64);
     await fs.writeFile(OUTPUT_JSON, JSON.stringify({
         total: working.length,
-        updated: new Date().toISOString(),
-        data: base64
+        updated: new Date().toISOString()
     }, null, 2));
 
-    console.log(`✅ Готово: ${working.length} рабочих серверов`);
-}
-
-main();
+    console.log('\n✅ ГОТОВО');
+})();
