@@ -14,7 +14,7 @@ function detectGroup(text) {
         return 1;
     }
 
-    if (t.includes('REALITY') || t.includes('CF') || t.includes('CDN')) {
+    if (t.includes('REALITY') || t.includes('CF') || t.includes('CDN') || t.includes('LTE') {
         return 3; // обход
     }
 
