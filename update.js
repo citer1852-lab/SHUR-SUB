@@ -15,8 +15,13 @@ const COUNTRY_PRIORITY = [
 
 // Ключевые слова для игровых серверов
 const GAMING_KEYWORDS = ["game", "gaming", "игровой"];
-// Ключевые слова для обходных серверов (LTE, REALITY, CDN и т.д.)
+// Ключевые слова для обходных серверов (LTE, REALITY, CF, CDN)
 const BYPASS_KEYWORDS = ["lte", "reality", "cf", "cdn"];
+
+// Ключевые слова для серверов, которые должны быть в самом конце (без иконки страны, резервные и т.п.)
+const LOW_PRIORITY_KEYWORDS = [
+    "cf cdn ws", "us reality (backup)", "de reality (best dpi bypass)", "nl grpc", "proxy-backup", "proxy-main", "free server", "stable fallback"
+];
 
 const EXTERNAL_SOURCES = [
     "vless://cad6daf7-6cf8-4e1b-b0d5-aa0bea400d2a@de.monkeyisland.xyz:443?type=tcp&security=reality&flow=xtls-rprx-vision&fp=chrome&pbk=2AKBmK0PMf2zUMhRo1Ad-WNf_XoRk3AN-SGo6ZdhxA4&sid=a0321aad8db9924f&sni=de.monkeyisland.xyz#🇩🇪_DE_REALITY",
@@ -157,26 +162,35 @@ async function processJsonFile(filePath, fileName) {
 // ----- Определение приоритета для сортировки -----
 function getSortPriority(tag) {
     const lowerTag = tag.toLowerCase();
-    // 1. Проверяем страны
+    
+    // 1. Сначала проверяем самые низкоприоритетные (резервные, без страны)
+    for (const kw of LOW_PRIORITY_KEYWORDS) {
+        if (lowerTag.includes(kw.toLowerCase())) {
+            return 1000; // самый низкий приоритет
+        }
+    }
+    
+    // 2. Проверяем страны
     for (let i = 0; i < COUNTRY_PRIORITY.length; i++) {
         if (lowerTag.includes(COUNTRY_PRIORITY[i].toLowerCase())) {
             return i; // 0..6
         }
     }
-    // 2. Проверяем игровые
+    
+    // 3. Проверяем игровые и обходные (LTE, REALITY, CF, CDN) — они идут после стран
     for (const kw of GAMING_KEYWORDS) {
         if (lowerTag.includes(kw)) {
-            return 100; // игровые
+            return 100;
         }
     }
-    // 3. Проверяем обходные (LTE, REALITY, CF, CDN)
     for (const kw of BYPASS_KEYWORDS) {
         if (lowerTag.includes(kw)) {
-            return 100; // тоже в группу с игровыми
+            return 100;
         }
     }
-    // 4. Всё остальное
-    return 200;
+    
+    // 4. Всё остальное (включая неизвестные) — отправляем в конец, но перед явно низкими (1000)
+    return 500;
 }
 
 // ----- Сортировка URI по приоритету и алфавиту -----
@@ -282,7 +296,7 @@ async function collectAllLines() {
 
     // Сортировка
     const sortedUris = sortUris(uniqueUris);
-    console.log(`📊 Сортировка выполнена: страны (по приоритету) → игровые/обходы → остальные`);
+    console.log(`📊 Сортировка выполнена: страны → игровые/обходы → остальные (резервные в самом конце)`);
     return sortedUris;
 }
 
@@ -291,7 +305,7 @@ function toBase64(text) {
 }
 
 async function main() {
-    console.log('🚀 Сборка подписки (Shadowsocks + VLESS) с сортировкой: страны → игровые/обходы → остальные\n');
+    console.log('🚀 Сборка подписки (Shadowsocks + VLESS) с улучшенной сортировкой\n');
     try {
         const uris = await collectAllLines();
         if (uris.length === 0) {
@@ -315,7 +329,7 @@ async function main() {
         console.log(`📄 ${OUTPUT_JSON}`);
         console.log(`\n🔗 Ссылка для Happ (импортируйте sub.txt как подписку):`);
         console.log(`   https://raw.githubusercontent.com/citer1852-lab/SHUR-SUB/main/sub.txt`);
-        console.log(`\n💡 Теперь серверы отсортированы: сначала Россия, Германия, Нидерланды, Франция, Сингапур, Гонконг, США; затем игровые и обходные (LTE, REALITY, CF, CDN); затем остальные.`);
+        console.log(`\n💡 Теперь серверы отсортированы: сначала страны, потом игровые/LTE, затем остальные, а резервные (CF CDN WS, US Reality, DE Reality, NL gRPC, proxy-*) — в самом конце.`);
     } catch (error) {
         console.error('❌ Критическая ошибка:', error);
         process.exit(1);
