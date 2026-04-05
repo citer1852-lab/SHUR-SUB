@@ -163,40 +163,39 @@ async function processJsonFile(filePath, fileName) {
 function getSortPriority(tag) {
     const lowerTag = tag.toLowerCase();
     
-    // 1. Самый высокий приоритет — FREE server (0)
+    // 1. FREE server (самый первый)
     if (lowerTag.includes("free")) {
         return 0;
     }
     
-    // 2. Игровые (1)
-    for (const kw of GAMING_KEYWORDS) {
-        if (lowerTag.includes(kw)) {
-            return 1;
-        }
+    // 2. LTE (только явное "lte")
+    if (lowerTag.includes("lte")) {
+        return 1;
     }
     
-    // 3. Обходные (LTE, REALITY, CF, CDN) — приоритет 2
-    for (const kw of BYPASS_KEYWORDS) {
+    // 3. Игровые
+    for (const kw of GAMING_KEYWORDS) {
         if (lowerTag.includes(kw)) {
             return 2;
         }
     }
     
-    // 4. Страны (приоритет от 10 до 16)
+    // 4. Страны (Россия, Германия, Нидерланды, Франция, Сингапур, Гонконг, США)
     for (let i = 0; i < COUNTRY_PRIORITY.length; i++) {
         if (lowerTag.includes(COUNTRY_PRIORITY[i].toLowerCase())) {
             return 10 + i;
         }
     }
     
-    // 5. Резервные (самый низкий приоритет 1000)
+    // 5. Всё остальное (reality, cf, cdn, workers, proxy, nl gRPC и т.д.)
+    //    Но если вы хотите, чтобы некоторые из них были в самом конце, добавьте в LOW_PRIORITY_KEYWORDS
     for (const kw of LOW_PRIORITY_KEYWORDS) {
         if (lowerTag.includes(kw.toLowerCase())) {
-            return 1000;
+            return 1000; // самые последние
         }
     }
     
-    // 6. Всё остальное — приоритет 500
+    // 6. По умолчанию – после стран, перед резервными
     return 500;
 }
 
