@@ -1,12 +1,11 @@
 const fs = require('fs').promises;
-const path = require('require');
+const path = require('path');
 
-// ==================== НАСТРОЙКИ ====================
-const LOCAL_SOURCES_DIR = './sources';
+const SOURCES_DIR = './sources';
 const OUTPUT_JSON = 'subscription.json';
 const OUTPUT_TXT = 'sub.txt';
 
-// Приоритет стран (чем раньше в списке, тем выше приоритет)
+// Приоритеты (как у вас в старом коде)
 const COUNTRY_PRIORITY = [
     "россия", "russia", "🇷🇺",
     "германия", "germany", "🇩🇪",
@@ -16,25 +15,28 @@ const COUNTRY_PRIORITY = [
     "гонконг", "hong kong", "🇭🇰",
     "сша", "usa", "🇺🇸"
 ];
-
 const GAMING_KEYWORDS = ["game", "gaming", "игровой"];
 const TELEGRAM_KEYWORDS = ["telegram", "телеграм"];
-// ===================================================
+const LOW_PRIORITY_KEYWORDS = [
+    "cf cdn ws", "us reality (backup)", "de reality (best dpi bypass)",
+    "nl grpc", "proxy-backup", "proxy-main", "stable fallback"
+];
 
-// ----- Функция получения приоритета для строки (remarks) -----
 function getSortPriority(text) {
-    const lowerText = text.toLowerCase();
-    if (lowerText.includes("free")) return 0;
-    if (lowerText.includes("lte")) return 1;
-    for (const kw of GAMING_KEYWORDS) if (lowerText.includes(kw)) return 2;
-    for (const kw of TELEGRAM_KEYWORDS) if (lowerText.includes(kw)) return 3;
+    const lower = text.toLowerCase();
+    if (lower.includes("free")) return 0;
+    if (lower.includes("lte")) return 1;
+    for (const kw of GAMING_KEYWORDS) if (lower.includes(kw)) return 2;
+    for (const kw of TELEGRAM_KEYWORDS) if (lower.includes(kw)) return 3;
     for (let i = 0; i < COUNTRY_PRIORITY.length; i++) {
-        if (lowerText.includes(COUNTRY_PRIORITY[i].toLowerCase())) return 10 + i;
+        if (lower.includes(COUNTRY_PRIORITY[i].toLowerCase())) return 10 + i;
+    }
+    for (const kw of LOW_PRIORITY_KEYWORDS) {
+        if (lower.includes(kw.toLowerCase())) return 1000;
     }
     return 500;
 }
 
-// ----- Сортировка массива конфигов -----
 function sortConfigs(configs) {
     return configs.sort((a, b) => {
         const remarksA = a.remarks || a.name || '';
@@ -46,7 +48,6 @@ function sortConfigs(configs) {
     });
 }
 
-// ----- Рекурсивный обход папки для сбора всех JSON-файлов -----
 async function getAllJsonFiles(dir) {
     let results = [];
     const entries = await fs.readdir(dir, { withFileTypes: true });
@@ -61,28 +62,22 @@ async function getAllJsonFiles(dir) {
     return results;
 }
 
-// ----- Основная функция -----
 async function main() {
-    console.log('🚀 Сборка подписки (целые JSON-конфиги) с сортировкой по remarks\n');
-
-    // 1. Получаем список всех JSON-файлов
+    console.log('🔄 Обновление подписки...');
     let jsonFiles = [];
     try {
-        jsonFiles = await getAllJsonFiles(LOCAL_SOURCES_DIR);
+        jsonFiles = await getAllJsonFiles(SOURCES_DIR);
     } catch (err) {
         if (err.code === 'ENOENT') {
-            console.log(`📁 Папка ${LOCAL_SOURCES_DIR} не найдена. Создайте её и положите туда JSON-файлы.`);
-            return;
+            console.log(`⚠️ Папка ${SOURCES_DIR} не найдена. Создайте её и добавьте JSON-файлы.`);
+            process.exit(0);
         }
         throw err;
     }
-
     if (jsonFiles.length === 0) {
-        console.log(`⚠️ В папке ${LOCAL_SOURCES_DIR} нет JSON-файлов.`);
-        return;
+        console.log(`⚠️ Нет JSON-файлов в ${SOURCES_DIR}`);
+        process.exit(0);
     }
-
-    // 2. Загружаем каждый JSON-файл как объект
     const configs = [];
     for (const file of jsonFiles) {
         try {
@@ -91,34 +86,23 @@ async function main() {
             configs.push(config);
             console.log(`✅ Загружен: ${path.basename(file)} — remarks: ${config.remarks || 'не указан'}`);
         } catch (err) {
-            console.error(`❌ Ошибка в файле ${file}: ${err.message}`);
+            console.error(`❌ Ошибка в ${file}: ${err.message}`);
         }
     }
-
-    // 3. Сортируем конфиги
-    const sortedConfigs = sortConfigs(configs);
-    console.log(`\n📊 Сортировка выполнена (по приоритету: free > LTE > игры > Telegram > страны > остальное > резервные)`);
-
-    // 4. Формируем объект подписки
+    const sorted = sortConfigs(configs);
     const subscription = {
         version: 1,
         lastUpdated: new Date().toISOString(),
-        total: sortedConfigs.length,
-        configs: sortedConfigs
+        total: sorted.length,
+        configs: sorted
     };
-
-    // 5. Сохраняем в файлы
     await fs.writeFile(OUTPUT_JSON, JSON.stringify(subscription, null, 2));
-    const base64Content = Buffer.from(JSON.stringify(subscription), 'utf-8').toString('base64');
-    await fs.writeFile(OUTPUT_TXT, base64Content);
-
-    console.log(`\n✅ Подписка создана!`);
-    console.log(`📄 ${OUTPUT_JSON} (plain JSON, ${JSON.stringify(subscription).length} символов)`);
-    console.log(`📄 ${OUTPUT_TXT} (base64, ${base64Content.length} символов)`);
-    console.log(`\n🔗 Ссылка для импорта (sub.txt) в Hiddify / Nekoray / Karing:`);
-    console.log(`   https://raw.githubusercontent.com/citer1852-lab/SHUR-SUB/main/sub.txt`);
-    console.log(`\n💡 Теперь каждый JSON-конфиг сохраняется целиком (с балансировкой, observatory и т.д.).`);
-    console.log(`   Сортировка применена к конфигам на основе поля "remarks".`);
+    const base64 = Buffer.from(JSON.stringify(subscription), 'utf-8').toString('base64');
+    await fs.writeFile(OUTPUT_TXT, base64);
+    console.log(`✅ Готово: ${sorted.length} конфигов, сохранены в ${OUTPUT_JSON} и ${OUTPUT_TXT}`);
 }
 
-main().catch(console.error);
+main().catch(err => {
+    console.error('❌ Критическая ошибка:', err);
+    process.exit(1);
+});
