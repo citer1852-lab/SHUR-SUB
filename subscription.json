@@ -1,91 +1,91 @@
 {
-  "lastUpdated": "2026-04-06T21:53:16.077Z",
+  "lastUpdated": "2026-04-06T21:58:14.966Z",
   "total": 17,
   "profiles": [
     {
-      "originalName": "FREE.json",
+      "file": "sources/FREE.json",
       "remarks": "🇫🇮 FREE server",
-      "url": "https://raw.githubusercontent.com/citer1852-lab/SHUR-SUB/main/profiles/free.json"
+      "url": "https://raw.githubusercontent.com/citer1852-lab/SHUR-SUB/main/sources/FREE.json"
     },
     {
-      "originalName": "whitelist-1.json",
+      "file": "sources/whitelist-1.json",
       "remarks": "🇫🇮 LTE №1",
-      "url": "https://raw.githubusercontent.com/citer1852-lab/SHUR-SUB/main/profiles/whitelist_1.json"
+      "url": "https://raw.githubusercontent.com/citer1852-lab/SHUR-SUB/main/sources/whitelist-1.json"
     },
     {
-      "originalName": "whitelist-3.json",
+      "file": "sources/whitelist-3.json",
       "remarks": "🇫🇮 LTE №10",
-      "url": "https://raw.githubusercontent.com/citer1852-lab/SHUR-SUB/main/profiles/whitelist_3.json"
+      "url": "https://raw.githubusercontent.com/citer1852-lab/SHUR-SUB/main/sources/whitelist-3.json"
     },
     {
-      "originalName": "whitelist-2.json",
+      "file": "sources/whitelist-2.json",
       "remarks": "🇫🇮 LTE №2",
-      "url": "https://raw.githubusercontent.com/citer1852-lab/SHUR-SUB/main/profiles/whitelist_2.json"
+      "url": "https://raw.githubusercontent.com/citer1852-lab/SHUR-SUB/main/sources/whitelist-2.json"
     },
     {
-      "originalName": "whitelist-4.json",
+      "file": "sources/whitelist-4.json",
       "remarks": "🇫🇮 LTE №3",
-      "url": "https://raw.githubusercontent.com/citer1852-lab/SHUR-SUB/main/profiles/whitelist_4.json"
+      "url": "https://raw.githubusercontent.com/citer1852-lab/SHUR-SUB/main/sources/whitelist-4.json"
     },
     {
-      "originalName": "telegram-lte-2.json",
+      "file": "sources/telegram-lte-2.json",
       "remarks": "🇷🇺LTE + Telegram №1",
-      "url": "https://raw.githubusercontent.com/citer1852-lab/SHUR-SUB/main/profiles/telegram_lte_2.json"
+      "url": "https://raw.githubusercontent.com/citer1852-lab/SHUR-SUB/main/sources/telegram-lte-2.json"
     },
     {
-      "originalName": "telegram-lte-1.json",
+      "file": "sources/telegram-lte-1.json",
       "remarks": "🇷🇺LTE + Telegram №2",
-      "url": "https://raw.githubusercontent.com/citer1852-lab/SHUR-SUB/main/profiles/telegram_lte_1.json"
+      "url": "https://raw.githubusercontent.com/citer1852-lab/SHUR-SUB/main/sources/telegram-lte-1.json"
     },
     {
-      "originalName": "gaming-2.json",
+      "file": "sources/gaming-2.json",
       "remarks": "🇪🇪 🎮 Игровой №2",
-      "url": "https://raw.githubusercontent.com/citer1852-lab/SHUR-SUB/main/profiles/gaming_2.json"
+      "url": "https://raw.githubusercontent.com/citer1852-lab/SHUR-SUB/main/sources/gaming-2.json"
     },
     {
-      "originalName": "gaming-1.json",
+      "file": "sources/gaming-1.json",
       "remarks": "🇫🇮 🎮 Игровой №1",
-      "url": "https://raw.githubusercontent.com/citer1852-lab/SHUR-SUB/main/profiles/gaming_1.json"
+      "url": "https://raw.githubusercontent.com/citer1852-lab/SHUR-SUB/main/sources/gaming-1.json"
     },
     {
-      "originalName": "gaming-3.json",
+      "file": "sources/gaming-3.json",
       "remarks": "🇸🇪 🎮 Игровой №3",
-      "url": "https://raw.githubusercontent.com/citer1852-lab/SHUR-SUB/main/profiles/gaming_3.json"
+      "url": "https://raw.githubusercontent.com/citer1852-lab/SHUR-SUB/main/sources/gaming-3.json"
     },
     {
-      "originalName": "telegram-1.json",
+      "file": "sources/telegram-1.json",
       "remarks": "Telegram №1🇷🇺",
-      "url": "https://raw.githubusercontent.com/citer1852-lab/SHUR-SUB/main/profiles/telegram_1.json"
+      "url": "https://raw.githubusercontent.com/citer1852-lab/SHUR-SUB/main/sources/telegram-1.json"
     },
     {
-      "originalName": "telegram-2.json",
+      "file": "sources/telegram-2.json",
       "remarks": "Telegram №2🇷🇺",
-      "url": "https://raw.githubusercontent.com/citer1852-lab/SHUR-SUB/main/profiles/telegram_2.json"
+      "url": "https://raw.githubusercontent.com/citer1852-lab/SHUR-SUB/main/sources/telegram-2.json"
     },
     {
-      "originalName": "russian.json",
+      "file": "sources/russian.json",
       "remarks": "🇷🇺 Россия",
-      "url": "https://raw.githubusercontent.com/citer1852-lab/SHUR-SUB/main/profiles/russian.json"
+      "url": "https://raw.githubusercontent.com/citer1852-lab/SHUR-SUB/main/sources/russian.json"
     },
     {
-      "originalName": "germany.json",
+      "file": "sources/germany.json",
       "remarks": "🇩🇪 Германия",
-      "url": "https://raw.githubusercontent.com/citer1852-lab/SHUR-SUB/main/profiles/germany.json"
+      "url": "https://raw.githubusercontent.com/citer1852-lab/SHUR-SUB/main/sources/germany.json"
     },
     {
-      "originalName": "amsterdam.json",
+      "file": "sources/amsterdam.json",
       "remarks": "🇳🇱 Нидерланды",
-      "url": "https://raw.githubusercontent.com/citer1852-lab/SHUR-SUB/main/profiles/amsterdam.json"
+      "url": "https://raw.githubusercontent.com/citer1852-lab/SHUR-SUB/main/sources/amsterdam.json"
     },
     {
-      "originalName": "france.json",
+      "file": "sources/france.json",
       "remarks": "🇫🇷 Франция",
-      "url": "https://raw.githubusercontent.com/citer1852-lab/SHUR-SUB/main/profiles/france.json"
+      "url": "https://raw.githubusercontent.com/citer1852-lab/SHUR-SUB/main/sources/france.json"
     },
     {
-      "originalName": "SHA.json",
+      "file": "sources/SHA.json",
       "remarks": "🇺🇸 США 🇺🇸",
-      "url": "https://raw.githubusercontent.com/citer1852-lab/SHUR-SUB/main/profiles/sha.json"
+      "url": "https://raw.githubusercontent.com/citer1852-lab/SHUR-SUB/main/sources/SHA.json"
     }
   ]
 }
