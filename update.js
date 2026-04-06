@@ -15,11 +15,11 @@ const COUNTRY_PRIORITY = [
 
 // Ключевые слова для игровых серверов
 const GAMING_KEYWORDS = ["game", "gaming", "игровой"];
-const TELEGRAM_KEYWORDS = ["telegram", "телеграм"]
+const TELEGRAM_KEYWORDS = ["telegram", "телеграм"];
 // Ключевые слова для обходных серверов (LTE, REALITY, CF, CDN)
 const BYPASS_KEYWORDS = ["lte", "reality", "cf", "cdn"];
 
-// Ключевые слова для серверов, которые должны быть в самом конце (без иконки страны, резервные и т.п.)
+// Ключевые слова для серверов, которые должны быть в самом конце
 const LOW_PRIORITY_KEYWORDS = [
     "cf cdn ws", "us reality (backup)", "de reality (best dpi bypass)", "nl grpc", "proxy-backup", "proxy-main", "stable fallback"
 ];
@@ -124,7 +124,7 @@ function extractOutbounds(obj, results = []) {
     return results;
 }
 
-// ----- Обработка одного JSON-файла -----
+// ----- Обработка одного JSON-файла (с учётом балансировки) -----
 async function processJsonFile(filePath, fileName) {
     const content = await fs.readFile(filePath, 'utf-8');
     let json;
@@ -135,9 +135,38 @@ async function processJsonFile(filePath, fileName) {
         return [];
     }
     const globalRemarks = json.remarks || json.name || path.basename(fileName, '.json');
-    const outbounds = extractOutbounds(json);
+    
+    // Собираем все outbound'ы
+    const allOutbounds = [];
+    extractOutbounds(json, allOutbounds);
+    
+    // Определяем fallback-теги из балансировщиков
+    const fallbackTags = new Set();
+    if (json.routing && json.routing.balancers && Array.isArray(json.routing.balancers)) {
+        for (const bal of json.routing.balancers) {
+            if (bal.fallbackTag) {
+                fallbackTags.add(bal.fallbackTag);
+            }
+            // Если selector — массив, то все элементы, кроме первого, считаем резервными
+            if (bal.selector && Array.isArray(bal.selector) && bal.selector.length > 1) {
+                for (let i = 1; i < bal.selector.length; i++) {
+                    fallbackTags.add(bal.selector[i]);
+                }
+            }
+        }
+    }
+    
+    // Оставляем только основные outbound'ы (не fallback)
+    const mainOutbounds = allOutbounds.filter(out => {
+        const tag = out.tag;
+        if (!tag) return true;
+        return !fallbackTags.has(tag);
+    });
+    
+    const outboundsToProcess = mainOutbounds.length ? mainOutbounds : allOutbounds;
+    
     const uris = [];
-    for (const out of outbounds) {
+    for (const out of outboundsToProcess) {
         let uri = null;
         if (out.protocol === 'shadowsocks') {
             uri = convertShadowsocksToURI(out, globalRemarks);
@@ -150,6 +179,12 @@ async function processJsonFile(filePath, fileName) {
             console.log(`   ⚠️ Пропущен outbound: ${out.tag || 'без тега'}`);
         }
     }
+    
+    // Если после фильтрации получилось несколько URI, оставляем только первый (как основной)
+    if (uris.length > 1) {
+        console.log(`   ⚠️ В конфиге ${fileName} найдено несколько основных outbound'ов (${uris.length}), оставляем первый.`);
+        return [uris[0]];
+    }
     return uris;
 }
 
@@ -157,49 +192,19 @@ async function processJsonFile(filePath, fileName) {
 function getSortPriority(tag) {
     const lowerTag = tag.toLowerCase();
     
-    // 1. FREE server (самый первый)
-    if (lowerTag.includes("free")) {
-        return 0;
-    }
-    
-    // 2. LTE (только явное "lte")
-    if (lowerTag.includes("lte")) {
-        return 1;
-    }
-    
-    // 3. Игровые
-    for (const kw of GAMING_KEYWORDS) {
-        if (lowerTag.includes(kw)) {
-            return 2;
-        }
-    }
-
-    for (const kw of TELEGRAM_KEYWORDS) {
-        if (lowerTag.includes(kw)) {
-            return 3;
-        }
-    }
-    
-    // 4. Страны (Россия, Германия, Нидерланды, Франция, Сингапур, Гонконг, США)
+    if (lowerTag.includes("free")) return 0;
+    if (lowerTag.includes("lte")) return 1;
+    for (const kw of GAMING_KEYWORDS) if (lowerTag.includes(kw)) return 2;
+    for (const kw of TELEGRAM_KEYWORDS) if (lowerTag.includes(kw)) return 3;
     for (let i = 0; i < COUNTRY_PRIORITY.length; i++) {
-        if (lowerTag.includes(COUNTRY_PRIORITY[i].toLowerCase())) {
-            return 10 + i;
-        }
+        if (lowerTag.includes(COUNTRY_PRIORITY[i].toLowerCase())) return 10 + i;
     }
-    
-    // 5. Всё остальное (reality, cf, cdn, workers, proxy, nl gRPC и т.д.)
-    //    Но если вы хотите, чтобы некоторые из них были в самом конце, добавьте в LOW_PRIORITY_KEYWORDS
     for (const kw of LOW_PRIORITY_KEYWORDS) {
-        if (lowerTag.includes(kw.toLowerCase())) {
-            return 1000; // самые последние
-        }
+        if (lowerTag.includes(kw.toLowerCase())) return 1000;
     }
-    
-    // 6. По умолчанию – после стран, перед резервными
     return 500;
 }
 
-// ----- Сортировка URI по приоритету и алфавиту -----
 function sortUris(uris) {
     const withTag = uris.map(uri => {
         let tag = "";
@@ -213,13 +218,11 @@ function sortUris(uris) {
         const prioA = getSortPriority(a.tag);
         const prioB = getSortPriority(b.tag);
         if (prioA !== prioB) return prioA - prioB;
-        // внутри одной группы сортируем по алфавиту
         return a.tag.localeCompare(b.tag);
     });
     return withTag.map(item => item.uri);
 }
 
-// ----- Сбор всех URI из внешних источников и локальной папки -----
 async function collectAllLines() {
     const allUris = [];
 
@@ -246,7 +249,7 @@ async function collectAllLines() {
         }
     }
 
-    // Локальная папка sources (рекурсивно)
+    // Локальная папка sources
     async function walkDir(dir) {
         try {
             const entries = await fs.readdir(dir, { withFileTypes: true });
@@ -288,7 +291,7 @@ async function collectAllLines() {
         else console.log(`📁 Папка ${LOCAL_SOURCES_DIR} не найдена`);
     }
 
-    // Удаление дубликатов (полные совпадения строк)
+    // Удаление дубликатов
     const unique = new Map();
     for (const uri of allUris) {
         if (!unique.has(uri)) {
@@ -300,9 +303,8 @@ async function collectAllLines() {
     const uniqueUris = Array.from(unique.values());
     console.log(`\n📊 Итого уникальных URI: ${uniqueUris.length} (изначально было ${allUris.length})`);
 
-    // Сортировка
     const sortedUris = sortUris(uniqueUris);
-    console.log(`📊 Сортировка выполнена: страны → игровые/обходы → остальные (резервные в самом конце)`);
+    console.log(`📊 Сортировка выполнена`);
     return sortedUris;
 }
 
@@ -311,7 +313,7 @@ function toBase64(text) {
 }
 
 async function main() {
-    console.log('🚀 Сборка подписки (Shadowsocks + VLESS) с улучшенной сортировкой\n');
+    console.log('🚀 Сборка подписки (Shadowsocks + VLESS) с улучшенной сортировкой и фильтрацией fallback\n');
     try {
         const uris = await collectAllLines();
         if (uris.length === 0) {
@@ -333,9 +335,9 @@ async function main() {
         console.log(`\n✅ Подписка создана!`);
         console.log(`📄 ${OUTPUT_TXT} (${base64Data.length} символов)`);
         console.log(`📄 ${OUTPUT_JSON}`);
-        console.log(`\n🔗 Ссылка для Happ (импортируйте sub.txt как подписку):`);
+        console.log(`\n🔗 Ссылка для импорта (sub.txt как подписка):`);
         console.log(`   https://raw.githubusercontent.com/citer1852-lab/SHUR-SUB/main/sub.txt`);
-        console.log(`\n💡 Теперь серверы отсортированы: сначала страны, потом игровые/LTE, затем остальные, а резервные (CF CDN WS, US Reality, DE Reality, NL gRPC, proxy-*) — в самом конце.`);
+        console.log(`\n💡 Теперь серверы отсортированы, а из конфигов с балансировкой извлекается только основной сервер (без fallback).`);
     } catch (error) {
         console.error('❌ Критическая ошибка:', error);
         process.exit(1);
