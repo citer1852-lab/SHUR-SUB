@@ -2,11 +2,10 @@ const fs = require('fs').promises;
 const path = require('path');
 
 const SOURCES_DIR = './sources';
-const OUTPUT_TXT = 'sub.txt';
 const OUTPUT_JSON = 'subscription.json';
+const OUTPUT_TXT = 'sub.txt';
 
-// Базовый URL raw-контента (замените, если репозиторий другой)
-const GITHUB_RAW_BASE = 'https://raw.githubusercontent.com/citer1852-lab/SHUR-SUB/main/';
+const GITHUB_RAW_BASE = 'https://raw.githubusercontent.com/citer1852-lab/SHUR-SUB/main/'; // не используется, но оставим
 
 // ==================== ПРАВИЛА СОРТИРОВКИ ====================
 const COUNTRY_PRIORITY = [
@@ -41,7 +40,6 @@ function getSortPriority(text) {
 }
 // ============================================================
 
-// Рекурсивный сбор всех JSON-файлов в папке sources
 async function getAllJsonFiles(dir) {
     let results = [];
     const entries = await fs.readdir(dir, { withFileTypes: true });
@@ -57,78 +55,69 @@ async function getAllJsonFiles(dir) {
 }
 
 async function main() {
-    console.log('🔄 Сборка подписки из папки sources с сортировкой...');
+    console.log('🔄 Сборка подписки (массив JSON-конфигов) с сортировкой...');
 
     let jsonFiles = [];
     try {
         jsonFiles = await getAllJsonFiles(SOURCES_DIR);
     } catch (err) {
         if (err.code === 'ENOENT') {
-            console.log(`⚠️ Папка ${SOURCES_DIR} не найдена. Создайте её и добавьте JSON-файлы.`);
+            console.log(`⚠️ Папка ${SOURCES_DIR} не найдена.`);
             process.exit(0);
         }
         throw err;
     }
 
     if (jsonFiles.length === 0) {
-        console.log(`⚠️ В папке ${SOURCES_DIR} нет JSON-файлов.`);
+        console.log(`⚠️ Нет JSON-файлов.`);
         process.exit(0);
     }
 
-    // Загружаем каждый файл, читаем remarks
-    const items = [];
+    const configs = [];
     for (const file of jsonFiles) {
         try {
             const content = await fs.readFile(file, 'utf-8');
             const config = JSON.parse(content);
-            let remarks = config.remarks || '';
-            remarks = remarks.replace(/\0/g, '').trim();
-            // Относительный путь от корня репозитория (например, sources/xxx.json)
-            const relativePath = path.relative(process.cwd(), file).replace(/\\/g, '/');
-            items.push({
-                relativePath,
+            const remarks = config.remarks || path.basename(file, '.json');
+            configs.push({
+                config,
                 remarks,
-                originalName: path.basename(file)
+                file
             });
-            console.log(`📁 ${relativePath} -> remarks: "${remarks || '(нет)'}"`);
+            console.log(`📁 ${path.basename(file)} -> remarks: "${remarks}"`);
         } catch (err) {
             console.error(`❌ Ошибка в ${file}: ${err.message}`);
         }
     }
 
-    // Сортировка по приоритету (remarks или имя файла)
-    items.sort((a, b) => {
-        const sortA = a.remarks || a.originalName;
-        const sortB = b.remarks || b.originalName;
-        const prioA = getSortPriority(sortA);
-        const prioB = getSortPriority(sortB);
+    // Сортировка
+    configs.sort((a, b) => {
+        const prioA = getSortPriority(a.remarks);
+        const prioB = getSortPriority(b.remarks);
         if (prioA !== prioB) return prioA - prioB;
-        return sortA.localeCompare(sortB);
+        return a.remarks.localeCompare(b.remarks);
     });
     console.log(`\n📊 Сортировка выполнена`);
 
-    // Формируем список raw-ссылок
-    const profileUrls = items.map(item => GITHUB_RAW_BASE + item.relativePath);
-    await fs.writeFile(OUTPUT_TXT, profileUrls.join('\n'));
+    // Берём только объекты config
+    const sortedConfigs = configs.map(item => item.config);
 
-    // Дополнительная информация (необязательно)
-    const subscriptionInfo = {
-        lastUpdated: new Date().toISOString(),
-        total: profileUrls.length,
-        profiles: items.map((item, i) => ({
-            file: item.relativePath,
-            remarks: item.remarks,
-            url: profileUrls[i]
-        }))
-    };
-    await fs.writeFile(OUTPUT_JSON, JSON.stringify(subscriptionInfo, null, 2));
+    // Сохраняем как массив в subscription.json
+    await fs.writeFile(OUTPUT_JSON, JSON.stringify(sortedConfigs, null, 2));
 
-    console.log(`\n✅ Готово! Создано ${profileUrls.length} ссылок.`);
-    console.log(`📄 ${OUTPUT_TXT} — подписка (список raw-ссылок на JSON-файлы в sources).`);
-    console.log(`🔗 Ссылка на подписку: https://raw.githubusercontent.com/citer1852-lab/SHUR-SUB/main/sub.txt`);
+    // Также создаём base64-версию для клиентов, ожидающих подписку в base64
+    const base64Content = Buffer.from(JSON.stringify(sortedConfigs), 'utf-8').toString('base64');
+    await fs.writeFile(OUTPUT_TXT, base64Content);
+
+    console.log(`\n✅ Готово! Сохранено ${sortedConfigs.length} конфигов.`);
+    console.log(`📄 ${OUTPUT_JSON} — массив конфигов (plain JSON)`);
+    console.log(`📄 ${OUTPUT_TXT} — то же самое в base64`);
+    console.log(`\n🔗 Ссылка для импорта в Hiddify / Nekoray / Karing:`);
+    console.log(`   https://raw.githubusercontent.com/citer1852-lab/SHUR-SUB/main/subscription.json`);
+    console.log(`   или base64: https://raw.githubusercontent.com/citer1852-lab/SHUR-SUB/main/sub.txt`);
 }
 
 main().catch(err => {
-    console.error('❌ Критическая ошибка:', err);
+    console.error('❌ Ошибка:', err);
     process.exit(1);
 });
