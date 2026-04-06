@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Настройка пинга в HApp</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            max-width: 400px;
+            width: 100%;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        h1 {
+            font-size: 24px;
+            margin-bottom: 16px;
+            color: #1a1a1a;
+        }
+        p {
+            color: #666;
+            line-height: 1.5;
+            margin-bottom: 24px;
+        }
+        .button {
+            display: inline-block;
+            background: #2e7d32;
+            color: white;
+            padding: 14px 28px;
+            border-radius: 28px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            transition: background 0.2s;
+            cursor: pointer;
+            border: none;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .button:hover {
+            background: #1b5e20;
+        }
+        .button:active {
+            transform: scale(0.98);
+        }
+        .note {
+            margin-top: 20px;
+            font-size: 12px;
+            color: #999;
+        }
+        hr {
+            margin: 24px 0;
+            border: none;
+            border-top: 1px solid #eee;
+        }
+        .secondary-button {
+            background: #1976d2;
+            margin-top: 12px;
+        }
+        .secondary-button:hover {
+            background: #0d47a1;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>⚙️ Настройка проверки задержки</h1>
+        <p>Для корректной работы подписки рекомендуется выбрать <strong>TCP Ping</strong> в настройках HApp.</p>
+        
+        <button class="button" onclick="openPingSettings()">
+            🔧 Открыть настройки пинга
+        </button>
+        
+        <hr>
+        
+        <button class="button secondary-button" onclick="openAddSubscription()">
+            📋 Добавить подписку
+        </button>
+        
+        <p class="note">
+            При нажатии на кнопку браузер может запросить разрешение на открытие HApp.<br>
+            Если ничего не происходит — проверьте, установлено ли приложение.
+        </p>
+    </div>
+
+    <script>
+        function openPingSettings() {
+            window.location.href = 'happ://ping/settings';
+        }
+        
+        function openAddSubscription() {
+            window.location.href = 'happ://add/https://raw.githubusercontent.com/citer1852-lab/SHUR-SUB/main/sub.txt';
+        }
+    </script>
+</body>
+</html>
