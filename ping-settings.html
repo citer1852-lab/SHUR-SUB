@@ -3,106 +3,314 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Настройка пинга в HApp</title>
+    <title>SHUR-SUB | Быстрая настройка подписки</title>
     <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background: #f5f5f5;
+        * {
             margin: 0;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
-        .card {
-            background: white;
-            border-radius: 16px;
-            padding: 24px;
-            max-width: 400px;
-            width: 100%;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            text-align: center;
-        }
-        h1 {
-            font-size: 24px;
-            margin-bottom: 16px;
-            color: #1a1a1a;
-        }
-        p {
-            color: #666;
-            line-height: 1.5;
-            margin-bottom: 24px;
-        }
-        .button {
-            display: inline-block;
-            background: #2e7d32;
-            color: white;
-            padding: 14px 28px;
-            border-radius: 28px;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 16px;
-            transition: background 0.2s;
-            cursor: pointer;
-            border: none;
-            width: 100%;
+            padding: 0;
             box-sizing: border-box;
         }
-        .button:hover {
-            background: #1b5e20;
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: #f0f2f5;
+            padding: 20px;
+            padding-bottom: 40px;
         }
-        .button:active {
+        
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        /* Заголовок */
+        .header {
+            text-align: center;
+            padding: 20px 0 10px 0;
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            color: #1a1a1a;
+            margin-bottom: 8px;
+        }
+        
+        .header p {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .sub-url {
+            background: #e8eaed;
+            padding: 10px 16px;
+            border-radius: 12px;
+            font-size: 12px;
+            color: #3c4043;
+            text-align: center;
+            word-break: break-all;
+            margin-bottom: 20px;
+        }
+        
+        /* Карточки */
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .card-desc {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 16px;
+            line-height: 1.4;
+        }
+        
+        /* Кнопки */
+        .buttons-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 8px;
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 20px;
+            border-radius: 14px;
+            font-size: 14px;
+            font-weight: 500;
+            text-decoration: none;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s ease;
+            flex: 1 1 auto;
+            min-width: 140px;
+        }
+        
+        .btn-primary {
+            background: #2e7d32;
+            color: white;
+        }
+        
+        .btn-primary:hover, .btn-primary:active {
+            background: #1b5e20;
             transform: scale(0.98);
         }
+        
+        .btn-secondary {
+            background: #1976d2;
+            color: white;
+        }
+        
+        .btn-secondary:hover, .btn-secondary:active {
+            background: #0d47a1;
+            transform: scale(0.98);
+        }
+        
+        .btn-outline {
+            background: white;
+            color: #1a1a1a;
+            border: 1px solid #dadce0;
+        }
+        
+        .btn-outline:hover, .btn-outline:active {
+            background: #f8f9fa;
+            transform: scale(0.98);
+        }
+        
+        .btn-dark {
+            background: #202124;
+            color: white;
+        }
+        
+        .btn-warning {
+            background: #e8710a;
+            color: white;
+        }
+        
+        /* Инструкция */
+        .instruction {
+            background: #f8f9fa;
+            border-radius: 16px;
+            padding: 16px;
+            margin-top: 16px;
+            font-size: 13px;
+            color: #3c4043;
+            border-left: 4px solid #2e7d32;
+        }
+        
+        .instruction p {
+            margin-bottom: 8px;
+        }
+        
+        .instruction p:last-child {
+            margin-bottom: 0;
+        }
+        
+        .instruction code {
+            background: #e8eaed;
+            padding: 2px 6px;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        
+        hr {
+            margin: 20px 0;
+            border: none;
+            border-top: 1px solid #e8eaed;
+        }
+        
         .note {
-            margin-top: 20px;
             font-size: 12px;
             color: #999;
+            text-align: center;
+            margin-top: 20px;
         }
-        hr {
-            margin: 24px 0;
-            border: none;
-            border-top: 1px solid #eee;
-        }
-        .secondary-button {
-            background: #1976d2;
-            margin-top: 12px;
-        }
-        .secondary-button:hover {
-            background: #0d47a1;
+        
+        @media (max-width: 500px) {
+            body {
+                padding: 16px;
+            }
+            .buttons-grid {
+                flex-direction: column;
+            }
+            .btn {
+                width: 100%;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="card">
-        <h1>⚙️ Настройка проверки задержки</h1>
-        <p>Для корректной работы подписки рекомендуется выбрать <strong>TCP Ping</strong> в настройках HApp.</p>
-        
-        <button class="button" onclick="openPingSettings()">
-            🔧 Открыть настройки пинга
-        </button>
-        
-        <hr>
-        
-        <button class="button secondary-button" onclick="openAddSubscription()">
-            📋 Добавить подписку
-        </button>
-        
-        <p class="note">
-            При нажатии на кнопку браузер может запросить разрешение на открытие HApp.<br>
-            Если ничего не происходит — проверьте, установлено ли приложение.
-        </p>
+<div class="container">
+    <div class="header">
+        <h1>🧩 SHUR-SUB</h1>
+        <p>Быстрая настройка подписки за 1 минуту</p>
     </div>
-
-    <script>
-        function openPingSettings() {
-            window.location.href = 'happ://ping/settings';
-        }
+    
+    <div class="sub-url">
+        🔗 Подписка: raw.githubusercontent.com/citer1852-lab/SHUR-SUB/main/sub.txt
+    </div>
+    
+    <!-- ===== 1. ВЫБОР ПРИЛОЖЕНИЯ ===== -->
+    <div class="card">
+        <div class="card-title">
+            📱 1. Установите приложение
+        </div>
+        <div class="card-desc">
+            Выберите ваше устройство и скачайте подходящий клиент:
+        </div>
+        <div class="buttons-grid">
+            <a href="https://apps.apple.com/app/happ-proxy-utility/id6478192307" target="_blank" class="btn btn-outline">📱 HApp (iOS)</a>
+            <a href="https://play.google.com/store/apps/details?id=pro.happ.app" target="_blank" class="btn btn-outline">🤖 HApp (Android)</a>
+            <a href="https://github.com/2dust/v2rayNG/releases" target="_blank" class="btn btn-outline">📦 v2rayNG (Android)</a>
+            <a href="https://apps.apple.com/app/shadowrocket/id932747118" target="_blank" class="btn btn-outline">🚀 Shadowrocket (iOS)</a>
+            <a href="https://github.com/2dust/v2rayN/releases" target="_blank" class="btn btn-outline">💻 v2rayN (Windows)</a>
+        </div>
+    </div>
+    
+    <!-- ===== 2. ДОБАВЛЕНИЕ ПОДПИСКИ ===== -->
+    <div class="card">
+        <div class="card-title">
+            📋 2. Добавьте подписку
+        </div>
+        <div class="card-desc">
+            Нажмите на кнопку для вашего приложения — подписка добавится автоматически:
+        </div>
+        <div class="buttons-grid">
+            <a href="happ://add/https://raw.githubusercontent.com/citer1852-lab/SHUR-SUB/main/sub.txt" class="btn btn-primary">📱 HApp (iOS/Android)</a>
+            <a href="v2rayng://install-sub/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fciter1852-lab%2FSHUR-SUB%2Fmain%2Fsub.txt%23SHUR-SUB" class="btn btn-primary">📦 v2rayNG</a>
+            <a href="sub://https://raw.githubusercontent.com/citer1852-lab/SHUR-SUB/main/sub.txt" class="btn btn-primary">🚀 Shadowrocket</a>
+            <a href="clash://install-config?url=https://raw.githubusercontent.com/citer1852-lab/SHUR-SUB/main/sub.txt" class="btn btn-primary">💻 Clash</a>
+        </div>
         
-        function openAddSubscription() {
-            window.location.href = 'happ://add/https://raw.githubusercontent.com/citer1852-lab/SHUR-SUB/main/sub.txt';
-        }
-    </script>
+        <div class="instruction">
+            <p><strong>📖 Или вручную:</strong></p>
+            <p>1. Скопируйте ссылку: <code>https://raw.githubusercontent.com/citer1852-lab/SHUR-SUB/main/sub.txt</code></p>
+            <p>2. Откройте приложение → Добавить подписку → Вставить ссылку → Сохранить</p>
+            <p>3. Обновите подписку (потяните вниз или нажмите ⋮ → Обновить)</p>
+        </div>
+    </div>
+    
+    <!-- ===== 3. НАСТРОЙКА ПИНГА ===== -->
+    <div class="card">
+        <div class="card-title">
+            📊 3. Настройка Ping (проверка задержки)
+        </div>
+        <div class="card-desc">
+            <strong>TCP Ping</strong> — лучший вариант для реальной оценки скорости, он работает через VPN-туннель и показывает реальную задержку до сервера [citation:3].
+        </div>
+        <div class="buttons-grid">
+            <a href="happ://ping/settings" class="btn btn-secondary">⚡ Открыть настройки пинга (HApp)</a>
+        </div>
+        <div class="instruction">
+            <p><strong>⚙️ Как настроить (один раз):</strong></p>
+            <p>• <strong>В HApp:</strong> Нажмите на кнопку выше → выберите <strong>TCP Ping</strong> или <strong>Via Proxy</strong> [citation:3]</p>
+            <p>• <strong>В v2rayNG:</strong> Нажмите на иконку ⚡ рядом с сервером → выберите TCP Ping</p>
+            <p>• <strong>В Shadowrocket:</strong> Нажмите на сервер → Test Latency → TCP</p>
+            <p>💡 <strong>Совет:</strong> Включите "Ping on Launch" в настройках, чтобы приложение автоматически проверяло все сервера при запуске [citation:3].</p>
+        </div>
+    </div>
+    
+    <!-- ===== 4. ИМПОРТ МАРШРУТИЗАЦИИ ===== -->
+    <div class="card">
+        <div class="card-title">
+            🧭 4. Импорт маршрутизации (для HApp)
+        </div>
+        <div class="card-desc">
+            Маршрутизация определяет, какие сайты идут через VPN, а какие — напрямую. Готовый профиль с настройками "всё через прокси".
+        </div>
+        <div class="buttons-grid">
+            <a href="happ://routing/add/ewogICAgIkdsb2JhbFByb3h5IjogdHJ1ZSwKICAgICJOYW1lIjogIlNIVVItU1VCIgp9" class="btn btn-warning">🌍 Импорт маршрутизации (HApp)</a>
+        </div>
+        <div class="instruction">
+            <p><strong>📌 Что делает этот профиль:</strong> Весь трафик направляется через прокси. Российские сайты и приватные IP идут напрямую (для стабильной работы).</p>
+            <p><strong>🛠️ Как импортировать вручную:</strong> HApp → Настройки → Маршрутизация → ⋮ → Импорт → Вставить ссылку или код</p>
+            <p>• <strong>В v2rayNG/Shadowrocket:</strong> Маршрутизация настраивается отдельно в правилах (Routing Rules).</p>
+        </div>
+    </div>
+    
+    <!-- ===== 5. ТИПЫ ПИНГА (ПОЯСНЕНИЕ) ===== -->
+    <div class="card">
+        <div class="card-title">
+            ℹ️ Типы пинга в HApp [citation:3]
+        </div>
+        <div class="instruction" style="margin-top: 0;">
+            <p><strong>🟢 ICMP Ping</strong> — классический пинг, требует отключения VPN. Используется редко.</p>
+            <p><strong>🔵 TCP Ping</strong> — измеряет время установки TCP-соединения. Работает через VPN, показывает реальную задержку.</p>
+            <p><strong>🟠 Via Proxy</strong> — самый точный метод. Проходит весь путь: клиент → VPN-сервер → целевой сайт. Учитывает шифрование и маршрутизацию.</p>
+            <p>💡 <strong>Рекомендация:</strong> Используйте <strong>TCP Ping</strong> или <strong>Via Proxy</strong> для наиболее точных результатов.</p>
+        </div>
+    </div>
+    
+    <div class="note">
+        ⚡ SHUR-SUB | Бесплатная подписка<br>
+        Обновляется автоматически каждый час
+    </div>
+</div>
+
+<script>
+    // Отслеживаем клики по кнопкам для статистики (опционально)
+    document.querySelectorAll('.btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            console.log('Нажата кнопка:', this.textContent.trim());
+        });
+    });
+</script>
 </body>
 </html>
