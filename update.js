@@ -15,6 +15,7 @@ const COUNTRY_PRIORITY = [
 
 // Ключевые слова для игровых серверов
 const GAMING_KEYWORDS = ["game", "gaming", "игровой"];
+const TELEGRAM_KEYWORDS = ["telegram", "телеграм"]
 // Ключевые слова для обходных серверов (LTE, REALITY, CF, CDN)
 const BYPASS_KEYWORDS = ["lte", "reality", "cf", "cdn"];
 
@@ -23,14 +24,7 @@ const LOW_PRIORITY_KEYWORDS = [
     "cf cdn ws", "us reality (backup)", "de reality (best dpi bypass)", "nl grpc", "proxy-backup", "proxy-main", "stable fallback"
 ];
 
-const EXTERNAL_SOURCES = [
-    "vless://cad6daf7-6cf8-4e1b-b0d5-aa0bea400d2a@de.monkeyisland.xyz:443?type=tcp&security=reality&flow=xtls-rprx-vision&fp=chrome&pbk=2AKBmK0PMf2zUMhRo1Ad-WNf_XoRk3AN-SGo6ZdhxA4&sid=a0321aad8db9924f&sni=de.monkeyisland.xyz#🇩🇪 REALITY",
-    "vless://a7b1b295-89c0-4794-bc3b-13af6cf63312@185.162.11.223:443?security=reality&encryption=none&pbk=htJuCzotUMp7MYP7ZEWKWT1iEuAbr5cDKoX32Ego6WE&headerType=none&fp=chrome&type=tcp&flow=xtls-rprx-vision&sni=sun6-21.userapi.com&sid=edbc04c389#🇳🇱 REALITY",
-    "vless://a91b9d7f-eca5-43a5-9524-2201817225d6@103.35.188.157:443?type=tcp&security=reality&flow=xtls-rprx-vision&fp=chrome&pbk=fy2Jdffg5wE6eUhSJP2Tv3xn06bX6ou_kNRyZ9zl314&sid=514be820&sni=google.com#🇺🇸 REALITY",
-    "vless://4c3a2f39-dc52-4322-ac66-83010d12bfc0@85.239.33.76:4354?security=reality&encryption=none&pbk=SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc&headerType=none&fp=chrome&type=tcp&flow=xtls-rprx-vision&sni=apple.com#🇫🇷 REALITY",
-    "vless://6d0e9ded-d23d-4ffb-b165-7bc757be84d3@89.124.79.248:443?security=reality&flow=xtls-rprx-vision&sni=www.google.com&type=tcp&fp=chrome&pbk=VFzQg-tlMPhO7wBJNQJD8M82zPxnCTy_Y2oHWgsFbzQ&sid=10402c47a7e61563#🇳🇱 REALITY_2",
-    "vless://0ca855d9-7c03-40eb-929b-919f934abdc3@104.16.30.239:80?encryption=none&security=none&type=ws&host=amirvpn.amirhm00100.workers.dev&path=%2F%3Fed%3D2048#🇨🇦 WORKERS"
-];
+const EXTERNAL_SOURCES = [];
 
 const LOCAL_SOURCES_DIR = './sources';
 const OUTPUT_JSON = 'subscription.json';
@@ -177,6 +171,12 @@ function getSortPriority(tag) {
     for (const kw of GAMING_KEYWORDS) {
         if (lowerTag.includes(kw)) {
             return 2;
+        }
+    }
+
+    for (const kw of TELEGRAM_KEYWORDS) {
+        if (lowerTag.includes(kw)) {
+            return 3;
         }
     }
     
