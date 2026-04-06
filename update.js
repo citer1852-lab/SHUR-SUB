@@ -2,50 +2,31 @@ const fs = require('fs').promises;
 const path = require('path');
 
 const SOURCES_DIR = './sources';
-const OUTPUT_JSON = 'subscription.json';
+const PROFILES_DIR = './profiles';
 const OUTPUT_TXT = 'sub.txt';
 
-// Приоритеты (как у вас в старом коде)
-const COUNTRY_PRIORITY = [
-    "россия", "russia", "🇷🇺",
-    "германия", "germany", "🇩🇪",
-    "нидерланды", "netherlands", "🇳🇱",
-    "франция", "france", "🇫🇷",
-    "сингапур", "singapore", "🇸🇬",
-    "гонконг", "hong kong", "🇭🇰",
-    "сша", "usa", "🇺🇸"
-];
-const GAMING_KEYWORDS = ["game", "gaming", "игровой"];
-const TELEGRAM_KEYWORDS = ["telegram", "телеграм"];
-const LOW_PRIORITY_KEYWORDS = [
-    "cf cdn ws", "us reality (backup)", "de reality (best dpi bypass)",
-    "nl grpc", "proxy-backup", "proxy-main", "stable fallback"
-];
+// Замените на ваш репозиторий и ветку, если нужно
+const GITHUB_RAW_BASE = 'https://raw.githubusercontent.com/citer1852-lab/SHUR-SUB/main/';
 
-function getSortPriority(text) {
-    const lower = text.toLowerCase();
-    if (lower.includes("free")) return 0;
-    if (lower.includes("lte")) return 1;
-    for (const kw of GAMING_KEYWORDS) if (lower.includes(kw)) return 2;
-    for (const kw of TELEGRAM_KEYWORDS) if (lower.includes(kw)) return 3;
-    for (let i = 0; i < COUNTRY_PRIORITY.length; i++) {
-        if (lower.includes(COUNTRY_PRIORITY[i].toLowerCase())) return 10 + i;
+// Функция для безопасного имени файла (латиница, без пробелов)
+function safeFilename(remarks, index) {
+    let base = remarks || `config_${index}`;
+    // Простая транслитерация и замена опасных символов
+    const translit = {
+        'а':'a','б':'b','в':'v','г':'g','д':'d','е':'e','ё':'e','ж':'zh','з':'z',
+        'и':'i','й':'y','к':'k','л':'l','м':'m','н':'n','о':'o','п':'p','р':'r',
+        'с':'s','т':'t','у':'u','ф':'f','х':'h','ц':'c','ч':'ch','ш':'sh','щ':'sch',
+        'ъ':'','ы':'y','ь':'','э':'e','ю':'yu','я':'ya',
+        '🇷🇺':'ru','🇩🇪':'de','🇳🇱':'nl','🇫🇷':'fr','🇸🇬':'sg','🇭🇰':'hk','🇺🇸':'us'
+    };
+    let safe = base.toLowerCase();
+    for (let [ru, en] of Object.entries(translit)) {
+        safe = safe.replace(new RegExp(ru, 'g'), en);
     }
-    for (const kw of LOW_PRIORITY_KEYWORDS) {
-        if (lower.includes(kw.toLowerCase())) return 1000;
-    }
-    return 500;
-}
-
-function sortConfigs(configs) {
-    return configs.sort((a, b) => {
-        const remarksA = a.remarks || a.name || '';
-        const remarksB = b.remarks || b.name || '';
-        const prioA = getSortPriority(remarksA);
-        const prioB = getSortPriority(remarksB);
-        if (prioA !== prioB) return prioA - prioB;
-        return remarksA.localeCompare(remarksB);
-    });
+    safe = safe.replace(/[^a-z0-9_\-]/g, '_');
+    safe = safe.replace(/_+/g, '_');
+    if (safe.length > 50) safe = safe.substring(0, 50);
+    return `${safe}.json`;
 }
 
 async function getAllJsonFiles(dir) {
@@ -63,7 +44,18 @@ async function getAllJsonFiles(dir) {
 }
 
 async function main() {
-    console.log('🔄 Обновление подписки...');
+    console.log('🔄 Обновление подписки (отдельные профили)...');
+
+    // Создаём папку profiles (если нет)
+    await fs.mkdir(PROFILES_DIR, { recursive: true });
+
+    // Очищаем profiles от старых файлов
+    const oldFiles = await fs.readdir(PROFILES_DIR);
+    for (const file of oldFiles) {
+        await fs.unlink(path.join(PROFILES_DIR, file));
+    }
+
+    // Получаем все JSON из sources
     let jsonFiles = [];
     try {
         jsonFiles = await getAllJsonFiles(SOURCES_DIR);
@@ -74,32 +66,37 @@ async function main() {
         }
         throw err;
     }
+
     if (jsonFiles.length === 0) {
-        console.log(`⚠️ Нет JSON-файлов в ${SOURCES_DIR}`);
+        console.log(`⚠️ В папке ${SOURCES_DIR} нет JSON-файлов.`);
         process.exit(0);
     }
-    const configs = [];
+
+    const profileUrls = [];
+    let index = 1;
     for (const file of jsonFiles) {
         try {
             const content = await fs.readFile(file, 'utf-8');
             const config = JSON.parse(content);
-            configs.push(config);
-            console.log(`✅ Загружен: ${path.basename(file)} — remarks: ${config.remarks || 'не указан'}`);
+            const remarks = config.remarks || '';
+            const safeName = safeFilename(remarks, index);
+            const destPath = path.join(PROFILES_DIR, safeName);
+            await fs.writeFile(destPath, content);
+            const rawUrl = GITHUB_RAW_BASE + `profiles/${encodeURIComponent(safeName)}`;
+            profileUrls.push(rawUrl);
+            console.log(`✅ Профиль ${index}: ${safeName} (remarks: ${remarks || 'без имени'})`);
+            index++;
         } catch (err) {
-            console.error(`❌ Ошибка в ${file}: ${err.message}`);
+            console.error(`❌ Ошибка в файле ${file}: ${err.message}`);
         }
     }
-    const sorted = sortConfigs(configs);
-    const subscription = {
-        version: 1,
-        lastUpdated: new Date().toISOString(),
-        total: sorted.length,
-        configs: sorted
-    };
-    await fs.writeFile(OUTPUT_JSON, JSON.stringify(subscription, null, 2));
-    const base64 = Buffer.from(JSON.stringify(subscription), 'utf-8').toString('base64');
-    await fs.writeFile(OUTPUT_TXT, base64);
-    console.log(`✅ Готово: ${sorted.length} конфигов, сохранены в ${OUTPUT_JSON} и ${OUTPUT_TXT}`);
+
+    // Сохраняем sub.txt как список raw-ссылок (по одной на строку)
+    await fs.writeFile(OUTPUT_TXT, profileUrls.join('\n'));
+
+    console.log(`\n✅ Готово! Создано ${profileUrls.length} профилей.`);
+    console.log(`📄 ${OUTPUT_TXT} — список ссылок. Импортируйте этот файл как подписку в Hiddify / Nekoray / Karing.`);
+    console.log(`\n🔗 Ваша подписка: https://raw.githubusercontent.com/citer1852-lab/SHUR-SUB/main/sub.txt`);
 }
 
 main().catch(err => {
