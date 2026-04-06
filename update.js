@@ -4,8 +4,9 @@ const path = require('path');
 const SOURCES_DIR = './sources';
 const PROFILES_DIR = './profiles';
 const OUTPUT_TXT = 'sub.txt';
-const OUTPUT_JSON = 'subscription.json'; // опционально, для информации
+const OUTPUT_JSON = 'subscription.json'; // дополнительный файл с метаданными
 
+// Базовый URL для raw-ссылок (укажите свой репозиторий и ветку)
 const GITHUB_RAW_BASE = 'https://raw.githubusercontent.com/citer1852-lab/SHUR-SUB/main/';
 
 // ==================== ПРАВИЛА СОРТИРОВКИ (как в вашем старом коде) ====================
@@ -39,8 +40,12 @@ function getSortPriority(text) {
     }
     return 500;
 }
-// =====================================================================
+// ====================================================================================
 
+/**
+ * Генерирует безопасное имя файла на основе remarks или имени файла.
+ * Удаляет нелатинские символы, заменяет эмодзи стран, транслитерирует русские буквы.
+ */
 function safeFilename(remarks, index) {
     let base = remarks || `config_${index}`;
     const translit = {
@@ -60,6 +65,9 @@ function safeFilename(remarks, index) {
     return `${safe}.json`;
 }
 
+/**
+ * Рекурсивно собирает все JSON-файлы в папке.
+ */
 async function getAllJsonFiles(dir) {
     let results = [];
     const entries = await fs.readdir(dir, { withFileTypes: true });
@@ -75,18 +83,16 @@ async function getAllJsonFiles(dir) {
 }
 
 async function main() {
-    console.log('🔄 Обновление подписки с сортировкой (отдельные профили)...');
+    console.log('🔄 Сборка подписки с сортировкой (отдельные профили)...');
 
-    // Создаём папку profiles
+    // Создаём и очищаем папку profiles
     await fs.mkdir(PROFILES_DIR, { recursive: true });
-
-    // Очищаем profiles
     const oldFiles = await fs.readdir(PROFILES_DIR);
     for (const file of oldFiles) {
         await fs.unlink(path.join(PROFILES_DIR, file));
     }
 
-    // Получаем все JSON из sources
+    // Получаем все JSON-файлы из sources
     let jsonFiles = [];
     try {
         jsonFiles = await getAllJsonFiles(SOURCES_DIR);
@@ -103,13 +109,15 @@ async function main() {
         process.exit(0);
     }
 
-    // Загружаем конфиги и извлекаем remarks
+    // Загружаем конфиги, извлекаем remarks
     const configs = [];
     for (const file of jsonFiles) {
         try {
             const content = await fs.readFile(file, 'utf-8');
             const config = JSON.parse(content);
-            const remarks = config.remarks || path.basename(file, '.json');
+            let remarks = config.remarks || path.basename(file, '.json');
+            // Убираем нулевые символы, если есть
+            remarks = remarks.replace(/\0/g, '');
             configs.push({
                 path: file,
                 content: content,
@@ -122,16 +130,16 @@ async function main() {
         }
     }
 
-    // Сортируем по приоритету (как в старом коде)
+    // Сортировка по приоритету
     configs.sort((a, b) => {
         const prioA = getSortPriority(a.remarks);
         const prioB = getSortPriority(b.remarks);
         if (prioA !== prioB) return prioA - prioB;
         return a.remarks.localeCompare(b.remarks);
     });
-    console.log(`\n📊 Сортировка выполнена (по приоритету: free > LTE > игры > Telegram > страны > остальное > резервные)`);
+    console.log(`\n📊 Сортировка выполнена (приоритет: free > LTE > игры > Telegram > страны > остальное > резервные)`);
 
-    // Создаём профили и список ссылок
+    // Копируем каждый конфиг в profiles с безопасным именем и собираем ссылки
     const profileUrls = [];
     let index = 1;
     for (const item of configs) {
@@ -144,10 +152,10 @@ async function main() {
         index++;
     }
 
-    // Сохраняем sub.txt как список ссылок в отсортированном порядке
+    // Записываем sub.txt (список ссылок, каждая с новой строки)
     await fs.writeFile(OUTPUT_TXT, profileUrls.join('\n'));
 
-    // Также создаём subscription.json для информации (необязательно)
+    // Дополнительно сохраняем метаинформацию в subscription.json
     const subscriptionInfo = {
         lastUpdated: new Date().toISOString(),
         total: profileUrls.length,
@@ -162,6 +170,7 @@ async function main() {
     console.log(`📄 ${OUTPUT_TXT} — список ссылок (отсортированный).`);
     console.log(`📄 ${OUTPUT_JSON} — информация о подписке.`);
     console.log(`\n🔗 Ваша подписка: https://raw.githubusercontent.com/citer1852-lab/SHUR-SUB/main/sub.txt`);
+    console.log(`   Импортируйте этот URL в Hiddify / Nekoray / Karing как подписку.`);
 }
 
 main().catch(err => {
