@@ -2,7 +2,7 @@ const fs = require('fs').promises;
 const path = require('path');
 
 const SOURCES_DIR = './sources';
-const PROFILES_DIR = './profiles';
+const PROFILES_DIR = SOURCES_DIR;
 const OUTPUT_TXT = 'sub.txt';
 
 // Замените на ваш репозиторий и ветку, если нужно
