@@ -2,10 +2,10 @@ const fs = require('fs').promises;
 const path = require('path');
 
 const SOURCES_DIR = './sources';
-const PROFILES_DIR = './profiles';
 const OUTPUT_TXT = 'sub.txt';
 const OUTPUT_JSON = 'subscription.json';
 
+// Базовый URL raw-контента (замените, если репозиторий другой)
 const GITHUB_RAW_BASE = 'https://raw.githubusercontent.com/citer1852-lab/SHUR-SUB/main/';
 
 // ==================== ПРАВИЛА СОРТИРОВКИ ====================
@@ -41,37 +41,7 @@ function getSortPriority(text) {
 }
 // ============================================================
 
-/**
- * Преобразует строку в безопасное имя файла (латиница, без пробелов, без спецсимволов).
- * Сохраняет расширение .json.
- */
-function safeFilenameFromOriginal(originalName, remarks, index) {
-    let base = originalName.replace(/\.json$/i, '');
-    // Если есть remarks и он не пустой, можно использовать его, но для предсказуемости лучше использовать оригинальное имя
-    // По желанию: base = remarks ? remarks.replace(/\0/g, '') : base;
-    // Однако по вашей просьбе, чтобы имена соответствовали исходным файлам, оставим оригинальное имя.
-    // Но в оригинальных именах могут быть пробелы, эмодзи, русские буквы – их нужно транслитерировать.
-    const translit = {
-        'а':'a','б':'b','в':'v','г':'g','д':'d','е':'e','ё':'e','ж':'zh','з':'z',
-        'и':'i','й':'y','к':'k','л':'l','м':'m','н':'n','о':'o','п':'p','р':'r',
-        'с':'s','т':'t','у':'u','ф':'f','х':'h','ц':'c','ч':'ch','ш':'sh','щ':'sch',
-        'ъ':'','ы':'y','ь':'','э':'e','ю':'yu','я':'ya',
-        '🇷🇺':'ru','🇩🇪':'de','🇳🇱':'nl','🇫🇷':'fr','🇸🇬':'sg','🇭🇰':'hk','🇺🇸':'us',
-        ' ':'_', '-':'_'
-    };
-    let safe = base.toLowerCase();
-    for (let [ru, en] of Object.entries(translit)) {
-        safe = safe.replace(new RegExp(ru, 'g'), en);
-    }
-    safe = safe.replace(/[^a-z0-9_\-]/g, '_');
-    safe = safe.replace(/_+/g, '_');
-    if (safe.length > 50) safe = safe.substring(0, 50);
-    // Убираем начальные и конечные подчёркивания
-    safe = safe.replace(/^_+|_+$/g, '');
-    if (!safe) safe = `config_${index}`;
-    return `${safe}.json`;
-}
-
+// Рекурсивный сбор всех JSON-файлов в папке sources
 async function getAllJsonFiles(dir) {
     let results = [];
     const entries = await fs.readdir(dir, { withFileTypes: true });
@@ -87,14 +57,7 @@ async function getAllJsonFiles(dir) {
 }
 
 async function main() {
-    console.log('🔄 Сборка подписки с сохранением исходных имён файлов...');
-
-    await fs.mkdir(PROFILES_DIR, { recursive: true });
-    // Очищаем profiles
-    const oldFiles = await fs.readdir(PROFILES_DIR);
-    for (const file of oldFiles) {
-        await fs.unlink(path.join(PROFILES_DIR, file));
-    }
+    console.log('🔄 Сборка подписки из папки sources с сортировкой...');
 
     let jsonFiles = [];
     try {
@@ -112,6 +75,7 @@ async function main() {
         process.exit(0);
     }
 
+    // Загружаем каждый файл, читаем remarks
     const items = [];
     for (const file of jsonFiles) {
         try {
@@ -119,56 +83,49 @@ async function main() {
             const config = JSON.parse(content);
             let remarks = config.remarks || '';
             remarks = remarks.replace(/\0/g, '').trim();
-            const originalName = path.basename(file);
+            // Относительный путь от корня репозитория (например, sources/xxx.json)
+            const relativePath = path.relative(process.cwd(), file).replace(/\\/g, '/');
             items.push({
-                originalPath: file,
-                originalName: originalName,
-                content: content,
-                remarks: remarks,
-                config: config
+                relativePath,
+                remarks,
+                originalName: path.basename(file)
             });
-            console.log(`📁 Загружен: ${originalName} -> remarks: "${remarks || '(нет)'}"`);
+            console.log(`📁 ${relativePath} -> remarks: "${remarks || '(нет)'}"`);
         } catch (err) {
-            console.error(`❌ Ошибка в файле ${file}: ${err.message}`);
+            console.error(`❌ Ошибка в ${file}: ${err.message}`);
         }
     }
 
-    // Сортировка
+    // Сортировка по приоритету (remarks или имя файла)
     items.sort((a, b) => {
-        const prioA = getSortPriority(a.remarks || a.originalName);
-        const prioB = getSortPriority(b.remarks || b.originalName);
+        const sortA = a.remarks || a.originalName;
+        const sortB = b.remarks || b.originalName;
+        const prioA = getSortPriority(sortA);
+        const prioB = getSortPriority(sortB);
         if (prioA !== prioB) return prioA - prioB;
-        return (a.remarks || a.originalName).localeCompare(b.remarks || b.originalName);
+        return sortA.localeCompare(sortB);
     });
     console.log(`\n📊 Сортировка выполнена`);
 
-    const profileUrls = [];
-    let index = 1;
-    for (const item of items) {
-        const safeName = safeFilenameFromOriginal(item.originalName, item.remarks, index);
-        const destPath = path.join(PROFILES_DIR, safeName);
-        await fs.writeFile(destPath, item.content);
-        const rawUrl = GITHUB_RAW_BASE + `profiles/${encodeURIComponent(safeName)}`;
-        profileUrls.push(rawUrl);
-        console.log(`✅ Профиль ${index}: ${safeName} (основа: ${item.originalName})`);
-        index++;
-    }
-
+    // Формируем список raw-ссылок
+    const profileUrls = items.map(item => GITHUB_RAW_BASE + item.relativePath);
     await fs.writeFile(OUTPUT_TXT, profileUrls.join('\n'));
+
+    // Дополнительная информация (необязательно)
     const subscriptionInfo = {
         lastUpdated: new Date().toISOString(),
         total: profileUrls.length,
         profiles: items.map((item, i) => ({
-            originalName: item.originalName,
+            file: item.relativePath,
             remarks: item.remarks,
             url: profileUrls[i]
         }))
     };
     await fs.writeFile(OUTPUT_JSON, JSON.stringify(subscriptionInfo, null, 2));
 
-    console.log(`\n✅ Готово! Создано ${profileUrls.length} профилей.`);
-    console.log(`📄 ${OUTPUT_TXT} — подписка (список ссылок).`);
-    console.log(`🔗 Ваша подписка: https://raw.githubusercontent.com/citer1852-lab/SHUR-SUB/main/sub.txt`);
+    console.log(`\n✅ Готово! Создано ${profileUrls.length} ссылок.`);
+    console.log(`📄 ${OUTPUT_TXT} — подписка (список raw-ссылок на JSON-файлы в sources).`);
+    console.log(`🔗 Ссылка на подписку: https://raw.githubusercontent.com/citer1852-lab/SHUR-SUB/main/sub.txt`);
 }
 
 main().catch(err => {
