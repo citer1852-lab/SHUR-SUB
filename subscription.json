@@ -1,6 +1,6 @@
 {
-  "lastUpdated": "2026-04-06T21:43:29.816Z",
-  "total": 18,
+  "lastUpdated": "2026-04-06T21:48:41.630Z",
+  "total": 17,
   "profiles": [
     {
       "remarks": "🇫🇮 FREE server",
@@ -69,10 +69,6 @@
     {
       "remarks": "🇺🇸 США 🇺🇸",
       "url": "https://raw.githubusercontent.com/citer1852-lab/SHUR-SUB/main/profiles/us_ssha_us.json"
-    },
-    {
-      "remarks": "🌍 Auto Best",
-      "url": "https://raw.githubusercontent.com/citer1852-lab/SHUR-SUB/main/profiles/_auto_best.json"
     }
   ]
 }

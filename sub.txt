@@ -15,4 +15,3 @@ https://raw.githubusercontent.com/citer1852-lab/SHUR-SUB/main/profiles/de_german
 https://raw.githubusercontent.com/citer1852-lab/SHUR-SUB/main/profiles/nl_niderlandy.json
 https://raw.githubusercontent.com/citer1852-lab/SHUR-SUB/main/profiles/fr_franciya.json
 https://raw.githubusercontent.com/citer1852-lab/SHUR-SUB/main/profiles/us_ssha_us.json
-https://raw.githubusercontent.com/citer1852-lab/SHUR-SUB/main/profiles/_auto_best.json
