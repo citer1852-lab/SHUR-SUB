@@ -1,7 +1,7 @@
 {
   "remarks": "Telegram №2🇷🇺",
   "dns": {
-    "servers": [
+    "servers": [ 
       "https://1.1.1.1/dns-query",
       "https://dns.google/dns-query",
       "https://dns.quad9.net/dns-query"
