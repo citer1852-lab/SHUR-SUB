@@ -1,42 +1,8 @@
 {
     "dns": {
-        "hosts": {
-            "77.88.8.8": "77.88.8.8",
-            "dns.quad9.net": "9.9.9.9",
-            "lkfl2.nalog.ru": "213.24.64.175",
-            "lknpd.nalog.ru": "213.24.64.181"
-        },
         "queryStrategy": "UseIPv4",
         "servers": [
-            "https://dns.quad9.net/dns-query",
-            {
-                "address": "https://dns.quad9.net/dns-query",
-                "domains": [
-                    "geosite:github",
-                    "geosite:twitch-ads",
-                    "geosite:youtube",
-                    "geosite:telegram"
-                ]
-            },
-            {
-                "address": "https://77.88.8.8/dns-query",
-                "domains": [
-                    "geosite:private",
-                    "geosite:category-ru",
-                    "geosite:whitelist",
-                    "geosite:microsoft",
-                    "geosite:apple",
-                    "geosite:google-play",
-                    "geosite:epicgames",
-                    "geosite:riot",
-                    "geosite:escapefromtarkov",
-                    "geosite:steam",
-                    "geosite:origin",
-                    "geosite:twitch",
-                    "geosite:pinterest",
-                    "geosite:faceit"
-                ]
-            }
+            "https://1.1.1.1/dns-query"
         ]
     },
     "inbounds": [
@@ -52,8 +18,7 @@
             "sniffing": {
                 "destOverride": [
                     "http",
-                    "tls",
-                    "quic"
+                    "tls"
                 ],
                 "enabled": true
             },
@@ -69,8 +34,7 @@
             "sniffing": {
                 "destOverride": [
                     "http",
-                    "tls",
-                    "quic"
+                    "tls"
                 ],
                 "enabled": true
             },
@@ -89,16 +53,15 @@
     "log": {
         "loglevel": "warning"
     },
+    "meta": null,
     "metrics": {
         "tag": "metrics_out"
     },
     "outbounds": [
         {
             "mux": {
-                "concurrency": -1,
-                "enabled": false,
-                "xudpConcurrency": 8,
-                "xudpProxyUDP443": ""
+                "concurrency": 8,
+                "enabled": true
             },
             "protocol": "vless",
             "settings": {
@@ -130,6 +93,13 @@
                     "spiderX": "/"
                 },
                 "security": "reality",
+                "sockopt": {
+                    "tcpCongestion": "bbr",
+                    "tcpFastOpen": true,
+                    "tcpKeepAliveIdle": 300,
+                    "tcpKeepAliveInterval": 30,
+                    "tcpNoDelay": true
+                },
                 "tcpSettings": {
                     "header": {
                         "type": "none"
@@ -140,8 +110,12 @@
         },
         {
             "protocol": "freedom",
-            "settings": {
-                "domainStrategy": "UseIP"
+            "streamSettings": {
+                "sockopt": {
+                    "tcpCongestion": "bbr",
+                    "tcpFastOpen": true,
+                    "tcpNoDelay": true
+                }
             },
             "tag": "direct"
         },
@@ -217,30 +191,20 @@
                 "outboundTag": "proxy"
             },
             {
-                "domain": [
-                    "geosite:private",
-                    "geosite:category-ru",
-                    "geosite:whitelist",
-                    "geosite:microsoft",
-                    "geosite:apple",
-                    "geosite:google-play",
-                    "geosite:epicgames",
-                    "geosite:riot",
-                    "geosite:escapefromtarkov",
-                    "geosite:steam",
-                    "geosite:origin",
-                    "geosite:twitch",
-                    "geosite:pinterest",
-                    "geosite:faceit"
-                ],
-                "outboundTag": "direct"
-            },
-            {
                 "ip": [
                     "geoip:private",
                     "geoip:direct"
                 ],
                 "outboundTag": "direct"
+            },
+            {
+                "inboundTag": [
+                    "socks",
+                    "http"
+                ],
+                "network": "tcp,udp",
+                "outboundTag": "proxy",
+                "type": "field"
             }
         ]
     },
