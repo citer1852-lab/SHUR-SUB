@@ -3,8 +3,7 @@
   "dns": {
     "servers": [
       "https://1.1.1.1/dns-query",
-      "https://dns.google/dns-query",
-      "https://dns.quad9.net/dns-query"
+      "https://dns.google/dns-query"
     ],
     "queryStrategy": "UseIPv4"
   },
@@ -122,8 +121,8 @@
         "sockopt": {
           "tcpNoDelay": true,
           "tcpFastOpen": true,
-          "tcpKeepAliveIdle": 300,
-          "tcpKeepAliveInterval": 30
+          "tcpKeepAliveIdle": 60,
+          "tcpKeepAliveInterval": 15
         },
         "security": "reality",
         "realitySettings": {
@@ -133,10 +132,6 @@
           "shortId": "50",
           "show": false
         }
-      },
-      "mux": {
-        "enabled": true,
-        "concurrency": 4
       }
     },
     {
