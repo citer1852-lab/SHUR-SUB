@@ -2,7 +2,7 @@ name: Update Subscription
 
 on:
   schedule:
-    - cron: '*/5 * * * *'   # каждые 5 минут
+    - cron: '0 */12 * * *'   # каждые 12 часов (в 00:00 и 12:00 UTC)
   workflow_dispatch:
 
 jobs:
@@ -22,5 +22,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add subscription.json sub.txt
-          git diff --quiet && git diff --staged --quiet || git commit -m "🤖 Auto-update subscription"
+          git diff --quiet && git diff --staged --quiet || git commit -m "🤖 Auto-update subscription (every 12h)"
           git push
