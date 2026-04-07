@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SHUR-SUB Admin Panel | Мониторинг серверов</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+            min-height: 100vh;
+            color: #e0e0e0;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .title h1 {
+            font-size: 28px;
+            background: linear-gradient(135deg, #fff, #7c3aed);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .title p {
+            font-size: 14px;
+            color: #888;
+            margin-top: 5px;
+        }
+
+        .stats {
+            display: flex;
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 10px 20px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .stat-card .number {
+            font-size: 28px;
+            font-weight: bold;
+            color: #7c3aed;
+        }
+
+        .stat-card .label {
+            font-size: 12px;
+            color: #888;
+        }
+
+        /* Controls */
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            background: #7c3aed;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #6d28d9;
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: rgba(255,255,255,0.1);
+            color: #e0e0e0;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .btn-danger {
+            background: rgba(239,68,68,0.2);
+            color: #ef4444;
+            border: 1px solid rgba(239,68,68,0.3);
+        }
+
+        .btn-danger:hover {
+            background: rgba(239,68,68,0.3);
+        }
+
+        .auto-refresh {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255,255,255,0.05);
+            padding: 8px 15px;
+            border-radius: 8px;
+        }
+
+        .auto-refresh label {
+            font-size: 14px;
+        }
+
+        /* Filter */
+        .filter-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 6px 15px;
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.2);
+            background: transparent;
+            color: #ccc;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 13px;
+        }
+
+        .filter-btn.active {
+            background: #7c3aed;
+            border-color: #7c3aed;
+            color: white;
+        }
+
+        .filter-btn:hover:not(.active) {
+            background: rgba(255,255,255,0.1);
+        }
+
+        /* Servers Grid */
+        .servers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+        }
+
+        /* Server Card */
+        .server-card {
+            background: rgba(255,255,255,0.03);
+            border-radius: 16px;
+            padding: 18px;
+            border: 1px solid rgba(255,255,255,0.08);
+            transition: all 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .server-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(124,58,237,0.3);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+
+        .server-card.online {
+            border-left: 3px solid #22c55e;
+        }
+
+        .server-card.offline {
+            border-left: 3px solid #ef4444;
+            opacity: 0.7;
+        }
+
+        .server-card.checking {
+            border-left: 3px solid #f59e0b;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .server-name {
+            font-size: 18px;
+            font-weight: 600;
+            word-break: break-word;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .status-badge.online {
+            background: rgba(34,197,94,0.15);
+            color: #22c55e;
+        }
+
+        .status-badge.offline {
+            background: rgba(239,68,68,0.15);
+            color: #ef4444;
+        }
+
+        .status-badge.checking {
+            background: rgba(245,158,11,0.15);
+            color: #f59e0b;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .status-dot.online { background: #22c55e; box-shadow: 0 0 5px #22c55e; }
+        .status-dot.offline { background: #ef4444; }
+        .status-dot.checking { background: #f59e0b; animation: pulse 1s infinite; }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .card-details {
+            margin-bottom: 15px;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+
+        .detail-label {
+            color: #888;
+        }
+
+        .detail-value {
+            color: #e0e0e0;
+            font-family: monospace;
+            word-break: break-all;
+            text-align: right;
+        }
+
+        .ping-info {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(255,255,255,0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .ping-value {
+            font-family: monospace;
+            font-size: 14px;
+        }
+
+        .ping-good { color: #22c55e; }
+        .ping-normal { color: #f59e0b; }
+        .ping-bad { color: #ef4444; }
+
+        .last-check {
+            font-size: 11px;
+            color: #666;
+        }
+
+        /* Loading */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(124,58,237,0.3);
+            border-top-color: #7c3aed;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 20px;
+        }
+
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+            padding: 20px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+
+        @media (max-width: 768px) {
+            .servers-grid {
+                grid-template-columns: 1fr;
+            }
+            .header {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="title">
+                <h1>🛰️ SHUR-SUB Admin Panel</h1>
+                <p>Мониторинг и управление серверами подписки</p>
+            </div>
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="number" id="totalServers">0</div>
+                    <div class="label">Всего серверов</div>
+                </div>
+                <div class="stat-card">
+                    <div class="number" id="onlineServers">0</div>
+                    <div class="label">Активных</div>
+                </div>
+                <div class="stat-card">
+                    <div class="number" id="offlineServers">0</div>
+                    <div class="label">Неактивных</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="btn btn-primary" id="refreshBtn">🔄 Обновить сейчас</button>
+            <div class="auto-refresh">
+                <span>⏱️</span>
+                <input type="checkbox" id="autoRefreshCheckbox" checked>
+                <label for="autoRefreshCheckbox">Автообновление</label>
+                <select id="refreshInterval" class="btn-secondary" style="padding: 5px 10px;">
+                    <option value="30">30 сек</option>
+                    <option value="60" selected>1 мин</option>
+                    <option value="120">2 мин</option>
+                    <option value="300">5 мин</option>
+                </select>
+            </div>
+            <button class="btn-danger" id="clearCacheBtn">🗑️ Сбросить кэш Cloudflare</button>
+        </div>
+
+        <div class="filter-bar">
+            <button class="filter-btn active" data-filter="all">Все</button>
+            <button class="filter-btn" data-filter="online">🟢 Онлайн</button>
+            <button class="filter-btn" data-filter="offline">🔴 Офлайн</button>
+            <button class="filter-btn" data-filter="lte">📡 LTE</button>
+            <button class="filter-btn" data-filter="telegram">✈️ Telegram</button>
+            <button class="filter-btn" data-filter="gaming">🎮 Игровые</button>
+        </div>
+
+        <div class="servers-grid" id="serversGrid">
+            <div class="empty-state">Загрузка серверов...</div>
+        </div>
+
+        <div class="footer">
+            <p>SHUR-SUB | Мониторинг обновляется каждые 60 секунд | Cloudflare Worker CDN</p>
+        </div>
+    </div>
+
+    <div id="loadingOverlay" class="loading-overlay hidden">
+        <div class="spinner"></div>
+    </div>
+
+    <script>
+        // Конфигурация
+        const SUBSCRIPTION_URL = 'https://shur-sub.mamasoso1488228.workers.dev/sub';
+        const WORKER_URL = 'https://shur-sub.mamasoso1488228.workers.dev';
+        
+        let servers = [];
+        let autoRefreshTimer = null;
+        let currentFilter = 'all';
+
+        // Утилиты
+        function showLoading() {
+            document.getElementById('loadingOverlay').classList.remove('hidden');
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingOverlay').classList.add('hidden');
+        }
+
+        function formatPing(ms) {
+            if (!ms || ms === 0) return '—';
+            if (ms < 100) return `<span class="ping-good">${ms} мс</span>`;
+            if (ms < 300) return `<span class="ping-normal">${ms} мс</span>`;
+            return `<span class="ping-bad">${ms} мс</span>`;
+        }
+
+        async function checkServerPing(server) {
+            const address = server.outbounds?.[0]?.settings?.vnext?.[0]?.address || 
+                           server.outbounds?.proxy?.settings?.vnext?.[0]?.address ||
+                           server.address;
+            
+            if (!address) return null;
+            
+            const startTime = performance.now();
+            try {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 5000);
+                
+                // Пытаемся сделать запрос к серверу
+                const response = await fetch(`https://${address}`, {
+                    mode: 'no-cors',
+                    signal: controller.signal
+                }).catch(() => null);
+                
+                clearTimeout(timeoutId);
+                const endTime = performance.now();
+                return Math.round(endTime - startTime);
+            } catch (error) {
+                return null;
+            }
+        }
+
+        async function loadServers() {
+            showLoading();
+            try {
+                const response = await fetch(SUBSCRIPTION_URL);
+                if (!response.ok) throw new Error('Ошибка загрузки подписки');
+                servers = await response.json();
+                
+                // Проверяем каждый сервер
+                for (let i = 0; i < servers.length; i++) {
+                    const server = servers[i];
+                    server.status = 'checking';
+                    server.ping = null;
+                    server.lastCheck = new Date();
+                }
+                
+                renderServers();
+                
+                // Асинхронно проверяем пинг
+                for (let i = 0; i < servers.length; i++) {
+                    const server = servers[i];
+                    const ping = await checkServerPing(server);
+                    server.ping = ping;
+                    server.status = ping ? 'online' : 'offline';
+                    renderServers();
+                }
+                
+            } catch (error) {
+                console.error('Ошибка:', error);
+                document.getElementById('serversGrid').innerHTML = `<div class="empty-state">❌ Ошибка загрузки: ${error.message}</div>`;
+            } finally {
+                hideLoading();
+            }
+        }
+
+        function getServerType(remarks) {
+            const lowerRemarks = remarks.toLowerCase();
+            if (lowerRemarks.includes('lte')) return 'lte';
+            if (lowerRemarks.includes('telegram')) return 'telegram';
+            if (lowerRemarks.includes('игровой') || lowerRemarks.includes('game')) return 'gaming';
+            return 'other';
+        }
+
+        function getServerIcon(remarks) {
+            const lowerRemarks = remarks.toLowerCase();
+            if (lowerRemarks.includes('lte')) return '📡';
+            if (lowerRemarks.includes('telegram')) return '✈️';
+            if (lowerRemarks.includes('игровой') || lowerRemarks.includes('game')) return '🎮';
+            if (lowerRemarks.includes('free')) return '🆓';
+            if (lowerRemarks.includes('россия') || lowerRemarks.includes('russia')) return '🇷🇺';
+            if (lowerRemarks.includes('германия') || lowerRemarks.includes('germany')) return '🇩🇪';
+            if (lowerRemarks.includes('нидерланды') || lowerRemarks.includes('netherlands')) return '🇳🇱';
+            if (lowerRemarks.includes('франция') || lowerRemarks.includes('france')) return '🇫🇷';
+            if (lowerRemarks.includes('сша') || lowerRemarks.includes('usa')) return '🇺🇸';
+            return '🖥️';
+        }
+
+        function renderServers() {
+            let filteredServers = servers;
+            
+            if (currentFilter === 'online') {
+                filteredServers = servers.filter(s => s.status === 'online');
+            } else if (currentFilter === 'offline') {
+                filteredServers = servers.filter(s => s.status === 'offline');
+            } else if (currentFilter === 'lte') {
+                filteredServers = servers.filter(s => getServerType(s.remarks || '') === 'lte');
+            } else if (currentFilter === 'telegram') {
+                filteredServers = servers.filter(s => getServerType(s.remarks || '') === 'telegram');
+            } else if (currentFilter === 'gaming') {
+                filteredServers = servers.filter(s => getServerType(s.remarks || '') === 'gaming');
+            }
+            
+            // Обновляем статистику
+            const onlineCount = servers.filter(s => s.status === 'online').length;
+            const offlineCount = servers.filter(s => s.status === 'offline').length;
+            document.getElementById('totalServers').textContent = servers.length;
+            document.getElementById('onlineServers').textContent = onlineCount;
+            document.getElementById('offlineServers').textContent = offlineCount;
+            
+            if (filteredServers.length === 0) {
+                document.getElementById('serversGrid').innerHTML = '<div class="empty-state">📭 Нет серверов с таким фильтром</div>';
+                return;
+            }
+            
+            const grid = document.getElementById('serversGrid');
+            grid.innerHTML = filteredServers.map((server, idx) => {
+                const remarks = server.remarks || 'Без названия';
+                const status = server.status || 'checking';
+                const ping = server.ping;
+                const lastCheck = server.lastCheck ? new Date(server.lastCheck).toLocaleTimeString() : '—';
+                const serverIcon = getServerIcon(remarks);
+                const serverType = getServerType(remarks);
+                
+                // Получаем адрес сервера
+                const address = server.outbounds?.[0]?.settings?.vnext?.[0]?.address || 
+                               server.outbounds?.proxy?.settings?.vnext?.[0]?.address ||
+                               '—';
+                const port = server.outbounds?.[0]?.settings?.vnext?.[0]?.port || 
+                            server.outbounds?.proxy?.settings?.vnext?.[0]?.port ||
+                            '—';
+                const protocol = server.outbounds?.[0]?.protocol || 
+                               server.outbounds?.proxy?.protocol || 
+                               'vless';
+                
+                return `
+                    <div class="server-card ${status}" data-type="${serverType}">
+                        <div class="card-header">
+                            <div class="server-name">
+                                ${serverIcon} ${escapeHtml(remarks)}
+                            </div>
+                            <div class="status-badge ${status}">
+                                <span class="status-dot ${status}"></span>
+                                ${status === 'online' ? 'Активен' : status === 'offline' ? 'Неактивен' : 'Проверка...'}
+                            </div>
+                        </div>
+                        <div class="card-details">
+                            <div class="detail-row">
+                                <span class="detail-label">🌐 Протокол:</span>
+                                <span class="detail-value">${protocol.toUpperCase()}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">📍 Адрес:</span>
+                                <span class="detail-value">${escapeHtml(address)}:${port}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">🆔 UUID/ID:</span>
+                                <span class="detail-value" style="font-size: 11px;">${getShortId(server)}</span>
+                            </div>
+                        </div>
+                        <div class="ping-info">
+                            <span class="ping-value">🏓 Пинг: ${formatPing(ping)}</span>
+                            <span class="last-check">Последняя проверка: ${lastCheck}</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        function getShortId(server) {
+            const id = server.outbounds?.[0]?.settings?.vnext?.[0]?.users?.[0]?.id ||
+                      server.outbounds?.proxy?.settings?.vnext?.[0]?.users?.[0]?.id;
+            if (!id) return '—';
+            return id.substring(0, 8) + '...' + id.substring(id.length - 4);
+        }
+        
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/[&<>]/g, function(m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            });
+        }
+        
+        async function refreshCache() {
+            showLoading();
+            try {
+                const response = await fetch(`${WORKER_URL}/sub?refresh=1`);
+                if (response.ok) {
+                    alert('✅ Кэш Cloudflare успешно сброшен! Серверы будут обновлены.');
+                    await loadServers();
+                } else {
+                    throw new Error('Ошибка сброса кэша');
+                }
+            } catch (error) {
+                alert('❌ Ошибка сброса кэша: ' + error.message);
+            } finally {
+                hideLoading();
+            }
+        }
+        
+        function startAutoRefresh() {
+            if (autoRefreshTimer) clearInterval(autoRefreshTimer);
+            
+            const isEnabled = document.getElementById('autoRefreshCheckbox').checked;
+            if (!isEnabled) return;
+            
+            const interval = parseInt(document.getElementById('refreshInterval').value) * 1000;
+            autoRefreshTimer = setInterval(() => {
+                loadServers();
+            }, interval);
+        }
+        
+        // Инициализация
+        document.getElementById('refreshBtn').addEventListener('click', loadServers);
+        document.getElementById('clearCacheBtn').addEventListener('click', refreshCache);
+        document.getElementById('autoRefreshCheckbox').addEventListener('change', startAutoRefresh);
+        document.getElementById('refreshInterval').addEventListener('change', startAutoRefresh);
+        
+        // Фильтры
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentFilter = btn.dataset.filter;
+                renderServers();
+            });
+        });
+        
+        // Загрузка
+        loadServers();
+        startAutoRefresh();
+    </script>
+</body>
+</html>
