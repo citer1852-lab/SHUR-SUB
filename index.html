@@ -278,9 +278,9 @@
         <div class="buttons-grid">
             <a href="https://apps.apple.com/app/happ-proxy-utility/id6478192307" target="_blank" class="btn btn-outline">📱 HApp (iOS)</a>
             <a href="https://play.google.com/store/apps/details?id=pro.happ.app" target="_blank" class="btn btn-outline">🤖 HApp (Android)</a>
-            <a href="https://github.com/2dust/v2rayNG/releases" target="_blank" class="btn btn-outline">📦 v2rayNG (Android)</a>
-            <a href="https://apps.apple.com/app/shadowrocket/id932747118" target="_blank" class="btn btn-outline">🚀 Shadowrocket (iOS)</a>
-            <a href="https://github.com/2dust/v2rayN/releases" target="_blank" class="btn btn-outline">💻 v2rayN (Windows)</a>
+            <a href="https://play.google.com/store/apps/details?id=com.v2raytun.android&pcampaignid=web_share" target="_blank" class="btn btn-outline">🚀 v2rayTun (Android)</a>
+            <a href="https://github.com/mdf45/v2raytun/releases" target="_blank" class="btn btn-outline">📦 v2rayTun (Windows/macOS)</a>
+            <a href="https://apps.apple.com/app/shadowrocket/id932747118" target="_blank" class="btn btn-outline">⚡ Shadowrocket (iOS)</a>
         </div>
     </div>
     
@@ -294,8 +294,8 @@
         </div>
         <div class="buttons-grid">
             <a href="happ://add/https://shur-sub.mamasoso1488228.workers.dev/sub" class="btn btn-primary">📱 HApp (iOS/Android)</a>
-            <a href="v2rayng://install-sub/?url=https%3A%2F%2Fshur-sub.mamasoso1488228.workers.dev%2Fsub%23SHUR-SUB" class="btn btn-primary">📦 v2rayNG</a>
-            <a href="sub://https://shur-sub.mamasoso1488228.workers.dev/sub" class="btn btn-primary">🚀 Shadowrocket</a>
+            <a href="v2raytun://install-sub?url=https%3A%2F%2Fshur-sub.mamasoso1488228.workers.dev%2Fsub" class="btn btn-primary">🚀 v2rayTun</a>
+            <a href="sub://https://shur-sub.mamasoso1488228.workers.dev/sub" class="btn btn-primary">⚡ Shadowrocket</a>
             <a href="clash://install-config?url=https://shur-sub.mamasoso1488228.workers.dev/sub" class="btn btn-primary">💻 Clash</a>
         </div>
         
@@ -304,6 +304,7 @@
             <p>1. Скопируйте ссылку: <code>https://shur-sub.mamasoso1488228.workers.dev/sub</code></p>
             <p>2. Откройте приложение → Добавить подписку → Вставить ссылку → Сохранить</p>
             <p>3. Обновите подписку (потяните вниз или нажмите ⋮ → Обновить)</p>
+            <p>• <strong>В v2rayTun:</strong> Группы → Добавить группу с удалённым файлом → вставьте ссылку</p>
         </div>
     </div>
     
@@ -318,33 +319,38 @@
         <div class="instruction">
             <p><strong>⚙️ Как настроить (один раз):</strong></p>
             <p>• <strong>В HApp:</strong> Нажмите на кнопку "настройки"/⚙️ → нажмите кнопку "Пинг" → выберите <strong>TCP</strong></p>
-            <p>• <strong>В v2rayNG:</strong> Нажмите на иконку ⚡ рядом с сервером → выберите TCP Ping</p>
+            <p>• <strong>В v2rayTun:</strong> Нажмите на сервер → Тест задержки → выберите TCP Ping</p>
             <p>• <strong>В Shadowrocket:</strong> Нажмите на сервер → Test Latency → TCP</p>
             <p>💡 <strong>Совет:</strong> Включите "Ping on Launch" в настройках, чтобы приложение автоматически проверяло все сервера при запуске.</p>
         </div>
     </div>
     
-    <!-- ===== 4. ИМПОРТ МАРШРУТИЗАЦИИ ===== -->
+    <!-- ===== 4. МАКСИМАЛЬНАЯ МАРШРУТИЗАЦИЯ ===== -->
     <div class="card">
         <div class="card-title">
-            🧭 4. Импорт маршрутизации (для HApp)
+            🛡️ 4. Максимальная маршрутизация (Всё через прокси)
         </div>
         <div class="card-desc">
-            Маршрутизация определяет, какие сайты идут через VPN, а какие — напрямую. Готовый профиль с настройками "всё через прокси".
+            Готовый профиль маршрутизации, который направляет <strong>весь трафик через прокси</strong> для максимальной анонимности и обхода блокировок.
         </div>
         <div class="buttons-grid">
-            <a href="happ://routing/add/ewogICAgIkdsb2JhbFByb3h5IjogdHJ1ZSwKICAgICJOYW1lIjogIlNIVVItU1VCIgp9" class="btn btn-warning">🌍 Импорт маршрутизации (HApp)</a>
+            <a href="happ://routing/add/ewogICAgIkJsb2NrSXAiOiBbCiAgICBdLAogICAgIkJsb2NrU2l0ZXMiOiBbCiAgICAgICAgImdlb3NpdGU6d2luLXNweSIsCiAgICAgICAgImdlb3NpdGU6dG9ycmVudCIsCiAgICAgICAgImdlb3NpdGU6Y2F0ZWdvcnktYWRzIgogICAgXSwKICAgICJEaXJlY3RJcCI6IFsKICAgICAgICAiZ2VvaXA6cHJpdmF0ZSIsCiAgICAgICAgImdlb2lwOmRpcmVjdCIKICAgIF0sCiAgICAiRGlyZWN0U2l0ZXMiOiBbCiAgICAgICAgImdlb3NpdGU6cHJpdmF0ZSIsCiAgICAgICAgImdlb3NpdGU6Y2F0ZWdvcnktcnUiLAogICAgICAgICJnZW9zaXRlOndoaXRlbGlzdCIsCiAgICAgICAgImdlb3NpdGU6bWljcm9zb2Z0IiwKICAgICAgICAiZ2Vvc2l0ZTphcHBsZSIsCiAgICAgICAgImdlb3NpdGU6Z29vZ2xlLXBsYXkiLAogICAgICAgICJnZW9zaXRlOmVwaWNnYW1lcyIsCiAgICAgICAgImdlb3NpdGU6cmlvdCIsCiAgICAgICAgImdlb3NpdGU6ZXNjYXBlZnJvbXRhcmtvdiIsCiAgICAgICAgImdlb3NpdGU6c3RlYW0iLAogICAgICAgICJnZW9zaXRlOm9yaWdpbiIsCiAgICAgICAgImdlb3NpdGU6dHdpdGNoIiwKICAgICAgICAiZ2Vvc2l0ZTpwaW50ZXJlc3QiLAogICAgICAgICJnZW9zaXRlOmZhY2VpdCIKICAgIF0sCiAgICAiRG5zSG9zdHMiOiB7CiAgICAgICAgImxrZmwyLm5hbG9nLnJ1IjogIjIxMy4yNC42NC4xNzUiLAogICAgICAgICJsa25wZC5uYWxvZy5ydSI6ICIyMTMuMjQuNjQuMTgxIgogICAgfSwKICAgICJEb21haW5TdHJhdGVneSI6ICJJUElmTm9uTWF0Y2giLAogICAgIkRvbWVzdGljRE5TRG9tYWluIjogImh0dHBzOi8vNzcuODguOC44L2Rucy1xdWVyeSIsCiAgICAiRG9tZXN0aWNETlNJUCI6ICI3Ny44OC44LjgiLAogICAgIkRvbWVzdGljRE5TVHlwZSI6ICJEb0giLAogICAgIkZha2VETlMiOiAiZmFsc2UiLAogICAgIkdlb2lwdXJsIjogImh0dHBzOi8vY2RuLmpzZGVsaXZyLm5ldC9naC9oeWRyYXBvbmlxdWUvcm9zY29tdnBuLWdlb2lwQDIwMjYwMzI0MDUwMy9yZWxlYXNlL2dlb2lwLmRhdCIsCiAgICAiR2Vvc2l0ZXVybCI6ICJodHRwczovL2Nkbi5qc2RlbGl2ci5uZXQvZ2gvaHlkcmFwb25pcXVlL3Jvc2NvbXZwbi1nZW9zaXRlQDIwMjYwMzIxMTgzOC9yZWxlYXNlL2dlb3NpdGUuZGF0IiwKICAgICJHbG9iYWxQcm94eSI6ICJ0cnVlIiwKICAgICJMYXN0VXBkYXRlZCI6IDE3NzUxNDk1MTgsCiAgICAiTmFtZSI6ICJTSEVSLVNVQiBNQVgiLAogICAgIlByb3h5SXAiOiBbCiAgICBdLAogICAgIlByb3h5U2l0ZXMiOiBbCiAgICAgICAgImdlb3NpdGU6Z2l0aHViIiwKICAgICAgICAiZ2Vvc2l0ZTp0d2l0Y2gtYWRzIiwKICAgICAgICAiZ2Vvc2l0ZTp5b3V0dWJlIiwKICAgICAgICAiZ2Vvc2l0ZTp0ZWxlZ3JhbSIKICAgIF0sCiAgICAiUmVtb3RlRE5TRG9tYWluIjogImh0dHBzOi8vZG5zLnF1YWQ5Lm5ldC9kbnMtcXVlcnkiLAogICAgIlJlbW90ZUROU0lQIjogIjkuOS45LjkiLAogICAgIlJlbW90ZUROU1R5cGUiOiAiRG9IIiwKICAgICJSb3V0ZU9yZGVyIjogImJsb2NrLXByb3h5LWRpcmVjdCIKfQo=" class="btn btn-warning">🌍 Импорт MAX маршрутизации (HApp)</a>
         </div>
         <div class="instruction">
-            <p><strong>📌 Что делает этот профиль:</strong> Весь трафик направляется через прокси. Российские сайты и приватные IP идут напрямую (для стабильной работы).</p>
-            <p><strong>🛠️ Как импортировать вручную:</strong> HApp → Настройки → Маршрутизация → ⋮ → Импорт → Вставить ссылку или код</p>
-            <p>• <strong>В v2rayNG/Shadowrocket:</strong> Маршрутизация настраивается отдельно в правилах (Routing Rules).</p>
+            <p><strong>🔥 Что делает этот профиль:</strong></p>
+            <p>• <strong>Всё через прокси</strong> — абсолютно весь трафик (браузер, приложения, игры, обновления) идёт через VPN-сервер</p>
+            <p>• <strong>Исключения:</strong> только локальные сети (192.168.x.x, 10.x.x.x) и localhost — чтобы не сломать доступ к роутеру и локальным устройствам</p>
+            <p>• <strong>Для опытных пользователей:</strong> полный контроль над трафиком, максимальная защита от DPI и блокировок</p>
+            <p><strong>🛠️ Альтернатива для v2rayTun:</strong></p>
+            <p>В настройках маршрутизации выберите "Global Proxy" (Глобальный прокси) или "Proxy All". Это включит режим "весь трафик через прокси".</p>
+            <p><strong>⚠️ Внимание:</strong> При использовании этого профиля весь ваш трафик идёт через прокси. Это может незначительно увеличить задержку, но обеспечивает максимальную скрытность.</p>
         </div>
     </div>
     
     <div class="note">
         ⚡ SHUR-SUB | Бесплатная подписка<br>
-        Обновляется автоматически каждый час
+        Обновляется автоматически каждый час<br>
+        🔒 Максимальная маршрутизация = весь трафик через прокси
     </div>
 </div>
 
