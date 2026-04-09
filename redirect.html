@@ -1,21 +1,19 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html>
 <head>
     <meta charset="UTF-8">
     <title>Перенаправление...</title>
-</head>
-<body>
     <script>
         const urlParams = new URLSearchParams(window.location.search);
-        const app = urlParams.get('app');
-        const subUrl = urlParams.get('url');
-
-        if (app && subUrl) {
-            const redirectUrl = `${app}://add/${subUrl}`;
-            window.location.href = redirectUrl;
+        const redirectUrl = urlParams.get('url');
+        if (redirectUrl) {
+            window.location.href = decodeURIComponent(redirectUrl);
         } else {
-            document.body.innerHTML = '<p>Ошибка: не указаны параметры app или url</p>';
+            document.body.innerText = 'Ошибка: отсутствует параметр url';
         }
     </script>
+</head>
+<body>
+    <p>Перенаправление в приложение...</p>
 </body>
 </html>
