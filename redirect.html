@@ -13,9 +13,9 @@
             subUrl = decodeURIComponent(subUrl);
             let redirectUrl;
             if (app === 'happ') {
-                redirectUrl = `happ://add/${subUrl}`;
+                redirectUrl = 'happ://add/' + subUrl;
             } else if (app === 'v2raytun') {
-                redirectUrl = `v2raytun://install-sub?url=${encodeURIComponent(subUrl)}`;
+                redirectUrl = 'v2raytun://install-sub?url=' + encodeURIComponent(subUrl);
             } else {
                 redirectUrl = null;
             }
