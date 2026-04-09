@@ -4,23 +4,15 @@
     <meta charset="UTF-8">
     <title>Перенаправление...</title>
     <script>
-        const urlParams = new URLSearchParams(window.location.search);
-        const app = urlParams.get('app');      // 'happ' или 'v2raytun'
-        const url = urlParams.get('url');      // URL подписки (с токеном)
-        
-        if (!app || !url) {
-            document.body.innerText = 'Ошибка: отсутствуют параметры app или url';
+        const params = new URLSearchParams(window.location.search);
+        const app = params.get('app');
+        const url = params.get('url');
+        if (app === 'happ' && url) {
+            window.location.href = 'happ://add/' + decodeURIComponent(url);
+        } else if (app === 'v2raytun' && url) {
+            window.location.href = 'v2raytun://install-sub?url=' + encodeURIComponent(decodeURIComponent(url));
         } else {
-            let scheme = '';
-            if (app === 'happ') {
-                scheme = 'happ://add/';
-            } else if (app === 'v2raytun') {
-                scheme = 'v2raytun://install-sub?url=';
-            } else {
-                document.body.innerText = 'Неизвестное приложение';
-            }
-            const fullUrl = scheme + encodeURIComponent(decodeURIComponent(url));
-            window.location.href = fullUrl;
+            document.body.innerText = 'Ошибка: неверные параметры';
         }
     </script>
 </head>
