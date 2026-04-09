@@ -2,18 +2,23 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Перенаправление в Happ</title>
-    <script>
-        // Пытаемся открыть Happ с deep link'ом (если бы работал)
-        window.location.href = "happ://settings";
-        // Запасной вариант: через 0.3 секунды, если приложение не открылось
-        setTimeout(function() {
-            window.location.href = "https://play.google.com/store/apps/details?id=pro.happ.app";
-        }, 300);
-    </script>
+    <title>Перенаправление...</title>
 </head>
-<body style="font-family: sans-serif; text-align: center; padding: 2rem;">
-    <p>🔁 Перенаправление в Happ...</p>
-    <p>Если ничего не происходит, <a href="https://play.google.com/store/apps/details?id=pro.happ.app">нажмите здесь</a> для установки.</p>
+<body>
+    <script>
+        // Получаем параметры из URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const app = urlParams.get('app');      // happ или v2raytun
+        const subUrl = urlParams.get('url');   // ссылка на подписку
+
+        if (app && subUrl) {
+            // Формируем нужную схему
+            const redirectUrl = `${app}://add/${subUrl}`;
+            // Перенаправляем
+            window.location.href = redirectUrl;
+        } else {
+            document.body.innerHTML = '<p>Ошибка: не указаны параметры app или url</p>';
+        }
+    </script>
 </body>
 </html>
