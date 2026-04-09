@@ -6,16 +6,24 @@
 </head>
 <body>
     <script>
-        // Получаем параметры из URL
         const urlParams = new URLSearchParams(window.location.search);
-        const app = urlParams.get('app');      // happ или v2raytun
-        const subUrl = urlParams.get('url');   // ссылка на подписку
-
+        const app = urlParams.get('app');
+        let subUrl = urlParams.get('url');
         if (app && subUrl) {
-            // Формируем нужную схему
-            const redirectUrl = `${app}://add/${subUrl}`;
-            // Перенаправляем
-            window.location.href = redirectUrl;
+            subUrl = decodeURIComponent(subUrl);
+            let redirectUrl;
+            if (app === 'happ') {
+                redirectUrl = `happ://add/${subUrl}`;
+            } else if (app === 'v2raytun') {
+                redirectUrl = `v2raytun://install-sub?url=${encodeURIComponent(subUrl)}`;
+            } else {
+                redirectUrl = null;
+            }
+            if (redirectUrl) {
+                window.location.href = redirectUrl;
+            } else {
+                document.body.innerHTML = '<p>Ошибка: неизвестное приложение</p>';
+            }
         } else {
             document.body.innerHTML = '<p>Ошибка: не указаны параметры app или url</p>';
         }
