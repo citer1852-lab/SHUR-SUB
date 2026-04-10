@@ -45,6 +45,7 @@
         .register-form{background:white;border-radius:24px;padding:20px;margin-top:20px}
         .register-form input{width:100%;padding:12px;border-radius:60px;border:1px solid #cddfe7;font-size:1rem;margin-top:8px}
         .register-form button{margin-top:16px}
+        .code-block{background:#f1f5f9;padding:12px;border-radius:16px;font-family:monospace;font-size:1.5rem;text-align:center;letter-spacing:4px;margin:16px 0}
         @media (max-width:560px){body{padding:16px 12px 40px}.buttons-grid{flex-direction:column}.btn{width:100%;justify-content:center}.tabs{gap:4px}.tab-btn{font-size:0.8rem;padding:8px 4px}}
     </style>
 </head>
@@ -77,19 +78,55 @@
             <div class="buttons-grid"><button id="refreshProfileBtn" class="btn btn-outline">🔄 Обновить статистику</button></div></div>
         </div>
         <div id="help" class="tab-content">
-            <!-- Ваш старый контент помощи, для краткости не копирую, оставьте как было -->
+            <div class="card"><div class="card-title">📱 1. Установите приложение</div>
+            <div class="buttons-grid">
+                <a href="https://apps.apple.com/app/happ-proxy-utility/id6478192307" target="_blank" class="btn btn-outline">📱 HApp (iOS)</a>
+                <a href="https://play.google.com/store/apps/details?id=pro.happ.app" target="_blank" class="btn btn-outline">🤖 HApp (Android)</a>
+                <a href="https://play.google.com/store/apps/details?id=com.v2raytun.android" target="_blank" class="btn btn-outline">🚀 v2rayTun (Android)</a>
+                <a href="https://github.com/mdf45/v2raytun/releases" target="_blank" class="btn btn-outline">📦 v2rayTun (Windows/macOS)</a>
+                <a href="https://apps.apple.com/app/shadowrocket/id932747118" target="_blank" class="btn btn-outline">⚡ Shadowrocket (iOS)</a>
+            </div></div>
+            <div class="card"><div class="card-title">📋 2. Добавьте подписку</div>
+            <div class="buttons-grid">
+                <a href="happ://add/https://vpn-write-list.mamasoso1488228.workers.dev/sub" class="btn btn-primary">📱 HApp</a>
+                <a href="v2raytun://install-sub?url=https%3A%2F%2Fvpn-write-list.mamasoso1488228.workers.dev%2Fsub" class="btn btn-primary">🚀 v2rayTun</a>
+                <a href="sub://https://vpn-write-list.mamasoso1488228.workers.dev/sub" class="btn btn-primary">⚡ Shadowrocket</a>
+                <a href="clash://install-config?url=https://vpn-write-list.mamasoso1488228.workers.dev/sub" class="btn btn-primary">💻 Clash</a>
+            </div>
+            <div class="instruction"><p><strong>📖 Или вручную:</strong><br>1. Скопируйте ссылку: <code>https://vpn-write-list.mamasoso1488228.workers.dev/sub</code><br>2. Вставьте в приложение → Добавить подписку.</p></div></div>
+            <div class="card"><div class="card-title">📊 3. Настройка Ping (TCP)</div>
+            <div class="instruction"><p>В HApp: настройки → Пинг → TCP. В v2rayTun: нажмите на сервер → Тест задержки → TCP Ping.</p></div></div>
+            <div class="card"><div class="card-title">🛡️ 4. Максимальная маршрутизация</div>
+            <div class="buttons-grid"><a href="happ://routing/add/ewogICAgIkJsb2NrSXAiOiBbCiAgICBdLAogICAgIkJsb2NrU2l0ZXMiOiBbCiAgICAgICAgImdlb3NpdGU6d2luLXNweSIsCiAgICAgICAgImdlb3NpdGU6dG9ycmVudCIsCiAgICAgICAgImdlb3NpdGU6Y2F0ZWdvcnktYWRzIgogICAgXSwKICAgICJEaXJlY3RJcCI6IFsKICAgICAgICAiZ2VvaXA6cHJpdmF0ZSIsCiAgICAgICAgImdlb2lwOmRpcmVjdCIKICAgIF0sCiAgICAiRGlyZWN0U2l0ZXMiOiBbCiAgICAgICAgImdlb3NpdGU6cHJpdmF0ZSIsCiAgICAgICAgImdlb3NpdGU6Y2F0ZWdvcnktcnUiLAogICAgICAgICJnZW9zaXRlOndoaXRlbGlzdCIsCiAgICAgICAgImdlb3NpdGU6bWljcm9zb2Z0IiwKICAgICAgICAiZ2Vvc2l0ZTphcHBsZSIsCiAgICAgICAgImdlb3NpdGU6Z29vZ2xlLXBsYXkiLAogICAgICAgICJnZW9zaXRlOmVwaWNnYW1lcyIsCiAgICAgICAgImdlb3NpdGU6cmlvdCIsCiAgICAgICAgImdlb3NpdGU6ZXNjYXBlZnJvbXRhcmtvdiIsCiAgICAgICAgImdlb3NpdGU6c3RlYW0iLAogICAgICAgICJnZW9zaXRlOm9yaWdpbiIsCiAgICAgICAgImdlb3NpdGU6dHdpdGNoIiwKICAgICAgICAiZ2Vvc2l0ZTpwaW50ZXJlc3QiLAogICAgICAgICJnZW9zaXRlOmZhY2VpdCIKICAgIF0sCiAgICAiRG5zSG9zdHMiOiB7CiAgICAgICAgImxrZmwyLm5hbG9nLnJ1IjogIjIxMy4yNC42NC4xNzUiLAogICAgICAgICJsa25wZC5uYWxvZy5ydSI6ICIyMTMuMjQuNjQuMTgxIgogICAgfSwKICAgICJEb21haW5TdHJhdGVneSI6ICJJUElmTm9uTWF0Y2giLAogICAgIkRvbWVzdGljRE5TRG9tYWluIjogImh0dHBzOi8vNzcuODguOC44L2Rucy1xdWVyeSIsCiAgICAiRG9tZXN0aWNETlNJUCI6ICI3Ny44OC44LjgiLAogICAgIkRvbWVzdGljRE5TVHlwZSI6ICJEb0giLAogICAgIkZha2VETlMiOiAiZmFsc2UiLAogICAgIkdlb2lwdXJsIjogImh0dHBzOi8vY2RuLmpzZGVsaXZyLm5ldC9naC9oeWRyYXBvbmlxdWUvcm9zY29tdnBuLWdlb2lwQDIwMjYwMzI0MDUwMy9yZWxlYXNlL2dlb2lwLmRhdCIsCiAgICAiR2Vvc2l0ZXVybCI6ICJodHRwczovL2Nkbi5qc2RlbGl2ci5uZXQvZ2gvaHlkcmFwb25pcXVlL3Jvc2NvbXZwbi1nZW9zaXRlQDIwMjYwMzIxMTgzOC9yZWxlYXNlL2dlb3NpdGUuZGF0IiwKICAgICJHbG9iYWxQcm94eSI6ICJ0cnVlIiwKICAgICJMYXN0VXBkYXRlZCI6IDE3NzUxNDk1MTgsCiAgICAiTmFtZSI6ICJTSEVSLVNVQiBNQVgiLAogICAgIlByb3h5SXAiOiBbCiAgICBdLAogICAgIlByb3h5U2l0ZXMiOiBbCiAgICAgICAgImdlb3NpdGU6Z2l0aHViIiwKICAgICAgICAiZ2Vvc2l0ZTp0d2l0Y2gtYWRzIiwKICAgICAgICAiZ2Vvc2l0ZTp5b3V0dWJlIiwKICAgICAgICAiZ2Vvc2l0ZTp0ZWxlZ3JhbSIKICAgIF0sCiAgICAiUmVtb3RlRE5TRG9tYWluIjogImh0dHBzOi8vZG5zLnF1YWQ5Lm5ldC9kbnMtcXVlcnkiLAogICAgIlJlbW90ZUROU0lQIjogIjkuOS45LjkiLAogICAgIlJlbW90ZUROU1R5cGUiOiAiRG9IIiwKICAgICJSb3V0ZU9yZGVyIjogImJsb2NrLXByb3h5LWRpcmVjdCIKfQo=" class="btn btn-warning">🌍 Импорт MAX маршрутизации (HApp)</a></div>
+            <div class="instruction"><p>🔥 Весь трафик через прокси. Для v2rayTun выберите "Global Proxy".</p></div></div>
         </div>
         <div id="errors" class="tab-content">
-            <!-- Ваш старый контент ошибок -->
+            <div class="card"><div class="card-title">⚠️ Ошибка 401 / Timeout / Превышено время ожидания</div>
+            <div class="instruction"><p><strong>1. Скопируйте JSON (нажмите на блок):</strong></p>
+            <pre id="uploadSubScript" style="background:#e2e8f0;padding:12px;border-radius:16px;overflow-x:auto;font-family:monospace;font-size:12px;cursor:pointer;user-select:all;">{
+  "remarks": "UPLOAD SUB",
+  "inbounds": [{"port":10808,"protocol":"socks","settings":{"udp":true}}],
+  "outbounds": [{
+    "protocol":"vless",
+    "settings":{"vnext":[{"address":"test.iron-coral.test-cdn-kkk.com","port":443,"users":[{"id":"5ae46adf-322d-4e8a-8c28-3f71ce56cd9d","flow":"xtls-rprx-vision","encryption":"none"}]}]},
+    "streamSettings":{"network":"tcp","security":"reality","realitySettings":{"serverName":"tradingview.com","fingerprint":"chrome","publicKey":"-tePObR3oZwGAUOb5kqTYkNWl6rtUKl0RFuzuu06wgw","shortId":"50"}}
+  }]
+}</pre>
+            <p><strong>2. В HApp: ➕ → «Вставить JSON»; в v2rayTun: ➕ → ручной ввод → вставить JSON.</strong></p>
+            <p><strong>3. Запустите сервер «UPLOAD SUB» и обновите подписку (🔄).</strong></p></div></div>
         </div>
     </div>
     <div id="registerForm" style="display: none; max-width: 500px; margin: 0 auto;">
         <div class="card">
             <div class="card-title">🔐 Регистрация</div>
-            <div class="card-desc">Ваш IP не зарегистрирован. Введите ваш Telegram username (@username) для подтверждения.</div>
+            <div class="card-desc">Ваш IP не зарегистрирован. Введите ваш Telegram username (@username).</div>
             <input type="text" id="tgUsername" placeholder="@username или просто username">
             <button id="registerBtn" class="btn btn-primary">📨 Отправить запрос</button>
             <div id="registerStatus" style="margin-top:16px;"></div>
+            <div id="codeDisplay" style="display:none;">
+                <div class="code-block" id="confirmationCode"></div>
+                <p>📌 Отправьте команду <code>/confirm &lt;код&gt;</code> в Telegram боту <a href="https://t.me/shur_vpn_bot" target="_blank">@shur_vpn_bot</a></p>
+            </div>
         </div>
     </div>
 </div>
@@ -129,6 +166,7 @@
         document.getElementById('loader').style.display = 'none';
         document.getElementById('content').style.display = 'none';
         document.getElementById('registerForm').style.display = 'block';
+        document.getElementById('codeDisplay').style.display = 'none';
     }
 
     async function sendRegistration() {
@@ -146,29 +184,25 @@
                 body: JSON.stringify({ username })
             });
             const data = await res.json();
-            if (res.ok) {
-                if (data.confirmation_url) {
-                    const confirmUrl = data.confirmation_url;
-                    statusDiv.innerHTML = `✅ Запрос отправлен! 
-                    <br>👉 <a href="${confirmUrl}" target="_blank">Нажмите сюда, чтобы подтвердить регистрацию в Telegram</a> 
-                    <br>Страница обновится автоматически после подтверждения.`;
-                    if (checkInterval) clearInterval(checkInterval);
-                    checkInterval = setInterval(async () => {
-                        const r = await fetch(AUTH_URL);
-                        const d = await r.json();
-                        if (d.exists && d.token) {
-                            clearInterval(checkInterval);
-                            currentToken = d.token;
-                            showCabinet();
-                            loadSubscriptionData();
-                        }
-                    }, 3000);
-                } else {
-                    statusDiv.innerHTML = '❌ Ошибка: ' + (data.error || 'Не удалось получить ссылку для подтверждения');
-                    btn.disabled = false;
-                }
+            if (res.ok && data.code) {
+                // Показываем код
+                document.getElementById('confirmationCode').innerText = data.code;
+                document.getElementById('codeDisplay').style.display = 'block';
+                statusDiv.innerHTML = '✅ Код сгенерирован! Отправьте его в бота.';
+                // Начинаем проверку подтверждения
+                if (checkInterval) clearInterval(checkInterval);
+                checkInterval = setInterval(async () => {
+                    const r = await fetch(AUTH_URL);
+                    const d = await r.json();
+                    if (d.exists && d.token) {
+                        clearInterval(checkInterval);
+                        currentToken = d.token;
+                        showCabinet();
+                        loadSubscriptionData();
+                    }
+                }, 3000);
             } else {
-                statusDiv.innerHTML = '❌ Ошибка: ' + (data.error || 'неизвестная');
+                statusDiv.innerHTML = '❌ Ошибка: ' + (data.error || 'Не удалось получить код');
                 btn.disabled = false;
             }
         } catch(err) {
