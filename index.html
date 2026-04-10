@@ -42,16 +42,22 @@
         .tab-content.active{display:block}
         .hidden{display:none}
         .loader{text-align:center;padding:2rem}
-        .register-form{background:white;border-radius:24px;padding:20px;margin-top:20px}
-        .register-form input{width:100%;padding:12px;border-radius:60px;border:1px solid #cddfe7;font-size:1rem;margin-top:8px}
-        .register-form button{margin-top:16px}
-        .code-block{background:#f1f5f9;padding:12px;border-radius:16px;font-family:monospace;font-size:1.5rem;text-align:center;letter-spacing:4px;margin:16px 0}
+        .modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);display:flex;justify-content:center;align-items:center;z-index:1000}
+        .modal-content{background:white;border-radius:32px;padding:24px;max-width:400px;width:90%}
+        .modal-content input{width:100%;padding:12px;margin:8px 0;border-radius:60px;border:1px solid #ccc}
+        .profile-menu{position:fixed;top:10px;right:10px;background:white;border-radius:30px;padding:8px 16px;box-shadow:0 2px 8px rgba(0,0,0,0.1);z-index:100;display:flex;align-items:center;gap:12px}
         @media (max-width:560px){body{padding:16px 12px 40px}.buttons-grid{flex-direction:column}.btn{width:100%;justify-content:center}.tabs{gap:4px}.tab-btn{font-size:0.8rem;padding:8px 4px}}
     </style>
 </head>
 <body>
+<div class="profile-menu" id="profileMenu" style="display: none;">
+    <span id="profileName"></span>
+    <button id="profileInfoBtn" class="btn-outline" style="padding:4px 12px">👤</button>
+    <button id="logoutBtn" class="btn-outline" style="padding:4px 12px">🚪</button>
+</div>
+
 <div class="container" id="app">
-    <div id="loader" class="loader">⏳ Проверка доступа...</div>
+    <div id="loader" class="loader">⏳ Загрузка...</div>
     <div id="content" style="display: none;">
         <div class="header"><h1>🧩 SHUR-SUB</h1><p>Кабинет • Серверы • Помощь</p></div>
         <div class="sub-url">🔗 Подписка: <span id="subUrlText">загрузка...</span></div>
@@ -61,49 +67,90 @@
             <button class="tab-btn" data-tab="help">❓ Помощь</button>
             <button class="tab-btn" data-tab="errors">⚠️ Ошибки</button>
         </div>
+
+        <!-- Вкладка Серверы -->
         <div id="servers" class="tab-content active">
-            <div class="card"><div class="card-title">📡 Список серверов подписки</div>
-            <div class="buttons-grid"><button id="refreshServersBtn" class="btn btn-secondary">🔄 Обновить список</button><button id="copySubBtn" class="btn btn-outline">📋 Скопировать ссылку подписки</button></div>
-            <div id="serversList" class="server-list"><div style="text-align:center;padding:20px;">Загрузка...</div></div>
-            <div class="instruction"><p>💡 Точный пинг можно проверить только внутри VPN-приложения.</p></div></div>
-        </div>
-        <div id="profile" class="tab-content">
-            <div class="card"><div class="card-title">👤 Профиль пользователя</div>
-            <div class="stats-row"><span class="stats-label">📱 Устройство:</span><span id="deviceName" class="stats-value">—</span></div>
-            <div class="stats-row"><span class="stats-label">📧 Контакты поддержки:</span><span class="stats-value"><a href="https://t.me/citer1852" target="_blank" style="color:#1f5e2c;">@Shurh3k</a></span></div>
-            <div class="stats-row"><span class="stats-label">📦 Серверов в подписке:</span><span id="profileServersCount" class="stats-value">—</span></div>
-            <div class="stats-row"><span class="stats-label">🔄 Последнее обновление:</span><span id="profileLastUpdate" class="stats-value">—</span></div>
-            <div class="stats-row"><span class="stats-label">📊 Лимит трафика:</span><span class="stats-value">∞ ТБ</span></div>
-            <div class="stats-row"><span class="stats-label">⏳ Действует до:</span><span id="profileExpiry" class="stats-value">—</span></div>
-            <div class="buttons-grid"><button id="refreshProfileBtn" class="btn btn-outline">🔄 Обновить статистику</button></div></div>
-        </div>
-        <div id="help" class="tab-content">
-            <div class="card"><div class="card-title">📱 1. Установите приложение</div>
-            <div class="buttons-grid">
-                <a href="https://apps.apple.com/app/happ-proxy-utility/id6478192307" target="_blank" class="btn btn-outline">📱 HApp (iOS)</a>
-                <a href="https://play.google.com/store/apps/details?id=pro.happ.app" target="_blank" class="btn btn-outline">🤖 HApp (Android)</a>
-                <a href="https://play.google.com/store/apps/details?id=com.v2raytun.android" target="_blank" class="btn btn-outline">🚀 v2rayTun (Android)</a>
-                <a href="https://github.com/mdf45/v2raytun/releases" target="_blank" class="btn btn-outline">📦 v2rayTun (Windows/macOS)</a>
-                <a href="https://apps.apple.com/app/shadowrocket/id932747118" target="_blank" class="btn btn-outline">⚡ Shadowrocket (iOS)</a>
-            </div></div>
-            <div class="card"><div class="card-title">📋 2. Добавьте подписку</div>
-            <div class="buttons-grid">
-                <a href="happ://add/https://vpn-write-list.mamasoso1488228.workers.dev/sub" class="btn btn-primary">📱 HApp</a>
-                <a href="v2raytun://install-sub?url=https%3A%2F%2Fvpn-write-list.mamasoso1488228.workers.dev%2Fsub" class="btn btn-primary">🚀 v2rayTun</a>
-                <a href="sub://https://vpn-write-list.mamasoso1488228.workers.dev/sub" class="btn btn-primary">⚡ Shadowrocket</a>
-                <a href="clash://install-config?url=https://vpn-write-list.mamasoso1488228.workers.dev/sub" class="btn btn-primary">💻 Clash</a>
+            <div class="card">
+                <div class="card-title">📡 Список серверов подписки</div>
+                <div class="card-desc">Все доступные серверы из вашей подписки. Название взято из поля "remarks".</div>
+                <div class="buttons-grid">
+                    <button id="refreshServersBtn" class="btn btn-secondary">🔄 Обновить список</button>
+                    <button id="copySubBtn" class="btn btn-outline">📋 Скопировать ссылку подписки</button>
+                </div>
+                <div id="serversList" class="server-list"><div style="text-align:center;padding:20px;">Загрузка...</div></div>
+                <div class="instruction"><p>💡 Точный пинг можно проверить только внутри VPN-приложения (HApp, v2rayTun, Shadowrocket). Здесь отображается только название сервера.</p></div>
             </div>
-            <div class="instruction"><p><strong>📖 Или вручную:</strong><br>1. Скопируйте ссылку: <code>https://vpn-write-list.mamasoso1488228.workers.dev/sub</code><br>2. Вставьте в приложение → Добавить подписку.</p></div></div>
-            <div class="card"><div class="card-title">📊 3. Настройка Ping (TCP)</div>
-            <div class="instruction"><p>В HApp: настройки → Пинг → TCP. В v2rayTun: нажмите на сервер → Тест задержки → TCP Ping.</p></div></div>
-            <div class="card"><div class="card-title">🛡️ 4. Максимальная маршрутизация</div>
-            <div class="buttons-grid"><a href="happ://routing/add/ewogICAgIkJsb2NrSXAiOiBbCiAgICBdLAogICAgIkJsb2NrU2l0ZXMiOiBbCiAgICAgICAgImdlb3NpdGU6d2luLXNweSIsCiAgICAgICAgImdlb3NpdGU6dG9ycmVudCIsCiAgICAgICAgImdlb3NpdGU6Y2F0ZWdvcnktYWRzIgogICAgXSwKICAgICJEaXJlY3RJcCI6IFsKICAgICAgICAiZ2VvaXA6cHJpdmF0ZSIsCiAgICAgICAgImdlb2lwOmRpcmVjdCIKICAgIF0sCiAgICAiRGlyZWN0U2l0ZXMiOiBbCiAgICAgICAgImdlb3NpdGU6cHJpdmF0ZSIsCiAgICAgICAgImdlb3NpdGU6Y2F0ZWdvcnktcnUiLAogICAgICAgICJnZW9zaXRlOndoaXRlbGlzdCIsCiAgICAgICAgImdlb3NpdGU6bWljcm9zb2Z0IiwKICAgICAgICAiZ2Vvc2l0ZTphcHBsZSIsCiAgICAgICAgImdlb3NpdGU6Z29vZ2xlLXBsYXkiLAogICAgICAgICJnZW9zaXRlOmVwaWNnYW1lcyIsCiAgICAgICAgImdlb3NpdGU6cmlvdCIsCiAgICAgICAgImdlb3NpdGU6ZXNjYXBlZnJvbXRhcmtvdiIsCiAgICAgICAgImdlb3NpdGU6c3RlYW0iLAogICAgICAgICJnZW9zaXRlOm9yaWdpbiIsCiAgICAgICAgImdlb3NpdGU6dHdpdGNoIiwKICAgICAgICAiZ2Vvc2l0ZTpwaW50ZXJlc3QiLAogICAgICAgICJnZW9zaXRlOmZhY2VpdCIKICAgIF0sCiAgICAiRG5zSG9zdHMiOiB7CiAgICAgICAgImxrZmwyLm5hbG9nLnJ1IjogIjIxMy4yNC42NC4xNzUiLAogICAgICAgICJsa25wZC5uYWxvZy5ydSI6ICIyMTMuMjQuNjQuMTgxIgogICAgfSwKICAgICJEb21haW5TdHJhdGVneSI6ICJJUElmTm9uTWF0Y2giLAogICAgIkRvbWVzdGljRE5TRG9tYWluIjogImh0dHBzOi8vNzcuODguOC44L2Rucy1xdWVyeSIsCiAgICAiRG9tZXN0aWNETlNJUCI6ICI3Ny44OC44LjgiLAogICAgIkRvbWVzdGljRE5TVHlwZSI6ICJEb0giLAogICAgIkZha2VETlMiOiAiZmFsc2UiLAogICAgIkdlb2lwdXJsIjogImh0dHBzOi8vY2RuLmpzZGVsaXZyLm5ldC9naC9oeWRyYXBvbmlxdWUvcm9zY29tdnBuLWdlb2lwQDIwMjYwMzI0MDUwMy9yZWxlYXNlL2dlb2lwLmRhdCIsCiAgICAiR2Vvc2l0ZXVybCI6ICJodHRwczovL2Nkbi5qc2RlbGl2ci5uZXQvZ2gvaHlkcmFwb25pcXVlL3Jvc2NvbXZwbi1nZW9zaXRlQDIwMjYwMzIxMTgzOC9yZWxlYXNlL2dlb3NpdGUuZGF0IiwKICAgICJHbG9iYWxQcm94eSI6ICJ0cnVlIiwKICAgICJMYXN0VXBkYXRlZCI6IDE3NzUxNDk1MTgsCiAgICAiTmFtZSI6ICJTSEVSLVNVQiBNQVgiLAogICAgIlByb3h5SXAiOiBbCiAgICBdLAogICAgIlByb3h5U2l0ZXMiOiBbCiAgICAgICAgImdlb3NpdGU6Z2l0aHViIiwKICAgICAgICAiZ2Vvc2l0ZTp0d2l0Y2gtYWRzIiwKICAgICAgICAiZ2Vvc2l0ZTp5b3V0dWJlIiwKICAgICAgICAiZ2Vvc2l0ZTp0ZWxlZ3JhbSIKICAgIF0sCiAgICAiUmVtb3RlRE5TRG9tYWluIjogImh0dHBzOi8vZG5zLnF1YWQ5Lm5ldC9kbnMtcXVlcnkiLAogICAgIlJlbW90ZUROU0lQIjogIjkuOS45LjkiLAogICAgIlJlbW90ZUROU1R5cGUiOiAiRG9IIiwKICAgICJSb3V0ZU9yZGVyIjogImJsb2NrLXByb3h5LWRpcmVjdCIKfQo=" class="btn btn-warning">🌍 Импорт MAX маршрутизации (HApp)</a></div>
-            <div class="instruction"><p>🔥 Весь трафик через прокси. Для v2rayTun выберите "Global Proxy".</p></div></div>
         </div>
+
+        <!-- Вкладка Профиль -->
+        <div id="profile" class="tab-content">
+            <div class="card">
+                <div class="card-title">👤 Профиль пользователя</div>
+                <div id="profileStats"></div>
+            </div>
+        </div>
+
+        <!-- Вкладка Помощь (полный гайд) -->
+        <div id="help" class="tab-content">
+            <div class="card">
+                <div class="card-title">📱 1. Установите приложение</div>
+                <div class="card-desc">Выберите ваше устройство и скачайте подходящий клиент:</div>
+                <div class="buttons-grid">
+                    <a href="https://apps.apple.com/app/happ-proxy-utility/id6478192307" target="_blank" class="btn btn-outline">📱 HApp (iOS)</a>
+                    <a href="https://play.google.com/store/apps/details?id=pro.happ.app" target="_blank" class="btn btn-outline">🤖 HApp (Android)</a>
+                    <a href="https://play.google.com/store/apps/details?id=com.v2raytun.android&pcampaignid=web_share" target="_blank" class="btn btn-outline">🚀 v2rayTun (Android)</a>
+                    <a href="https://github.com/mdf45/v2raytun/releases" target="_blank" class="btn btn-outline">📦 v2rayTun (Windows/macOS)</a>
+                    <a href="https://apps.apple.com/app/shadowrocket/id932747118" target="_blank" class="btn btn-outline">⚡ Shadowrocket (iOS)</a>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-title">📋 2. Добавьте подписку</div>
+                <div class="card-desc">Нажмите на кнопку для вашего приложения — подписка добавится автоматически:</div>
+                <div class="buttons-grid">
+                    <a href="#" id="happQuickAdd" class="btn btn-primary">📱 HApp (iOS/Android)</a>
+                    <a href="#" id="v2raytunQuickAdd" class="btn btn-primary">🚀 v2rayTun</a>
+                    <a href="#" id="shadowQuickAdd" class="btn btn-primary">⚡ Shadowrocket</a>
+                    <a href="#" id="clashQuickAdd" class="btn btn-primary">💻 Clash</a>
+                </div>
+                <div class="instruction">
+                    <p><strong>📖 Или вручную:</strong></p>
+                    <p>1. Скопируйте ссылку подписки (она отображается вверху страницы).</p>
+                    <p>2. Откройте приложение → Добавить подписку → Вставить ссылку → Сохранить</p>
+                    <p>3. Обновите подписку (потяните вниз или нажмите ⋮ → Обновить)</p>
+                    <p>• <strong>В v2rayTun:</strong> Группы → Добавить группу с удалённым файлом → вставьте ссылку</p>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-title">📊 3. Настройка Ping (проверка задержки)</div>
+                <div class="card-desc"><strong>TCP Ping</strong> — лучший вариант для реальной оценки скорости.</div>
+                <div class="instruction">
+                    <p><strong>⚙️ Как настроить (один раз):</strong></p>
+                    <p>• <strong>В HApp:</strong> Нажмите на кнопку "настройки"/⚙️ → нажмите кнопку "Пинг" → выберите <strong>TCP</strong></p>
+                    <p>• <strong>В v2rayTun:</strong> Нажмите на сервер → Тест задержки → выберите TCP Ping</p>
+                    <p>• <strong>В Shadowrocket:</strong> Нажмите на сервер → Test Latency → TCP</p>
+                    <p>💡 <strong>Совет:</strong> Включите "Ping on Launch" в настройках, чтобы приложение автоматически проверяло все сервера при запуске.</p>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-title">🛡️ 4. Максимальная маршрутизация (Всё через прокси)</div>
+                <div class="card-desc">Готовый профиль маршрутизации, который направляет <strong>весь трафик через прокси</strong> для максимальной анонимности.</div>
+                <div class="buttons-grid">
+                    <a href="happ://routing/add/ewogICAgIkJsb2NrSXAiOiBbCiAgICBdLAogICAgIkJsb2NrU2l0ZXMiOiBbCiAgICAgICAgImdlb3NpdGU6d2luLXNweSIsCiAgICAgICAgImdlb3NpdGU6dG9ycmVudCIsCiAgICAgICAgImdlb3NpdGU6Y2F0ZWdvcnktYWRzIgogICAgXSwKICAgICJEaXJlY3RJcCI6IFsKICAgICAgICAiZ2VvaXA6cHJpdmF0ZSIsCiAgICAgICAgImdlb2lwOmRpcmVjdCIKICAgIF0sCiAgICAiRGlyZWN0U2l0ZXMiOiBbCiAgICAgICAgImdlb3NpdGU6cHJpdmF0ZSIsCiAgICAgICAgImdlb3NpdGU6Y2F0ZWdvcnktcnUiLAogICAgICAgICJnZW9zaXRlOndoaXRlbGlzdCIsCiAgICAgICAgImdlb3NpdGU6bWljcm9zb2Z0IiwKICAgICAgICAiZ2Vvc2l0ZTphcHBsZSIsCiAgICAgICAgImdlb3NpdGU6Z29vZ2xlLXBsYXkiLAogICAgICAgICJnZW9zaXRlOmVwaWNnYW1lcyIsCiAgICAgICAgImdlb3NpdGU6cmlvdCIsCiAgICAgICAgImdlb3NpdGU6ZXNjYXBlZnJvbXRhcmtvdiIsCiAgICAgICAgImdlb3NpdGU6c3RlYW0iLAogICAgICAgICJnZW9zaXRlOm9yaWdpbiIsCiAgICAgICAgImdlb3NpdGU6dHdpdGNoIiwKICAgICAgICAiZ2Vvc2l0ZTpwaW50ZXJlc3QiLAogICAgICAgICJnZW9zaXRlOmZhY2VpdCIKICAgIF0sCiAgICAiRG5zSG9zdHMiOiB7CiAgICAgICAgImxrZmwyLm5hbG9nLnJ1IjogIjIxMy4yNC42NC4xNzUiLAogICAgICAgICJsa25wZC5uYWxvZy5ydSI6ICIyMTMuMjQuNjQuMTgxIgogICAgfSwKICAgICJEb21haW5TdHJhdGVneSI6ICJJUElmTm9uTWF0Y2giLAogICAgIkRvbWVzdGljRE5TRG9tYWluIjogImh0dHBzOi8vNzcuODguOC44L2Rucy1xdWVyeSIsCiAgICAiRG9tZXN0aWNETlNJUCI6ICI3Ny44OC44LjgiLAogICAgIkRvbWVzdGljRE5TVHlwZSI6ICJEb0giLAogICAgIkZha2VETlMiOiAiZmFsc2UiLAogICAgIkdlb2lwdXJsIjogImh0dHBzOi8vY2RuLmpzZGVsaXZyLm5ldC9naC9oeWRyYXBvbmlxdWUvcm9zY29tdnBuLWdlb2lwQDIwMjYwMzI0MDUwMy9yZWxlYXNlL2dlb2lwLmRhdCIsCiAgICAiR2Vvc2l0ZXVybCI6ICJodHRwczovL2Nkbi5qc2RlbGl2ci5uZXQvZ2gvaHlkcmFwb25pcXVlL3Jvc2NvbXZwbi1nZW9zaXRlQDIwMjYwMzIxMTgzOC9yZWxlYXNlL2dlb3NpdGUuZGF0IiwKICAgICJHbG9iYWxQcm94eSI6ICJ0cnVlIiwKICAgICJMYXN0VXBkYXRlZCI6IDE3NzUxNDk1MTgsCiAgICAiTmFtZSI6ICJTSEVSLVNVQiBNQVgiLAogICAgIlByb3h5SXAiOiBbCiAgICBdLAogICAgIlByb3h5U2l0ZXMiOiBbCiAgICAgICAgImdlb3NpdGU6Z2l0aHViIiwKICAgICAgICAiZ2Vvc2l0ZTp0d2l0Y2gtYWRzIiwKICAgICAgICAiZ2Vvc2l0ZTp5b3V0dWJlIiwKICAgICAgICAiZ2Vvc2l0ZTp0ZWxlZ3JhbSIKICAgIF0sCiAgICAiUmVtb3RlRE5TRG9tYWluIjogImh0dHBzOi8vZG5zLnF1YWQ5Lm5ldC9kbnMtcXVlcnkiLAogICAgIlJlbW90ZUROU0lQIjogIjkuOS45LjkiLAogICAgIlJlbW90ZUROU1R5cGUiOiAiRG9IIiwKICAgICJSb3V0ZU9yZGVyIjogImJsb2NrLXByb3h5LWRpcmVjdCIKfQo=" class="btn btn-warning">🌍 Импорт MAX маршрутизации (HApp)</a>
+                </div>
+                <div class="instruction">
+                    <p><strong>🔥 Что делает этот профиль:</strong> весь трафик идёт через прокси (кроме локальных сетей). Максимальная скрытность.</p>
+                    <p><strong>🛠️ Альтернатива для v2rayTun:</strong> в настройках маршрутизации выберите "Global Proxy".</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Вкладка Ошибки -->
         <div id="errors" class="tab-content">
-            <div class="card"><div class="card-title">⚠️ Ошибка 401 / Timeout / Превышено время ожидания</div>
-            <div class="instruction"><p><strong>1. Скопируйте JSON (нажмите на блок):</strong></p>
-            <pre id="uploadSubScript" style="background:#e2e8f0;padding:12px;border-radius:16px;overflow-x:auto;font-family:monospace;font-size:12px;cursor:pointer;user-select:all;">{
+            <div class="card">
+                <div class="card-title">⚠️ Ошибка 401 / Timeout / Превышено время ожидания</div>
+                <div class="instruction">
+                    <p><strong>1. Скопируйте следующий JSON-скрипт (нажмите на блок, чтобы скопировать):</strong></p>
+                    <pre id="uploadSubScript" style="background:#e2e8f0;padding:12px;border-radius:16px;overflow-x:auto;font-family:monospace;font-size:12px;cursor:pointer;user-select:all;">{
   "remarks": "UPLOAD SUB",
   "inbounds": [{"port":10808,"protocol":"socks","settings":{"udp":true}}],
   "outbounds": [{
@@ -112,174 +159,250 @@
     "streamSettings":{"network":"tcp","security":"reality","realitySettings":{"serverName":"tradingview.com","fingerprint":"chrome","publicKey":"-tePObR3oZwGAUOb5kqTYkNWl6rtUKl0RFuzuu06wgw","shortId":"50"}}
   }]
 }</pre>
-            <p><strong>2. В HApp: ➕ → «Вставить JSON»; в v2rayTun: ➕ → ручной ввод → вставить JSON.</strong></p>
-            <p><strong>3. Запустите сервер «UPLOAD SUB» и обновите подписку (🔄).</strong></p></div></div>
-        </div>
-    </div>
-    <div id="registerForm" style="display: none; max-width: 500px; margin: 0 auto;">
-        <div class="card">
-            <div class="card-title">🔐 Регистрация</div>
-            <div class="card-desc">Ваш IP не зарегистрирован. Введите ваш Telegram username (@username).</div>
-            <input type="text" id="tgUsername" placeholder="@username или просто username">
-            <button id="registerBtn" class="btn btn-primary">📨 Отправить запрос</button>
-            <div id="registerStatus" style="margin-top:16px;"></div>
-            <div id="codeDisplay" style="display:none;">
-                <div class="code-block" id="confirmationCode"></div>
-                <p>📌 Отправьте команду <code>/confirm &lt;код&gt;</code> в Telegram боту <a href="https://t.me/shur_vpn_bot" target="_blank">@shur_vpn_bot</a></p>
+                    <p><strong>2. Зайдите в приложение HApp / v2rayTun:</strong></p>
+                    <p><strong>HApp:</strong> нажмите ➕ → «Вставить JSON» / «Вставить из буфера обмена».</p>
+                    <p><strong>v2rayTun:</strong> нажмите ➕ → ручной ввод → вставьте скопированный JSON → добавить.</p>
+                    <p><strong>3. Найдите в приложении сервер с названием «UPLOAD SUB» и запустите его.</strong></p>
+                    <p><strong>4. Обновление подписки:</strong> если серверы пропали, нажмите справа от названия подписки кнопку 🔄 (обновить). Подписка успешно обновится.</p>
+                    <p>✅ <strong>Поздравляю, подписка успешно обновлена!</strong></p>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-    const AUTH_URL = 'https://vpn-write-list.mamasoso1488228.workers.dev/auth';
-    const SUB_URL = 'https://vpn-write-list.mamasoso1488228.workers.dev/sub';
-    let currentToken = null;
-    let checkInterval = null;
+    const WORKER_URL = 'https://vpn-write-list.mamasoso1488228.workers.dev';
+    let currentToken = localStorage.getItem('shur_token');
+    let pollInterval = null;
 
+    // ==================== АВТОРИЗАЦИЯ ====================
     async function checkAuth() {
-        try {
-            const token = localStorage.getItem('shur_token'); // сохраняйте токен после регистрации
-            let url = AUTH_URL;
-            if (token) url += `?token=${token}`;
-            const res = await fetch(url);
-            const data = await res.json();
-            if (data.exists && data.token) {
-                currentToken = data.token;
-                localStorage.setItem('shur_token', currentToken);
-                showCabinet();
-                loadSubscriptionData();
-                if (checkInterval) clearInterval(checkInterval);
-            } else {
-                localStorage.removeItem('shur_token');
-                showRegister();
-                if (checkInterval) clearInterval(checkInterval);
-            }
-        } catch(err) {
-            document.getElementById('loader').innerHTML = '❌ Ошибка подключения. Попробуйте позже.';
+        if (currentToken) {
+            try {
+                const res = await fetch(`${WORKER_URL}/auth/me?token=${currentToken}`);
+                if (res.ok) {
+                    const user = await res.json();
+                    showCabinet(user.username);
+                    loadSubscription();
+                    return;
+                } else {
+                    localStorage.removeItem('shur_token');
+                    currentToken = null;
+                }
+            } catch(e) {}
         }
+        showAuthPanel();
     }
 
-    function showCabinet() {
-        document.getElementById('loader').style.display = 'none';
-        document.getElementById('registerForm').style.display = 'none';
-        document.getElementById('content').style.display = 'block';
-        document.getElementById('subUrlText').innerText = `${SUB_URL}?token=${currentToken}`;
-    }
-
-    function showRegister() {
+    function showAuthPanel() {
         document.getElementById('loader').style.display = 'none';
         document.getElementById('content').style.display = 'none';
-        document.getElementById('registerForm').style.display = 'block';
-        document.getElementById('codeDisplay').style.display = 'none';
+        document.getElementById('profileMenu').style.display = 'none';
+        const authHtml = `
+            <div class="card" style="max-width: 500px; margin: 0 auto;">
+                <div class="card-title">🔐 Вход / Регистрация</div>
+                <div style="display:flex; gap:8px; margin-bottom:20px;">
+                    <button id="showLoginBtn" class="btn btn-primary">Вход</button>
+                    <button id="showRegisterBtn" class="btn btn-outline">Регистрация</button>
+                    <button id="showTelegramBtn" class="btn btn-outline">Telegram</button>
+                </div>
+                <div id="loginPanel">
+                    <input type="text" id="loginUsername" placeholder="Имя пользователя">
+                    <input type="password" id="loginPassword" placeholder="Пароль">
+                    <button id="loginBtn" class="btn btn-primary">Войти</button>
+                </div>
+                <div id="registerPanel" style="display:none">
+                    <input type="text" id="regUsername" placeholder="Имя пользователя">
+                    <input type="password" id="regPassword" placeholder="Пароль">
+                    <input type="text" id="regTelegram" placeholder="Telegram username (опционально)">
+                    <button id="registerBtn" class="btn btn-primary">Зарегистрироваться</button>
+                    <div id="regMsg"></div>
+                </div>
+                <div id="telegramPanel" style="display:none">
+                    <input type="text" id="tgUsername" placeholder="Telegram username (например, @shurh3k)">
+                    <button id="sendTelegramCodeBtn" class="btn btn-primary">Получить код</button>
+                    <div id="tgMsg"></div>
+                    <div id="codeInputDiv" style="display:none; margin-top:16px;">
+                        <input type="text" id="tgCode" placeholder="Введите код">
+                        <button id="submitTelegramCodeBtn" class="btn btn-secondary">Подтвердить</button>
+                    </div>
+                </div>
+                <div id="statusMsg" style="margin-top:16px;"></div>
+            </div>
+        `;
+        document.getElementById('app').innerHTML += authHtml;
+        attachAuthHandlers();
     }
 
-    async function sendRegistration() {
-        let username = document.getElementById('tgUsername').value.trim();
-        if (!username) { alert('Введите Telegram username'); return; }
-        if (username.startsWith('@')) username = username.substring(1);
-        const statusDiv = document.getElementById('registerStatus');
-        const btn = document.getElementById('registerBtn');
-        statusDiv.innerHTML = '⏳ Отправка запроса...';
-        btn.disabled = true;
+    function attachAuthHandlers() {
+        document.getElementById('showLoginBtn').onclick = () => {
+            document.getElementById('loginPanel').style.display = 'block';
+            document.getElementById('registerPanel').style.display = 'none';
+            document.getElementById('telegramPanel').style.display = 'none';
+        };
+        document.getElementById('showRegisterBtn').onclick = () => {
+            document.getElementById('loginPanel').style.display = 'none';
+            document.getElementById('registerPanel').style.display = 'block';
+            document.getElementById('telegramPanel').style.display = 'none';
+        };
+        document.getElementById('showTelegramBtn').onclick = () => {
+            document.getElementById('loginPanel').style.display = 'none';
+            document.getElementById('registerPanel').style.display = 'none';
+            document.getElementById('telegramPanel').style.display = 'block';
+        };
+        document.getElementById('loginBtn').onclick = async () => {
+            const username = document.getElementById('loginUsername').value;
+            const password = document.getElementById('loginPassword').value;
+            const msg = document.getElementById('statusMsg');
+            msg.innerText = 'Вход...';
+            try {
+                const res = await fetch(`${WORKER_URL}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    currentToken = data.token;
+                    localStorage.setItem('shur_token', currentToken);
+                    location.reload();
+                } else {
+                    msg.innerText = data.error || 'Ошибка входа';
+                }
+            } catch(e) { msg.innerText = 'Ошибка сети'; }
+        };
+        document.getElementById('registerBtn').onclick = async () => {
+            const username = document.getElementById('regUsername').value;
+            const password = document.getElementById('regPassword').value;
+            const telegram_username = document.getElementById('regTelegram').value;
+            const msg = document.getElementById('regMsg');
+            if (!username || !password) { msg.innerText = 'Заполните поля'; return; }
+            msg.innerText = 'Регистрация...';
+            try {
+                const res = await fetch(`${WORKER_URL}/auth/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password, telegram_username })
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    msg.innerText = 'Регистрация успешна! Теперь войдите по паролю.';
+                    document.getElementById('showLoginBtn').click();
+                } else {
+                    msg.innerText = data.error || 'Ошибка';
+                }
+            } catch(e) { msg.innerText = 'Ошибка сети'; }
+        };
+        document.getElementById('sendTelegramCodeBtn').onclick = async () => {
+            let tgUser = document.getElementById('tgUsername').value.trim();
+            if (tgUser.startsWith('@')) tgUser = tgUser.substring(1);
+            const msg = document.getElementById('tgMsg');
+            msg.innerText = 'Генерация кода...';
+            try {
+                const res = await fetch(`${WORKER_URL}/auth/telegram`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ telegram_username: tgUser })
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    msg.innerHTML = `Код: <strong>${data.code}</strong><br>Отправьте команду /confirm ${data.code} в бота @shur_vpn_bot`;
+                    document.getElementById('codeInputDiv').style.display = 'block';
+                    if (pollInterval) clearInterval(pollInterval);
+                    pollInterval = setInterval(async () => {
+                        const checkRes = await fetch(`${WORKER_URL}/auth/check?code=${data.code}`);
+                        const checkData = await checkRes.json();
+                        if (checkData.token) {
+                            clearInterval(pollInterval);
+                            currentToken = checkData.token;
+                            localStorage.setItem('shur_token', currentToken);
+                            location.reload();
+                        }
+                    }, 3000);
+                } else {
+                    msg.innerText = data.error || 'Ошибка';
+                }
+            } catch(e) { msg.innerText = 'Ошибка сети'; }
+        };
+        document.getElementById('submitTelegramCodeBtn').onclick = () => {
+            alert('Код отправлен боту. После подтверждения страница обновится автоматически.');
+        };
+    }
+
+    function showCabinet(username) {
+        document.getElementById('loader').style.display = 'none';
+        document.getElementById('content').style.display = 'block';
+        document.getElementById('profileMenu').style.display = 'flex';
+        document.getElementById('profileName').innerText = username;
+        document.getElementById('logoutBtn').onclick = () => {
+            localStorage.removeItem('shur_token');
+            location.reload();
+        };
+        document.getElementById('profileInfoBtn').onclick = async () => {
+            const res = await fetch(`${WORKER_URL}/auth/me?token=${currentToken}`);
+            const user = await res.json();
+            document.getElementById('profileStats').innerHTML = `
+                <div class="stats-row"><span>Имя:</span><span>${user.username || '—'}</span></div>
+                <div class="stats-row"><span>Telegram:</span><span>${user.telegram_username || '—'}</span></div>
+                <div class="stats-row"><span>Подписка до:</span><span>${user.expires_at ? new Date(user.expires_at).toLocaleDateString() : 'бессрочно'}</span></div>
+            `;
+            document.querySelector('.tab-btn[data-tab="profile"]').click();
+        };
+    }
+
+    // ==================== ЗАГРУЗКА ПОДПИСКИ ====================
+    async function loadSubscription() {
+        if (!currentToken) return;
         try {
-            const res = await fetch(AUTH_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username })
-            });
-            const data = await res.json();
-            if (res.ok && data.code) {
-                document.getElementById('confirmationCode').innerText = data.code;
-                document.getElementById('codeDisplay').style.display = 'block';
-                statusDiv.innerHTML = '✅ Код сгенерирован! Отправьте его в бота.';
-                if (checkInterval) clearInterval(checkInterval);
-                checkInterval = setInterval(async () => {
-                    const token = localStorage.getItem('shur_token');
-                    let url = AUTH_URL;
-                    if (token) url += `?token=${token}`;
-                    const r = await fetch(url);
-                    const d = await r.json();
-                    if (d.exists && d.token) {
-                        clearInterval(checkInterval);
-                        currentToken = d.token;
-                        localStorage.setItem('shur_token', currentToken);
-                        showCabinet();
-                        loadSubscriptionData();
-                    }
-                }, 5000);
+            const res = await fetch(`${WORKER_URL}/sub?token=${currentToken}`);
+            const configs = await res.json();
+            const subUrl = `${WORKER_URL}/sub?token=${currentToken}`;
+            document.getElementById('subUrlText').innerText = subUrl;
+            // Обновляем быстрые кнопки импорта в Помощи
+            document.getElementById('happQuickAdd').href = `happ://add/${subUrl}`;
+            document.getElementById('v2raytunQuickAdd').href = `v2raytun://install-sub?url=${encodeURIComponent(subUrl)}`;
+            document.getElementById('shadowQuickAdd').href = `sub://${subUrl}`;
+            document.getElementById('clashQuickAdd').href = `clash://install-config?url=${subUrl}`;
+            const container = document.getElementById('serversList');
+            if (configs.length) {
+                container.innerHTML = configs.map(s => `<div class="server-item"><span class="server-name">${escapeHtml(s.remarks || 'Сервер')}</span><span class="server-ping">📡 активен</span></div>`).join('');
             } else {
-                statusDiv.innerHTML = '❌ Ошибка: ' + (data.error || 'Не удалось получить код');
-                btn.disabled = false;
+                container.innerHTML = '<div style="padding:20px;text-align:center">Нет серверов</div>';
             }
-        } catch(err) {
-            statusDiv.innerHTML = '❌ Ошибка сети';
-            btn.disabled = false;
-        }
+        } catch(e) { console.error(e); }
     }
 
-    async function loadSubscriptionData() {
-        const servers = await fetchServers();
-        const count = servers ? servers.length : 0;
-        document.getElementById('profileServersCount').innerText = count;
-        document.getElementById('profileLastUpdate').innerText = new Date().toLocaleString('ru-RU');
-        await renderServersList();
-        try {
-            const resp = await fetch(`${SUB_URL}?token=${currentToken}`, { method: 'HEAD' });
-            const userInfo = resp.headers.get('subscription-userinfo');
-            if (userInfo) {
-                const match = userInfo.match(/expire=(\d+)/);
-                if (match) {
-                    const expireDate = new Date(parseInt(match[1]) * 1000);
-                    document.getElementById('profileExpiry').innerText = expireDate.toLocaleDateString('ru-RU');
-                } else { document.getElementById('profileExpiry').innerText = 'через 1 год'; }
-            } else { document.getElementById('profileExpiry').innerText = 'неизвестно'; }
-        } catch(e) { document.getElementById('profileExpiry').innerText = '—'; }
-    }
-
-    async function fetchServers() {
-        try {
-            const response = await fetch(`${SUB_URL}?token=${currentToken}`);
-            if (!response.ok) return [];
-            const data = await response.json();
-            if (Array.isArray(data)) return data;
-            if (data.configs && Array.isArray(data.configs)) return data.configs;
-            return [];
-        } catch(e) { return []; }
-    }
-
-    async function renderServersList() {
-        const container = document.getElementById('serversList');
-        const servers = await fetchServers();
-        if (!servers.length) { container.innerHTML = '<div style="text-align:center;padding:20px;">❌ Не удалось загрузить серверы</div>'; return; }
-        let html = '';
-        servers.forEach((s, i) => {
-            const remarks = s.remarks || s.name || `Сервер ${i+1}`;
-            html += `<div class="server-item"><span class="server-name">${escapeHtml(remarks)}</span><span class="server-ping">📡 активен</span></div>`;
+    function escapeHtml(str) {
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
         });
-        container.innerHTML = html;
     }
 
-    function escapeHtml(str) { return str.replace(/[&<>]/g, m => m==='&'?'&amp;':m==='<'?'&lt;':'&gt;'); }
-    function getDeviceName() {
-        const ua = navigator.userAgent;
-        if (/(iPhone|iPad|iPod)/i.test(ua)) return '🍏 Apple iOS';
-        if (/Android/i.test(ua)) return '🤖 Android';
-        if (/Windows/i.test(ua)) return '💻 Windows';
-        if (/Mac/i.test(ua)) return '🍎 macOS';
-        if (/Linux/i.test(ua)) return '🐧 Linux';
-        return '🌐 Устройство';
-    }
-    document.getElementById('deviceName').innerText = getDeviceName();
-
+    document.getElementById('refreshServersBtn')?.addEventListener('click', loadSubscription);
     document.getElementById('copySubBtn')?.addEventListener('click', () => {
-        const url = `${SUB_URL}?token=${currentToken}`;
+        const url = `${WORKER_URL}/sub?token=${currentToken}`;
         navigator.clipboard.writeText(url).then(() => alert('✅ Ссылка скопирована')).catch(() => prompt('Скопируйте вручную:', url));
     });
-    document.getElementById('refreshServersBtn')?.addEventListener('click', renderServersList);
-    document.getElementById('refreshProfileBtn')?.addEventListener('click', loadSubscriptionData);
-    document.getElementById('registerBtn')?.addEventListener('click', sendRegistration);
 
+    // Копирование JSON для ошибок
+    const preBlock = document.getElementById('uploadSubScript');
+    if (preBlock) {
+        preBlock.addEventListener('click', function() {
+            const range = document.createRange();
+            range.selectNode(this);
+            window.getSelection().removeAllRanges();
+            window.getSelection().addRange(range);
+            document.execCommand('copy');
+            window.getSelection().removeAllRanges();
+            alert('✅ JSON скопирован');
+        });
+    }
+
+    // Переключение табов
     const tabs = document.querySelectorAll('.tab-btn');
     const contents = document.querySelectorAll('.tab-content');
     tabs.forEach(btn => {
@@ -289,10 +412,10 @@
             tabs.forEach(b => b.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
             btn.classList.add('active');
-            if (tabId === 'servers') renderServersList();
-            if (tabId === 'profile') loadSubscriptionData();
+            if (tabId === 'servers') loadSubscription();
         });
     });
+
     checkAuth();
 </script>
 </body>
