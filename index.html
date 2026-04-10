@@ -190,7 +190,10 @@
             });
             const data = await res.json();
             if (res.ok) {
-                statusDiv.innerHTML = '✅ Запрос отправлен. Подтвердите в Telegram-боте. Страница обновится автоматически.';
+                const confirmUrl = data.confirmation_url;
+                statusDiv.innerHTML = `✅ Запрос отправлен! 
+                <br>👉 <a href="${confirmUrl}" target="_blank">Нажмите сюда, чтобы подтвердить регистрацию в Telegram</a> 
+                <br>Страница обновится автоматически после подтверждения.`;
                 if (checkInterval) clearInterval(checkInterval);
                 checkInterval = setInterval(async () => {
                     const r = await fetch(AUTH_URL);
