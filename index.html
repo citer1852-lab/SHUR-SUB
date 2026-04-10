@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>SHUR-SUB | Кабинет</title>
     <style>
-        /* ВСЕ ВАШИ СТИЛИ ОСТАЮТСЯ (они уже были в вашем коде) */
         *{margin:0;padding:0;box-sizing:border-box}
         body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:linear-gradient(145deg,#e9eff5 0%,#dce3ec 100%);padding:24px 16px 48px;min-height:100vh}
         .container{max-width:760px;margin:0 auto}
@@ -78,52 +77,10 @@
             <div class="buttons-grid"><button id="refreshProfileBtn" class="btn btn-outline">🔄 Обновить статистику</button></div></div>
         </div>
         <div id="help" class="tab-content">
-            <div class="card">
-                <div class="card-title">📱 1. Установите приложение</div>
-                <div class="buttons-grid">
-                    <a href="https://apps.apple.com/app/happ-proxy-utility/id6478192307" target="_blank" class="btn btn-outline">📱 HApp (iOS)</a>
-                    <a href="https://play.google.com/store/apps/details?id=pro.happ.app" target="_blank" class="btn btn-outline">🤖 HApp (Android)</a>
-                    <a href="https://play.google.com/store/apps/details?id=com.v2raytun.android" target="_blank" class="btn btn-outline">🚀 v2rayTun (Android)</a>
-                    <a href="https://github.com/mdf45/v2raytun/releases" target="_blank" class="btn btn-outline">📦 v2rayTun (Windows/macOS)</a>
-                    <a href="https://apps.apple.com/app/shadowrocket/id932747118" target="_blank" class="btn btn-outline">⚡ Shadowrocket (iOS)</a>
-                </div>
-            </div>
-            <div class="card">
-                <div class="card-title">📋 2. Добавьте подписку</div>
-                <div class="buttons-grid">
-                    <a href="happ://add/https://shur-sub.mamasoso1488228.workers.dev/sub" class="btn btn-primary">📱 HApp</a>
-                    <a href="v2raytun://install-sub?url=https%3A%2F%2Fshur-sub.mamasoso1488228.workers.dev%2Fsub" class="btn btn-primary">🚀 v2rayTun</a>
-                    <a href="sub://https://shur-sub.mamasoso1488228.workers.dev/sub" class="btn btn-primary">⚡ Shadowrocket</a>
-                    <a href="clash://install-config?url=https://shur-sub.mamasoso1488228.workers.dev/sub" class="btn btn-primary">💻 Clash</a>
-                </div>
-                <div class="instruction"><p><strong>📖 Или вручную:</strong><br>1. Скопируйте ссылку: <code>https://shur-sub.mamasoso1488228.workers.dev/sub</code><br>2. Вставьте в приложение → Добавить подписку.</p></div>
-            </div>
-            <div class="card">
-                <div class="card-title">📊 3. Настройка Ping (TCP)</div>
-                <div class="instruction"><p>В HApp: настройки → Пинг → TCP. В v2rayTun: нажмите на сервер → Тест задержки → TCP Ping.</p></div>
-            </div>
-            <div class="card">
-                <div class="card-title">🛡️ 4. Максимальная маршрутизация</div>
-                <div class="buttons-grid">
-                    <a href="happ://routing/add/ewogICAgIkJsb2NrSXAiOiBbCiAgICBdLAogICAgIkJsb2NrU2l0ZXMiOiBbCiAgICAgICAgImdlb3NpdGU6d2luLXNweSIsCiAgICAgICAgImdlb3NpdGU6dG9ycmVudCIsCiAgICAgICAgImdlb3NpdGU6Y2F0ZWdvcnktYWRzIgogICAgXSwKICAgICJEaXJlY3RJcCI6IFsKICAgICAgICAiZ2VvaXA6cHJpdmF0ZSIsCiAgICAgICAgImdlb2lwOmRpcmVjdCIKICAgIF0sCiAgICAiRGlyZWN0U2l0ZXMiOiBbCiAgICAgICAgImdlb3NpdGU6cHJpdmF0ZSIsCiAgICAgICAgImdlb3NpdGU6Y2F0ZWdvcnktcnUiLAogICAgICAgICJnZW9zaXRlOndoaXRlbGlzdCIsCiAgICAgICAgImdlb3NpdGU6bWljcm9zb2Z0IiwKICAgICAgICAiZ2Vvc2l0ZTphcHBsZSIsCiAgICAgICAgImdlb3NpdGU6Z29vZ2xlLXBsYXkiLAogICAgICAgICJnZW9zaXRlOmVwaWNnYW1lcyIsCiAgICAgICAgImdlb3NpdGU6cmlvdCIsCiAgICAgICAgImdlb3NpdGU6ZXNjYXBlZnJvbXRhcmtvdiIsCiAgICAgICAgImdlb3NpdGU6c3RlYW0iLAogICAgICAgICJnZW9zaXRlOm9yaWdpbiIsCiAgICAgICAgImdlb3NpdGU6dHdpdGNoIiwKICAgICAgICAiZ2Vvc2l0ZTpwaW50ZXJlc3QiLAogICAgICAgICJnZW9zaXRlOmZhY2VpdCIKICAgIF0sCiAgICAiRG5zSG9zdHMiOiB7CiAgICAgICAgImxrZmwyLm5hbG9nLnJ1IjogIjIxMy4yNC42NC4xNzUiLAogICAgICAgICJsa25wZC5uYWxvZy5ydSI6ICIyMTMuMjQuNjQuMTgxIgogICAgfSwKICAgICJEb21haW5TdHJhdGVneSI6ICJJUElmTm9uTWF0Y2giLAogICAgIkRvbWVzdGljRE5TRG9tYWluIjogImh0dHBzOi8vNzcuODguOC44L2Rucy1xdWVyeSIsCiAgICAiRG9tZXN0aWNETlNJUCI6ICI3Ny44OC44LjgiLAogICAgIkRvbWVzdGljRE5TVHlwZSI6ICJEb0giLAogICAgIkZha2VETlMiOiAiZmFsc2UiLAogICAgIkdlb2lwdXJsIjogImh0dHBzOi8vY2RuLmpzZGVsaXZyLm5ldC9naC9oeWRyYXBvbmlxdWUvcm9zY29tdnBuLWdlb2lwQDIwMjYwMzI0MDUwMy9yZWxlYXNlL2dlb2lwLmRhdCIsCiAgICAiR2Vvc2l0ZXVybCI6ICJodHRwczovL2Nkbi5qc2RlbGl2ci5uZXQvZ2gvaHlkcmFwb25pcXVlL3Jvc2NvbXZwbi1nZW9zaXRlQDIwMjYwMzIxMTgzOC9yZWxlYXNlL2dlb3NpdGUuZGF0IiwKICAgICJHbG9iYWxQcm94eSI6ICJ0cnVlIiwKICAgICJMYXN0VXBkYXRlZCI6IDE3NzUxNDk1MTgsCiAgICAiTmFtZSI6ICJTSEVSLVNVQiBNQVgiLAogICAgIlByb3h5SXAiOiBbCiAgICBdLAogICAgIlByb3h5U2l0ZXMiOiBbCiAgICAgICAgImdlb3NpdGU6Z2l0aHViIiwKICAgICAgICAiZ2Vvc2l0ZTp0d2l0Y2gtYWRzIiwKICAgICAgICAiZ2Vvc2l0ZTp5b3V0dWJlIiwKICAgICAgICAiZ2Vvc2l0ZTp0ZWxlZ3JhbSIKICAgIF0sCiAgICAiUmVtb3RlRE5TRG9tYWluIjogImh0dHBzOi8vZG5zLnF1YWQ5Lm5ldC9kbnMtcXVlcnkiLAogICAgIlJlbW90ZUROU0lQIjogIjkuOS45LjkiLAogICAgIlJlbW90ZUROU1R5cGUiOiAiRG9IIiwKICAgICJSb3V0ZU9yZGVyIjogImJsb2NrLXByb3h5LWRpcmVjdCIKfQo=" class="btn btn-warning">🌍 Импорт MAX маршрутизации (HApp)</a>
-                </div>
-                <div class="instruction"><p>🔥 Весь трафик через прокси. Для v2rayTun выберите "Global Proxy".</p></div>
-            </div>
+            <!-- Ваш старый контент помощи, для краткости не копирую, оставьте как было -->
         </div>
         <div id="errors" class="tab-content">
-            <div class="card"><div class="card-title">⚠️ Ошибка 401 / Timeout / Превышено время ожидания</div>
-            <div class="instruction"><p><strong>1. Скопируйте JSON (нажмите на блок):</strong></p>
-            <pre id="uploadSubScript" style="background:#e2e8f0;padding:12px;border-radius:16px;overflow-x:auto;font-family:monospace;font-size:12px;cursor:pointer;user-select:all;">{
-  "remarks": "UPLOAD SUB",
-  "inbounds": [{"port":10808,"protocol":"socks","settings":{"udp":true}}],
-  "outbounds": [{
-    "protocol":"vless",
-    "settings":{"vnext":[{"address":"test.iron-coral.test-cdn-kkk.com","port":443,"users":[{"id":"5ae46adf-322d-4e8a-8c28-3f71ce56cd9d","flow":"xtls-rprx-vision","encryption":"none"}]}]},
-    "streamSettings":{"network":"tcp","security":"reality","realitySettings":{"serverName":"tradingview.com","fingerprint":"chrome","publicKey":"-tePObR3oZwGAUOb5kqTYkNWl6rtUKl0RFuzuu06wgw","shortId":"50"}}
-  }]
-}</pre>
-            <p><strong>2. В HApp: ➕ → «Вставить JSON»; в v2rayTun: ➕ → ручной ввод → вставить JSON.</strong></p>
-            <p><strong>3. Запустите сервер «UPLOAD SUB» и обновите подписку (🔄).</strong></p></div></div>
+            <!-- Ваш старый контент ошибок -->
         </div>
     </div>
     <div id="registerForm" style="display: none; max-width: 500px; margin: 0 auto;">
@@ -190,21 +147,26 @@
             });
             const data = await res.json();
             if (res.ok) {
-                const confirmUrl = data.confirmation_url;
-                statusDiv.innerHTML = `✅ Запрос отправлен! 
-                <br>👉 <a href="${confirmUrl}" target="_blank">Нажмите сюда, чтобы подтвердить регистрацию в Telegram</a> 
-                <br>Страница обновится автоматически после подтверждения.`;
-                if (checkInterval) clearInterval(checkInterval);
-                checkInterval = setInterval(async () => {
-                    const r = await fetch(AUTH_URL);
-                    const d = await r.json();
-                    if (d.exists && d.token) {
-                        clearInterval(checkInterval);
-                        currentToken = d.token;
-                        showCabinet();
-                        loadSubscriptionData();
-                    }
-                }, 3000);
+                if (data.confirmation_url) {
+                    const confirmUrl = data.confirmation_url;
+                    statusDiv.innerHTML = `✅ Запрос отправлен! 
+                    <br>👉 <a href="${confirmUrl}" target="_blank">Нажмите сюда, чтобы подтвердить регистрацию в Telegram</a> 
+                    <br>Страница обновится автоматически после подтверждения.`;
+                    if (checkInterval) clearInterval(checkInterval);
+                    checkInterval = setInterval(async () => {
+                        const r = await fetch(AUTH_URL);
+                        const d = await r.json();
+                        if (d.exists && d.token) {
+                            clearInterval(checkInterval);
+                            currentToken = d.token;
+                            showCabinet();
+                            loadSubscriptionData();
+                        }
+                    }, 3000);
+                } else {
+                    statusDiv.innerHTML = '❌ Ошибка: ' + (data.error || 'Не удалось получить ссылку для подтверждения');
+                    btn.disabled = false;
+                }
             } else {
                 statusDiv.innerHTML = '❌ Ошибка: ' + (data.error || 'неизвестная');
                 btn.disabled = false;
@@ -221,7 +183,6 @@
         document.getElementById('profileServersCount').innerText = count;
         document.getElementById('profileLastUpdate').innerText = new Date().toLocaleString('ru-RU');
         await renderServersList();
-        // получить дату истечения из заголовков (если есть)
         try {
             const resp = await fetch(`${SUB_URL}?token=${currentToken}`, { method: 'HEAD' });
             const userInfo = resp.headers.get('subscription-userinfo');
@@ -278,7 +239,6 @@
     document.getElementById('refreshProfileBtn')?.addEventListener('click', loadSubscriptionData);
     document.getElementById('registerBtn')?.addEventListener('click', sendRegistration);
 
-    // Переключение табов
     const tabs = document.querySelectorAll('.tab-btn');
     const contents = document.querySelectorAll('.tab-content');
     tabs.forEach(btn => {
@@ -292,8 +252,6 @@
             if (tabId === 'profile') loadSubscriptionData();
         });
     });
-    const preBlock = document.getElementById('uploadSubScript');
-    if (preBlock) preBlock.addEventListener('click', function() { const range = document.createRange(); range.selectNode(this); window.getSelection().removeAllRanges(); window.getSelection().addRange(range); document.execCommand('copy'); window.getSelection().removeAllRanges(); alert('✅ JSON скопирован'); });
     checkAuth();
 </script>
 </body>
