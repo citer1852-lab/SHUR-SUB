@@ -42,9 +42,6 @@
         .tab-content.active{display:block}
         .hidden{display:none}
         .loader{text-align:center;padding:2rem}
-        .modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);display:flex;justify-content:center;align-items:center;z-index:1000}
-        .modal-content{background:white;border-radius:32px;padding:24px;max-width:400px;width:90%}
-        .modal-content input{width:100%;padding:12px;margin:8px 0;border-radius:60px;border:1px solid #ccc}
         .profile-menu{position:fixed;top:10px;right:10px;background:white;border-radius:30px;padding:8px 16px;box-shadow:0 2px 8px rgba(0,0,0,0.1);z-index:100;display:flex;align-items:center;gap:12px}
         @media (max-width:560px){body{padding:16px 12px 40px}.buttons-grid{flex-direction:column}.btn{width:100%;justify-content:center}.tabs{gap:4px}.tab-btn{font-size:0.8rem;padding:8px 4px}}
     </style>
@@ -67,90 +64,24 @@
             <button class="tab-btn" data-tab="help">❓ Помощь</button>
             <button class="tab-btn" data-tab="errors">⚠️ Ошибки</button>
         </div>
-
-        <!-- Вкладка Серверы -->
-        <div id="servers" class="tab-content active">
-            <div class="card">
-                <div class="card-title">📡 Список серверов подписки</div>
-                <div class="card-desc">Все доступные серверы из вашей подписки. Название взято из поля "remarks".</div>
-                <div class="buttons-grid">
-                    <button id="refreshServersBtn" class="btn btn-secondary">🔄 Обновить список</button>
-                    <button id="copySubBtn" class="btn btn-outline">📋 Скопировать ссылку подписки</button>
-                </div>
-                <div id="serversList" class="server-list"><div style="text-align:center;padding:20px;">Загрузка...</div></div>
-                <div class="instruction"><p>💡 Точный пинг можно проверить только внутри VPN-приложения (HApp, v2rayTun, Shadowrocket). Здесь отображается только название сервера.</p></div>
-            </div>
-        </div>
-
-        <!-- Вкладка Профиль -->
-        <div id="profile" class="tab-content">
-            <div class="card">
-                <div class="card-title">👤 Профиль пользователя</div>
-                <div id="profileStats"></div>
-            </div>
-        </div>
-
-        <!-- Вкладка Помощь (полный гайд) -->
+        <div id="servers" class="tab-content active"><div class="card"><div class="card-title">📡 Список серверов</div><div id="serversList">Загрузка...</div></div></div>
+        <div id="profile" class="tab-content"><div class="card"><div class="card-title">👤 Профиль</div><div id="profileStats"></div></div></div>
         <div id="help" class="tab-content">
-            <div class="card">
-                <div class="card-title">📱 1. Установите приложение</div>
-                <div class="card-desc">Выберите ваше устройство и скачайте подходящий клиент:</div>
-                <div class="buttons-grid">
-                    <a href="https://apps.apple.com/app/happ-proxy-utility/id6478192307" target="_blank" class="btn btn-outline">📱 HApp (iOS)</a>
-                    <a href="https://play.google.com/store/apps/details?id=pro.happ.app" target="_blank" class="btn btn-outline">🤖 HApp (Android)</a>
-                    <a href="https://play.google.com/store/apps/details?id=com.v2raytun.android&pcampaignid=web_share" target="_blank" class="btn btn-outline">🚀 v2rayTun (Android)</a>
-                    <a href="https://github.com/mdf45/v2raytun/releases" target="_blank" class="btn btn-outline">📦 v2rayTun (Windows/macOS)</a>
-                    <a href="https://apps.apple.com/app/shadowrocket/id932747118" target="_blank" class="btn btn-outline">⚡ Shadowrocket (iOS)</a>
-                </div>
-            </div>
-            <div class="card">
-                <div class="card-title">📋 2. Добавьте подписку</div>
-                <div class="card-desc">Нажмите на кнопку для вашего приложения — подписка добавится автоматически:</div>
-                <div class="buttons-grid">
-                    <a href="#" id="happQuickAdd" class="btn btn-primary">📱 HApp (iOS/Android)</a>
-                    <a href="#" id="v2raytunQuickAdd" class="btn btn-primary">🚀 v2rayTun</a>
-                    <a href="#" id="shadowQuickAdd" class="btn btn-primary">⚡ Shadowrocket</a>
-                    <a href="#" id="clashQuickAdd" class="btn btn-primary">💻 Clash</a>
-                </div>
-                <div class="instruction">
-                    <p><strong>📖 Или вручную:</strong></p>
-                    <p>1. Скопируйте ссылку подписки (она отображается вверху страницы).</p>
-                    <p>2. Откройте приложение → Добавить подписку → Вставить ссылку → Сохранить</p>
-                    <p>3. Обновите подписку (потяните вниз или нажмите ⋮ → Обновить)</p>
-                    <p>• <strong>В v2rayTun:</strong> Группы → Добавить группу с удалённым файлом → вставьте ссылку</p>
-                </div>
-            </div>
-            <div class="card">
-                <div class="card-title">📊 3. Настройка Ping (проверка задержки)</div>
-                <div class="card-desc"><strong>TCP Ping</strong> — лучший вариант для реальной оценки скорости.</div>
-                <div class="instruction">
-                    <p><strong>⚙️ Как настроить (один раз):</strong></p>
-                    <p>• <strong>В HApp:</strong> Нажмите на кнопку "настройки"/⚙️ → нажмите кнопку "Пинг" → выберите <strong>TCP</strong></p>
-                    <p>• <strong>В v2rayTun:</strong> Нажмите на сервер → Тест задержки → выберите TCP Ping</p>
-                    <p>• <strong>В Shadowrocket:</strong> Нажмите на сервер → Test Latency → TCP</p>
-                    <p>💡 <strong>Совет:</strong> Включите "Ping on Launch" в настройках, чтобы приложение автоматически проверяло все сервера при запуске.</p>
-                </div>
-            </div>
-            <div class="card">
-                <div class="card-title">🛡️ 4. Максимальная маршрутизация (Всё через прокси)</div>
-                <div class="card-desc">Готовый профиль маршрутизации, который направляет <strong>весь трафик через прокси</strong> для максимальной анонимности.</div>
-                <div class="buttons-grid">
-                    <a href="happ://routing/add/ewogICAgIkJsb2NrSXAiOiBbCiAgICBdLAogICAgIkJsb2NrU2l0ZXMiOiBbCiAgICAgICAgImdlb3NpdGU6d2luLXNweSIsCiAgICAgICAgImdlb3NpdGU6dG9ycmVudCIsCiAgICAgICAgImdlb3NpdGU6Y2F0ZWdvcnktYWRzIgogICAgXSwKICAgICJEaXJlY3RJcCI6IFsKICAgICAgICAiZ2VvaXA6cHJpdmF0ZSIsCiAgICAgICAgImdlb2lwOmRpcmVjdCIKICAgIF0sCiAgICAiRGlyZWN0U2l0ZXMiOiBbCiAgICAgICAgImdlb3NpdGU6cHJpdmF0ZSIsCiAgICAgICAgImdlb3NpdGU6Y2F0ZWdvcnktcnUiLAogICAgICAgICJnZW9zaXRlOndoaXRlbGlzdCIsCiAgICAgICAgImdlb3NpdGU6bWljcm9zb2Z0IiwKICAgICAgICAiZ2Vvc2l0ZTphcHBsZSIsCiAgICAgICAgImdlb3NpdGU6Z29vZ2xlLXBsYXkiLAogICAgICAgICJnZW9zaXRlOmVwaWNnYW1lcyIsCiAgICAgICAgImdlb3NpdGU6cmlvdCIsCiAgICAgICAgImdlb3NpdGU6ZXNjYXBlZnJvbXRhcmtvdiIsCiAgICAgICAgImdlb3NpdGU6c3RlYW0iLAogICAgICAgICJnZW9zaXRlOm9yaWdpbiIsCiAgICAgICAgImdlb3NpdGU6dHdpdGNoIiwKICAgICAgICAiZ2Vvc2l0ZTpwaW50ZXJlc3QiLAogICAgICAgICJnZW9zaXRlOmZhY2VpdCIKICAgIF0sCiAgICAiRG5zSG9zdHMiOiB7CiAgICAgICAgImxrZmwyLm5hbG9nLnJ1IjogIjIxMy4yNC42NC4xNzUiLAogICAgICAgICJsa25wZC5uYWxvZy5ydSI6ICIyMTMuMjQuNjQuMTgxIgogICAgfSwKICAgICJEb21haW5TdHJhdGVneSI6ICJJUElmTm9uTWF0Y2giLAogICAgIkRvbWVzdGljRE5TRG9tYWluIjogImh0dHBzOi8vNzcuODguOC44L2Rucy1xdWVyeSIsCiAgICAiRG9tZXN0aWNETlNJUCI6ICI3Ny44OC44LjgiLAogICAgIkRvbWVzdGljRE5TVHlwZSI6ICJEb0giLAogICAgIkZha2VETlMiOiAiZmFsc2UiLAogICAgIkdlb2lwdXJsIjogImh0dHBzOi8vY2RuLmpzZGVsaXZyLm5ldC9naC9oeWRyYXBvbmlxdWUvcm9zY29tdnBuLWdlb2lwQDIwMjYwMzI0MDUwMy9yZWxlYXNlL2dlb2lwLmRhdCIsCiAgICAiR2Vvc2l0ZXVybCI6ICJodHRwczovL2Nkbi5qc2RlbGl2ci5uZXQvZ2gvaHlkcmFwb25pcXVlL3Jvc2NvbXZwbi1nZW9zaXRlQDIwMjYwMzIxMTgzOC9yZWxlYXNlL2dlb3NpdGUuZGF0IiwKICAgICJHbG9iYWxQcm94eSI6ICJ0cnVlIiwKICAgICJMYXN0VXBkYXRlZCI6IDE3NzUxNDk1MTgsCiAgICAiTmFtZSI6ICJTSEVSLVNVQiBNQVgiLAogICAgIlByb3h5SXAiOiBbCiAgICBdLAogICAgIlByb3h5U2l0ZXMiOiBbCiAgICAgICAgImdlb3NpdGU6Z2l0aHViIiwKICAgICAgICAiZ2Vvc2l0ZTp0d2l0Y2gtYWRzIiwKICAgICAgICAiZ2Vvc2l0ZTp5b3V0dWJlIiwKICAgICAgICAiZ2Vvc2l0ZTp0ZWxlZ3JhbSIKICAgIF0sCiAgICAiUmVtb3RlRE5TRG9tYWluIjogImh0dHBzOi8vZG5zLnF1YWQ5Lm5ldC9kbnMtcXVlcnkiLAogICAgIlJlbW90ZUROU0lQIjogIjkuOS45LjkiLAogICAgIlJlbW90ZUROU1R5cGUiOiAiRG9IIiwKICAgICJSb3V0ZU9yZGVyIjogImJsb2NrLXByb3h5LWRpcmVjdCIKfQo=" class="btn btn-warning">🌍 Импорт MAX маршрутизации (HApp)</a>
-                </div>
-                <div class="instruction">
-                    <p><strong>🔥 Что делает этот профиль:</strong> весь трафик идёт через прокси (кроме локальных сетей). Максимальная скрытность.</p>
-                    <p><strong>🛠️ Альтернатива для v2rayTun:</strong> в настройках маршрутизации выберите "Global Proxy".</p>
-                </div>
-            </div>
+            <div class="card"><div class="card-title">📱 1. Установите приложение</div><div class="buttons-grid">
+                <a href="https://apps.apple.com/app/happ-proxy-utility/id6478192307" target="_blank" class="btn btn-outline">📱 HApp (iOS)</a>
+                <a href="https://play.google.com/store/apps/details?id=pro.happ.app" target="_blank" class="btn btn-outline">🤖 HApp (Android)</a>
+                <a href="https://play.google.com/store/apps/details?id=com.v2raytun.android" target="_blank" class="btn btn-outline">🚀 v2rayTun (Android)</a>
+                <a href="https://github.com/mdf45/v2raytun/releases" target="_blank" class="btn btn-outline">📦 v2rayTun (Windows/macOS)</a>
+                <a href="https://apps.apple.com/app/shadowrocket/id932747118" target="_blank" class="btn btn-outline">⚡ Shadowrocket (iOS)</a>
+            </div></div>
+            <div class="card"><div class="card-title">📋 2. Добавьте подписку</div><div class="instruction"><p><strong>📖 Скопируйте ссылку подписки вверху страницы и вставьте в приложение.</strong></p></div></div>
+            <div class="card"><div class="card-title">📊 3. Настройка Ping (TCP)</div><div class="instruction"><p>В HApp: настройки → Пинг → TCP. В v2rayTun: нажмите на сервер → Тест задержки → TCP Ping.</p></div></div>
+            <div class="card"><div class="card-title">🛡️ 4. Максимальная маршрутизация</div><div class="buttons-grid"><a href="happ://routing/add/ewogICAgIkJsb2NrSXAiOiBbCiAgICBdLAogICAgIkJsb2NrU2l0ZXMiOiBbCiAgICAgICAgImdlb3NpdGU6d2luLXNweSIsCiAgICAgICAgImdlb3NpdGU6dG9ycmVudCIsCiAgICAgICAgImdlb3NpdGU6Y2F0ZWdvcnktYWRzIgogICAgXSwKICAgICJEaXJlY3RJcCI6IFsKICAgICAgICAiZ2VvaXA6cHJpdmF0ZSIsCiAgICAgICAgImdlb2lwOmRpcmVjdCIKICAgIF0sCiAgICAiRGlyZWN0U2l0ZXMiOiBbCiAgICAgICAgImdlb3NpdGU6cHJpdmF0ZSIsCiAgICAgICAgImdlb3NpdGU6Y2F0ZWdvcnktcnUiLAogICAgICAgICJnZW9zaXRlOndoaXRlbGlzdCIsCiAgICAgICAgImdlb3NpdGU6bWljcm9zb2Z0IiwKICAgICAgICAiZ2Vvc2l0ZTphcHBsZSIsCiAgICAgICAgImdlb3NpdGU6Z29vZ2xlLXBsYXkiLAogICAgICAgICJnZW9zaXRlOmVwaWNnYW1lcyIsCiAgICAgICAgImdlb3NpdGU6cmlvdCIsCiAgICAgICAgImdlb3NpdGU6ZXNjYXBlZnJvbXRhcmtvdiIsCiAgICAgICAgImdlb3NpdGU6c3RlYW0iLAogICAgICAgICJnZW9zaXRlOm9yaWdpbiIsCiAgICAgICAgImdlb3NpdGU6dHdpdGNoIiwKICAgICAgICAiZ2Vvc2l0ZTpwaW50ZXJlc3QiLAogICAgICAgICJnZW9zaXRlOmZhY2VpdCIKICAgIF0sCiAgICAiRG5zSG9zdHMiOiB7CiAgICAgICAgImxrZmwyLm5hbG9nLnJ1IjogIjIxMy4yNC42NC4xNzUiLAogICAgICAgICJsa25wZC5uYWxvZy5ydSI6ICIyMTMuMjQuNjQuMTgxIgogICAgfSwKICAgICJEb21haW5TdHJhdGVneSI6ICJJUElmTm9uTWF0Y2giLAogICAgIkRvbWVzdGljRE5TRG9tYWluIjogImh0dHBzOi8vNzcuODguOC44L2Rucy1xdWVyeSIsCiAgICAiRG9tZXN0aWNETlNJUCI6ICI3Ny44OC44LjgiLAogICAgIkRvbWVzdGljRE5TVHlwZSI6ICJEb0giLAogICAgIkZha2VETlMiOiAiZmFsc2UiLAogICAgIkdlb2lwdXJsIjogImh0dHBzOi8vY2RuLmpzZGVsaXZyLm5ldC9naC9oeWRyYXBvbmlxdWUvcm9zY29tdnBuLWdlb2lwQDIwMjYwMzI0MDUwMy9yZWxlYXNlL2dlb2lwLmRhdCIsCiAgICAiR2Vvc2l0ZXVybCI6ICJodHRwczovL2Nkbi5qc2RlbGl2ci5uZXQvZ2gvaHlkcmFwb25pcXVlL3Jvc2NvbXZwbi1nZW9zaXRlQDIwMjYwMzIxMTgzOC9yZWxlYXNlL2dlb3NpdGUuZGF0IiwKICAgICJHbG9iYWxQcm94eSI6ICJ0cnVlIiwKICAgICJMYXN0VXBkYXRlZCI6IDE3NzUxNDk1MTgsCiAgICAiTmFtZSI6ICJTSEVSLVNVQiBNQVgiLAogICAgIlByb3h5SXAiOiBbCiAgICBdLAogICAgIlByb3h5U2l0ZXMiOiBbCiAgICAgICAgImdlb3NpdGU6Z2l0aHViIiwKICAgICAgICAiZ2Vvc2l0ZTp0d2l0Y2gtYWRzIiwKICAgICAgICAiZ2Vvc2l0ZTp5b3V0dWJlIiwKICAgICAgICAiZ2Vvc2l0ZTp0ZWxlZ3JhbSIKICAgIF0sCiAgICAiUmVtb3RlRE5TRG9tYWluIjogImh0dHBzOi8vZG5zLnF1YWQ5Lm5ldC9kbnMtcXVlcnkiLAogICAgIlJlbW90ZUROU0lQIjogIjkuOS45LjkiLAogICAgIlJlbW90ZUROU1R5cGUiOiAiRG9IIiwKICAgICJSb3V0ZU9yZGVyIjogImJsb2NrLXByb3h5LWRpcmVjdCIKfQo=" class="btn btn-warning">🌍 Импорт MAX маршрутизации (HApp)</a></div></div>
         </div>
-
-        <!-- Вкладка Ошибки -->
         <div id="errors" class="tab-content">
-            <div class="card">
-                <div class="card-title">⚠️ Ошибка 401 / Timeout / Превышено время ожидания</div>
-                <div class="instruction">
-                    <p><strong>1. Скопируйте следующий JSON-скрипт (нажмите на блок, чтобы скопировать):</strong></p>
-                    <pre id="uploadSubScript" style="background:#e2e8f0;padding:12px;border-radius:16px;overflow-x:auto;font-family:monospace;font-size:12px;cursor:pointer;user-select:all;">{
+            <div class="card"><div class="card-title">⚠️ Ошибка 401 / Timeout / Превышено время ожидания</div>
+            <div class="instruction"><p><strong>1. Скопируйте JSON (нажмите на блок):</strong></p>
+            <pre id="uploadSubScript" style="background:#e2e8f0;padding:12px;border-radius:16px;overflow-x:auto;font-family:monospace;font-size:12px;cursor:pointer;user-select:all;">{
   "remarks": "UPLOAD SUB",
   "inbounds": [{"port":10808,"protocol":"socks","settings":{"udp":true}}],
   "outbounds": [{
@@ -159,14 +90,8 @@
     "streamSettings":{"network":"tcp","security":"reality","realitySettings":{"serverName":"tradingview.com","fingerprint":"chrome","publicKey":"-tePObR3oZwGAUOb5kqTYkNWl6rtUKl0RFuzuu06wgw","shortId":"50"}}
   }]
 }</pre>
-                    <p><strong>2. Зайдите в приложение HApp / v2rayTun:</strong></p>
-                    <p><strong>HApp:</strong> нажмите ➕ → «Вставить JSON» / «Вставить из буфера обмена».</p>
-                    <p><strong>v2rayTun:</strong> нажмите ➕ → ручной ввод → вставьте скопированный JSON → добавить.</p>
-                    <p><strong>3. Найдите в приложении сервер с названием «UPLOAD SUB» и запустите его.</strong></p>
-                    <p><strong>4. Обновление подписки:</strong> если серверы пропали, нажмите справа от названия подписки кнопку 🔄 (обновить). Подписка успешно обновится.</p>
-                    <p>✅ <strong>Поздравляю, подписка успешно обновлена!</strong></p>
-                </div>
-            </div>
+            <p><strong>2. В HApp: ➕ → «Вставить JSON»; в v2rayTun: ➕ → ручной ввод → вставить JSON.</strong></p>
+            <p><strong>3. Запустите сервер «UPLOAD SUB» и обновите подписку.</strong></p></div></div>
         </div>
     </div>
 </div>
@@ -174,9 +99,16 @@
 <script>
     const WORKER_URL = 'https://vpn-write-list.mamasoso1488228.workers.dev';
     let currentToken = localStorage.getItem('shur_token');
-    let pollInterval = null;
 
-    // ==================== АВТОРИЗАЦИЯ ====================
+    // Если в URL есть ?token=... – сохраняем и перезагружаем без параметра
+    const urlParams = new URLSearchParams(window.location.search);
+    const tokenFromUrl = urlParams.get('token');
+    if (tokenFromUrl) {
+        localStorage.setItem('shur_token', tokenFromUrl);
+        window.history.replaceState({}, document.title, window.location.pathname);
+        currentToken = tokenFromUrl;
+    }
+
     async function checkAuth() {
         if (currentToken) {
             try {
@@ -223,10 +155,6 @@
                     <input type="text" id="tgUsername" placeholder="Telegram username (например, @shurh3k)">
                     <button id="sendTelegramCodeBtn" class="btn btn-primary">Получить код</button>
                     <div id="tgMsg"></div>
-                    <div id="codeInputDiv" style="display:none; margin-top:16px;">
-                        <input type="text" id="tgCode" placeholder="Введите код">
-                        <button id="submitTelegramCodeBtn" class="btn btn-secondary">Подтвердить</button>
-                    </div>
                 </div>
                 <div id="statusMsg" style="margin-top:16px;"></div>
             </div>
@@ -307,26 +235,11 @@
                 });
                 const data = await res.json();
                 if (res.ok) {
-                    msg.innerHTML = `Код: <strong>${data.code}</strong><br>Отправьте команду /confirm ${data.code} в бота @shur_vpn_bot`;
-                    document.getElementById('codeInputDiv').style.display = 'block';
-                    if (pollInterval) clearInterval(pollInterval);
-                    pollInterval = setInterval(async () => {
-                        const checkRes = await fetch(`${WORKER_URL}/auth/check?code=${data.code}`);
-                        const checkData = await checkRes.json();
-                        if (checkData.token) {
-                            clearInterval(pollInterval);
-                            currentToken = checkData.token;
-                            localStorage.setItem('shur_token', currentToken);
-                            location.reload();
-                        }
-                    }, 3000);
+                    msg.innerHTML = `✅ Код: <strong>${data.code}</strong><br><br>📌 Отправьте команду <code>/confirm ${data.code}</code> в бота <strong>@shur_vpn_bot</strong>.<br><br>После подтверждения бот пришлёт ссылку на кабинет.`;
                 } else {
                     msg.innerText = data.error || 'Ошибка';
                 }
             } catch(e) { msg.innerText = 'Ошибка сети'; }
-        };
-        document.getElementById('submitTelegramCodeBtn').onclick = () => {
-            alert('Код отправлен боту. После подтверждения страница обновится автоматически.');
         };
     }
 
@@ -351,7 +264,6 @@
         };
     }
 
-    // ==================== ЗАГРУЗКА ПОДПИСКИ ====================
     async function loadSubscription() {
         if (!currentToken) return;
         try {
@@ -359,11 +271,6 @@
             const configs = await res.json();
             const subUrl = `${WORKER_URL}/sub?token=${currentToken}`;
             document.getElementById('subUrlText').innerText = subUrl;
-            // Обновляем быстрые кнопки импорта в Помощи
-            document.getElementById('happQuickAdd').href = `happ://add/${subUrl}`;
-            document.getElementById('v2raytunQuickAdd').href = `v2raytun://install-sub?url=${encodeURIComponent(subUrl)}`;
-            document.getElementById('shadowQuickAdd').href = `sub://${subUrl}`;
-            document.getElementById('clashQuickAdd').href = `clash://install-config?url=${subUrl}`;
             const container = document.getElementById('serversList');
             if (configs.length) {
                 container.innerHTML = configs.map(s => `<div class="server-item"><span class="server-name">${escapeHtml(s.remarks || 'Сервер')}</span><span class="server-ping">📡 активен</span></div>`).join('');
@@ -374,12 +281,7 @@
     }
 
     function escapeHtml(str) {
-        return str.replace(/[&<>]/g, function(m) {
-            if (m === '&') return '&amp;';
-            if (m === '<') return '&lt;';
-            if (m === '>') return '&gt;';
-            return m;
-        });
+        return str.replace(/[&<>]/g, m => m==='&'?'&amp;':m==='<'?'&lt;':'&gt;');
     }
 
     document.getElementById('refreshServersBtn')?.addEventListener('click', loadSubscription);
@@ -388,7 +290,6 @@
         navigator.clipboard.writeText(url).then(() => alert('✅ Ссылка скопирована')).catch(() => prompt('Скопируйте вручную:', url));
     });
 
-    // Копирование JSON для ошибок
     const preBlock = document.getElementById('uploadSubScript');
     if (preBlock) {
         preBlock.addEventListener('click', function() {
@@ -402,7 +303,6 @@
         });
     }
 
-    // Переключение табов
     const tabs = document.querySelectorAll('.tab-btn');
     const contents = document.querySelectorAll('.tab-content');
     tabs.forEach(btn => {
