@@ -1,5 +1,5 @@
 {
-  "remarks": "🇷🇺Telegram + LTE №2",
+  "remarks": "🇷🇺Telegram + LTE №1",
   "dns": {
     "servers": [
       "https://1.1.1.1/dns-query",
@@ -47,7 +47,7 @@
       },
       "streamSettings": {
         "network": "tcp",
-        "sockopt": { "tcpNoDelay": true, "tcpFastOpen": false },
+        "sockopt": { "tcpNoDelay": true, "tcpFastOpen": true },
         "security": "reality",
         "realitySettings": {
           "serverName": "tradingview.com",
@@ -56,7 +56,7 @@
           "shortId": "50", "show": false
         }
       },
-      "mux": { "enabled": false }
+      "mux": { "enabled": true, "concurrency": 4 }
     },
     {
       "tag": "srv2",
@@ -70,7 +70,7 @@
       },
       "streamSettings": {
         "network": "tcp",
-        "sockopt": { "tcpNoDelay": true, "tcpFastOpen": false },
+        "sockopt": { "tcpNoDelay": true, "tcpFastOpen": true },
         "security": "reality",
         "realitySettings": {
           "serverName": "ads.x5.ru",
@@ -79,7 +79,7 @@
           "shortId": "50", "show": false
         }
       },
-      "mux": { "enabled": false }
+      "mux": { "enabled": true, "concurrency": 4 }
     },
     {
       "tag": "srv3",
@@ -93,7 +93,7 @@
       },
       "streamSettings": {
         "network": "tcp",
-        "sockopt": { "tcpNoDelay": true, "tcpFastOpen": false },
+        "sockopt": { "tcpNoDelay": true, "tcpFastOpen": true },
         "security": "reality",
         "realitySettings": {
           "serverName": "io.ozone.ru",
@@ -102,7 +102,7 @@
           "shortId": "50", "show": false
         }
       },
-      "mux": { "enabled": false }
+      "mux": { "enabled": true, "concurrency": 4 }
     },
     {
       "tag": "srv4",
@@ -116,7 +116,7 @@
       },
       "streamSettings": {
         "network": "tcp",
-        "sockopt": { "tcpNoDelay": true, "tcpFastOpen": false },
+        "sockopt": { "tcpNoDelay": true, "tcpFastOpen": true },
         "security": "reality",
         "realitySettings": {
           "serverName": "sun6-21.userapi.com",
@@ -125,7 +125,7 @@
           "shortId": "50", "show": false
         }
       },
-      "mux": { "enabled": false }
+      "mux": { "enabled": true, "concurrency": 4 }
     },
     {
       "tag": "srv5",
@@ -139,7 +139,7 @@
       },
       "streamSettings": {
         "network": "tcp",
-        "sockopt": { "tcpNoDelay": true, "tcpFastOpen": false },
+        "sockopt": { "tcpNoDelay": true, "tcpFastOpen": true },
         "security": "reality",
         "realitySettings": {
           "serverName": "ads.x5.ru",
@@ -148,7 +148,7 @@
           "shortId": "50", "show": false
         }
       },
-      "mux": { "enabled": false }
+      "mux": { "enabled": true, "concurrency": 4 }
     },
     {
       "tag": "srv6",
@@ -162,7 +162,7 @@
       },
       "streamSettings": {
         "network": "tcp",
-        "sockopt": { "tcpNoDelay": true, "tcpFastOpen": false },
+        "sockopt": { "tcpNoDelay": true, "tcpFastOpen": true },
         "security": "reality",
         "realitySettings": {
           "serverName": "ads.x5.ru",
@@ -171,12 +171,12 @@
           "shortId": "50", "show": false
         }
       },
-      "mux": { "enabled": false }
+      "mux": { "enabled": true, "concurrency": 4 }
     },
     {
       "tag": "direct",
       "protocol": "freedom",
-      "streamSettings": { "sockopt": { "tcpNoDelay": true, "tcpFastOpen": false } }
+      "streamSettings": { "sockopt": { "tcpNoDelay": true, "tcpFastOpen": true } }
     },
     { "tag": "block", "protocol": "blackhole" }
   ],
