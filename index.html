@@ -139,14 +139,19 @@
 
     async function checkAuth() {
         try {
-            const res = await fetch(AUTH_URL);
+            const token = localStorage.getItem('shur_token'); // сохраняйте токен после регистрации
+            let url = AUTH_URL;
+            if (token) url += `?token=${token}`;
+            const res = await fetch(url);
             const data = await res.json();
             if (data.exists && data.token) {
                 currentToken = data.token;
+                localStorage.setItem('shur_token', currentToken);
                 showCabinet();
                 loadSubscriptionData();
                 if (checkInterval) clearInterval(checkInterval);
             } else {
+                localStorage.removeItem('shur_token');
                 showRegister();
                 if (checkInterval) clearInterval(checkInterval);
             }
