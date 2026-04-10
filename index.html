@@ -190,22 +190,24 @@
             });
             const data = await res.json();
             if (res.ok && data.code) {
-                // Показываем код
                 document.getElementById('confirmationCode').innerText = data.code;
                 document.getElementById('codeDisplay').style.display = 'block';
                 statusDiv.innerHTML = '✅ Код сгенерирован! Отправьте его в бота.';
-                // Начинаем проверку подтверждения
                 if (checkInterval) clearInterval(checkInterval);
                 checkInterval = setInterval(async () => {
-                    const r = await fetch(AUTH_URL);
+                    const token = localStorage.getItem('shur_token');
+                    let url = AUTH_URL;
+                    if (token) url += `?token=${token}`;
+                    const r = await fetch(url);
                     const d = await r.json();
                     if (d.exists && d.token) {
                         clearInterval(checkInterval);
                         currentToken = d.token;
+                        localStorage.setItem('shur_token', currentToken);
                         showCabinet();
                         loadSubscriptionData();
                     }
-                }, 3000);
+                }, 5000);
             } else {
                 statusDiv.innerHTML = '❌ Ошибка: ' + (data.error || 'Не удалось получить код');
                 btn.disabled = false;
