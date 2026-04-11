@@ -60,11 +60,10 @@
 </div>
 
 <script>
-    // Получаем параметры из URL
     const urlParams = new URLSearchParams(window.location.search);
-    const app = urlParams.get('app');      // 'happ' или 'v2raytun'
-    let targetUrl = urlParams.get('url'); // закодированный URL подписки (например, https://shur-sub.../?token=...)
-    const routingData = urlParams.get('data'); // <-- новое
+    const app = urlParams.get('app');
+    let targetUrl = urlParams.get('url');
+    const routingData = urlParams.get('data');
 
     if (targetUrl) {
         targetUrl = decodeURIComponent(targetUrl);
@@ -73,36 +72,26 @@
     let redirectUri = null;
 
     if (routingData) {
-    // Маршрутизация
+        // Маршрутизация
         if (app === 'happ') {
             redirectUri = `happ://routing/add/${routingData}`;
-        } // v2raytun для маршрутизации пока не поддерживаем
+        }
+        // v2raytun пока не поддерживает импорт маршрутизации через data
     } else if (targetUrl) {
-    // Обычная подписка
-        const decodedUrl = decodeURIComponent(targetUrl);
+        // Обычная подписка
         if (app === 'happ') {
-            redirectUri = `happ://add/${decodedUrl}`;
+            redirectUri = `happ://add/${targetUrl}`;
         } else if (app === 'v2raytun') {
-            redirectUri = `v2raytun://install-sub?url=${encodeURIComponent(decodedUrl)}`;
+            redirectUri = `v2raytun://install-sub?url=${encodeURIComponent(targetUrl)}`;
         }
     }
 
-    if (app === 'happ' && targetUrl) {
-        redirectUri = `happ://add/${targetUrl}`;
-    } else if (app === 'v2raytun' && targetUrl) {
-        redirectUri = `v2raytun://install-sub?url=${encodeURIComponent(targetUrl)}`;
-    }
-
-    // Элементы
     const manualLink = document.getElementById('manualLink');
     const errorMsg = document.getElementById('errorMsg');
 
     if (redirectUri) {
-        // Пробуем перенаправить автоматически
         window.location.href = redirectUri;
         manualLink.href = redirectUri;
-
-        // Если через 3 секунды не произошло перехода (возможно, приложение не установлено) – показываем подсказку
         setTimeout(() => {
             errorMsg.textContent = 'Приложение не установлено? Установите Happ или v2rayTun и нажмите кнопку выше.';
         }, 3000);
