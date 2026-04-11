@@ -641,22 +641,27 @@
             const btn = document.getElementById('requestCodeBtn');
             btn.disabled = true;
             btn.innerText = '⏳ Отправка...';
+            const authMessage = document.getElementById('authMessage');
+            authMessage.innerText = '';
             try {
                 const resp = await fetch(`${WORKER_BASE}/auth/telegram`, {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({ telegram_username: input })
                 });
-                const data = await resp.json();
+                const text = await resp.text();
+                let data;
+                try { data = JSON.parse(text); } catch { data = { error: 'Invalid JSON: ' + text }; }
                 if (resp.ok) {
                     showCodeStep(data.code, input);
                 } else {
-                    document.getElementById('authMessage').innerText = data.error || 'Ошибка';
+                    authMessage.innerText = `Ошибка ${resp.status}: ${data.error || text}`;
                     btn.disabled = false;
                     btn.innerText = '📨 Получить код';
                 }
             } catch (e) {
-                document.getElementById('authMessage').innerText = 'Сетевая ошибка';
+                console.error(e);
+                authMessage.innerText = `Сетевая ошибка: ${e.message}`;
                 btn.disabled = false;
                 btn.innerText = '📨 Получить код';
             }
