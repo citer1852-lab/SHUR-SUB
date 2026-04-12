@@ -1,7 +1,9 @@
 {
   "remarks": "🇫🇮 LTE №4",
   "dns": {
-    "servers": ["https://1.1.1.1/dns-query"],
+    "servers": [
+      "https://1.1.1.1/dns-query"
+    ],
     "queryStrategy": "UseIPv4"
   },
   "inbounds": [
@@ -9,23 +11,43 @@
       "listen": "127.0.0.1",
       "port": 10808,
       "protocol": "socks",
-      "settings": { "auth": "noauth", "udp": true, "userLevel": 8 },
-      "sniffing": { "destOverride": ["http", "tls"], "enabled": true },
+      "settings": {
+        "auth": "noauth",
+        "udp": true,
+        "userLevel": 8
+      },
+      "sniffing": {
+        "destOverride": [
+          "http",
+          "tls"
+        ],
+        "enabled": true
+      },
       "tag": "socks"
     },
     {
       "listen": "127.0.0.1",
       "port": 10809,
       "protocol": "http",
-      "settings": { "userLevel": 8 },
-      "sniffing": { "destOverride": ["http", "tls"], "enabled": true },
+      "settings": {
+        "userLevel": 8
+      },
+      "sniffing": {
+        "destOverride": [
+          "http",
+          "tls"
+        ],
+        "enabled": true
+      },
       "tag": "http"
     },
     {
       "listen": "127.0.0.1",
       "port": 11111,
       "protocol": "dokodemo-door",
-      "settings": { "address": "127.0.0.1" },
+      "settings": {
+        "address": "127.0.0.1"
+      },
       "tag": "metrics_in"
     }
   ],
@@ -33,24 +55,31 @@
     "enableConcurrency": true,
     "probeInterval": "1m",
     "probeUrl": "https://www.google.com/generate_204",
-    "subjectSelector": ["node_main", "node_backup"]
+    "subjectSelector": [
+      "node_main",
+      "node_backup"
+    ]
   },
   "outbounds": [
     {
       "tag": "node_main",
       "protocol": "vless",
       "settings": {
-        "vnext": [{
-          "address": "82.97.248.167",
-          "port": 443,
-          "users": [{
-            "encryption": "none",
-            "flow": "xtls-rprx-vision",
-            "id": "a01881a8-3d9b-48bb-9a9c-e96e8b40b2c6",
-            "level": 8,
-            "security": "auto"
-          }]
-        }]
+        "vnext": [
+          {
+            "address": "82.97.248.167",
+            "port": 443,
+            "users": [
+              {
+                "encryption": "none",
+                "flow": "xtls-rprx-vision",
+                "id": "a01881a8-3d9b-48bb-9a9c-e96e8b40b2c6",
+                "level": 8,
+                "security": "auto"
+              }
+            ]
+          }
+        ]
       },
       "streamSettings": {
         "network": "tcp",
@@ -71,24 +100,34 @@
           "show": false,
           "spiderX": "/"
         },
-        "tcpSettings": { "header": { "type": "none" } }
+        "tcpSettings": {
+          "header": {
+            "type": "none"
+          }
+        }
       },
-      "mux": { "enabled": false }
+      "mux": {
+        "enabled": false
+      }
     },
     {
       "tag": "node_backup",
       "protocol": "vless",
       "settings": {
-        "vnext": [{
-          "address": "146.185.208.51",
-          "port": 5443,
-          "users": [{
-            "encryption": "none",
-            "id": "b8dd4a70-7ef8-49d7-8b32-40c0cb707abf",
-            "level": 8,
-            "security": "auto"
-          }]
-        }]
+        "vnext": [
+          {
+            "address": "146.185.208.51",
+            "port": 5443,
+            "users": [
+              {
+                "encryption": "none",
+                "id": "b8dd4a70-7ef8-49d7-8b32-40c0cb707abf",
+                "level": 8,
+                "security": "auto"
+              }
+            ]
+          }
+        ]
       },
       "streamSettings": {
         "network": "tcp",
@@ -109,26 +148,51 @@
           "show": false,
           "spiderX": "/"
         },
-        "tcpSettings": { "header": { "type": "none" } }
+        "tcpSettings": {
+          "header": {
+            "type": "none"
+          }
+        }
       },
-      "mux": { "enabled": false }
+      "mux": {
+        "enabled": false
+      }
     },
     {
       "protocol": "freedom",
-      "settings": { "domainStrategy": "UseIP" },
-      "streamSettings": { "sockopt": { "tcpNoDelay": true, "tcpFastOpen": false } },
+      "settings": {
+        "domainStrategy": "UseIP"
+      },
+      "streamSettings": {
+        "sockopt": {
+          "tcpNoDelay": true,
+          "tcpFastOpen": false
+        }
+      },
       "tag": "direct"
     },
     {
       "protocol": "blackhole",
-      "settings": { "response": { "type": "http" } },
+      "settings": {
+        "response": {
+          "type": "http"
+        }
+      },
       "tag": "block"
     }
   ],
   "policy": {
     "levels": {
-      "0": { "statsUserDownlink": true, "statsUserUplink": true },
-      "8": { "connIdle": 300, "downlinkOnly": 1, "handshake": 4, "uplinkOnly": 1 }
+      "0": {
+        "statsUserDownlink": true,
+        "statsUserUplink": true
+      },
+      "8": {
+        "connIdle": 300,
+        "downlinkOnly": 1,
+        "handshake": 4,
+        "uplinkOnly": 1
+      }
     },
     "system": {
       "statsInboundDownlink": true,
@@ -142,15 +206,27 @@
     "balancers": [
       {
         "tag": "balancer",
-        "selector": ["node_main"],
+        "selector": [
+          "node_main"
+        ],
         "fallbackTag": "node_backup",
         "strategy": {
           "type": "leastLoad",
           "settings": {
-            "baselines": ["4s"],
+            "baselines": [
+              "4s"
+            ],
             "costs": [
-              { "match": "node_main", "regexp": false, "value": 1 },
-              { "match": "node_backup", "regexp": false, "value": 1000000 }
+              {
+                "match": "node_main",
+                "regexp": false,
+                "value": 1
+              },
+              {
+                "match": "node_backup",
+                "regexp": false,
+                "value": 1000000
+              }
             ],
             "expected": 1,
             "maxRTT": "6s"
@@ -159,10 +235,74 @@
       }
     ],
     "rules": [
-      { "type": "field", "protocol": ["bittorrent"], "outboundTag": "block" },
-      { "type": "field", "domain": ["domain:mtalk.google.com", "domain:push.apple.com", "domain:api.push.apple.com"], "outboundTag": "direct" },
-      { "type": "field", "ip": ["17.0.0.0/8"], "outboundTag": "direct" },
-      { "type": "field", "inboundTag": ["socks", "http"], "network": "tcp,udp", "balancerTag": "balancer" }
+      {
+        "type": "field",
+        "domain": [
+          "geosite:category-ru",
+          "geosite:category-ru-social",
+          "geosite:category-ru-mail"
+        ],
+        "outboundTag": "direct"
+      },
+      {
+        "type": "field",
+        "ip": [
+          "geoip:ru"
+        ],
+        "outboundTag": "direct"
+      },
+      {
+        "type": "field",
+        "domain": [
+          "geosite:github"
+        ],
+        "outboundTag": "direct"
+      },
+      {
+        "type": "field",
+        "domain": [
+          "geosite:category-finance",
+          "geosite:bank",
+          "geosite:category-financial"
+        ],
+        "outboundTag": "direct"
+      },
+      {
+        "type": "field",
+        "protocol": [
+          "bittorrent"
+        ],
+        "outboundTag": "block"
+      },
+      {
+        "type": "field",
+        "domain": [
+          "domain:mtalk.google.com",
+          "domain:push.apple.com",
+          "domain:api.push.apple.com"
+        ],
+        "outboundTag": "direct"
+      },
+      {
+        "type": "field",
+        "ip": [
+          "17.0.0.0/8"
+        ],
+        "outboundTag": "direct"
+      },
+      {
+        "type": "field",
+        "inboundTag": [
+          "socks",
+          "http"
+        ],
+        "network": "tcp,udp",
+        "balancerTag": "balancer"
+      },
+      {
+        "type": "field",
+        "outboundTag": "proxy"
+      }
     ]
   },
   "stats": {}

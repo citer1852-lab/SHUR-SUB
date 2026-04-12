@@ -1,7 +1,10 @@
 {
   "remarks": "🇩🇪 TikTok №1",
   "dns": {
-    "servers": ["1.1.1.1", "8.8.8.8"],
+    "servers": [
+      "1.1.1.1",
+      "8.8.8.8"
+    ],
     "queryStrategy": "UseIPv4"
   },
   "inbounds": [
@@ -10,16 +13,33 @@
       "port": 10808,
       "listen": "127.0.0.1",
       "protocol": "socks",
-      "settings": { "udp": true, "auth": "noauth" },
-      "sniffing": { "enabled": true, "destOverride": ["http", "tls"] }
+      "settings": {
+        "udp": true,
+        "auth": "noauth"
+      },
+      "sniffing": {
+        "enabled": true,
+        "destOverride": [
+          "http",
+          "tls"
+        ]
+      }
     },
     {
       "tag": "http",
       "port": 10809,
       "listen": "127.0.0.1",
       "protocol": "http",
-      "settings": { "allowTransparent": false },
-      "sniffing": { "enabled": true, "destOverride": ["http", "tls"] }
+      "settings": {
+        "allowTransparent": false
+      },
+      "sniffing": {
+        "enabled": true,
+        "destOverride": [
+          "http",
+          "tls"
+        ]
+      }
     }
   ],
   "outbounds": [
@@ -58,12 +78,20 @@
           "show": false
         }
       },
-      "mux": { "enabled": true, "concurrency": 4 }
+      "mux": {
+        "enabled": true,
+        "concurrency": 4
+      }
     },
     {
       "tag": "direct",
       "protocol": "freedom",
-      "streamSettings": { "sockopt": { "tcpNoDelay": true, "tcpFastOpen": true } }
+      "streamSettings": {
+        "sockopt": {
+          "tcpNoDelay": true,
+          "tcpFastOpen": true
+        }
+      }
     },
     {
       "tag": "block",
@@ -73,8 +101,36 @@
   "routing": {
     "domainStrategy": "IPIfNonMatch",
     "rules": [
-      { "type": "field", "protocol": ["bittorrent"], "outboundTag": "block" },
-      { "type": "field", "inboundTag": ["socks", "http"], "network": "tcp,udp", "outboundTag": "proxy" }
+      {
+        "type": "field",
+        "domain": [
+          "geosite:tiktok",
+          "domain:tiktok.com",
+          "domain:*.tiktok.com",
+          "domain:musical.ly"
+        ],
+        "outboundTag": "proxy"
+      },
+      {
+        "type": "field",
+        "protocol": [
+          "bittorrent"
+        ],
+        "outboundTag": "block"
+      },
+      {
+        "type": "field",
+        "inboundTag": [
+          "socks",
+          "http"
+        ],
+        "network": "tcp,udp",
+        "outboundTag": "proxy"
+      },
+      {
+        "type": "field",
+        "outboundTag": "direct"
+      }
     ]
   }
 }

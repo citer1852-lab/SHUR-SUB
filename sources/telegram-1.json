@@ -11,7 +11,37 @@
   "routing": {
     "domainStrategy": "IPIfNonMatch",
     "rules": [
-      { "type": "field", "protocol": ["bittorrent"], "outboundTag": "block" },
+      {
+        "type": "field",
+        "domain": [
+          "geosite:telegram",
+          "domain:telegram.org",
+          "domain:t.me",
+          "domain:tdesktop.com",
+          "domain:usercontent.telegram.org"
+        ],
+        "outboundTag": "proxy"
+      },
+      {
+        "type": "field",
+        "ip": [
+          "91.108.4.0/22",
+          "91.108.8.0/22",
+          "91.108.12.0/22",
+          "91.108.16.0/22",
+          "91.108.20.0/22",
+          "95.161.64.0/20",
+          "149.154.160.0/20"
+        ],
+        "outboundTag": "proxy"
+      },
+      {
+        "type": "field",
+        "protocol": [
+          "bittorrent"
+        ],
+        "outboundTag": "block"
+      },
       {
         "type": "field",
         "domain": [
@@ -23,7 +53,13 @@
         ],
         "outboundTag": "direct"
       },
-      { "type": "field", "ip": ["17.0.0.0/8"], "outboundTag": "direct" },
+      {
+        "type": "field",
+        "ip": [
+          "17.0.0.0/8"
+        ],
+        "outboundTag": "direct"
+      },
       {
         "type": "field",
         "domain": [
@@ -37,11 +73,19 @@
       {
         "type": "field",
         "ip": [
-          "91.108.4.0/22", "91.108.8.0/22", "91.108.12.0/22",
-          "91.108.16.0/22", "91.108.20.0/22", "95.161.64.0/20",
+          "91.108.4.0/22",
+          "91.108.8.0/22",
+          "91.108.12.0/22",
+          "91.108.16.0/22",
+          "91.108.20.0/22",
+          "95.161.64.0/20",
           "149.154.160.0/20"
         ],
         "outboundTag": "proxy"
+      },
+      {
+        "type": "field",
+        "outboundTag": "direct"
       }
     ]
   },
@@ -51,16 +95,33 @@
       "port": 10808,
       "listen": "127.0.0.1",
       "protocol": "socks",
-      "settings": { "udp": true, "auth": "noauth" },
-      "sniffing": { "enabled": true, "destOverride": ["http", "tls"] }
+      "settings": {
+        "udp": true,
+        "auth": "noauth"
+      },
+      "sniffing": {
+        "enabled": true,
+        "destOverride": [
+          "http",
+          "tls"
+        ]
+      }
     },
     {
       "tag": "http",
       "port": 10809,
       "listen": "127.0.0.1",
       "protocol": "http",
-      "settings": { "allowTransparent": false },
-      "sniffing": { "enabled": true, "destOverride": ["http", "tls"] }
+      "settings": {
+        "allowTransparent": false
+      },
+      "sniffing": {
+        "enabled": true,
+        "destOverride": [
+          "http",
+          "tls"
+        ]
+      }
     }
   ],
   "outbounds": [
@@ -68,19 +129,26 @@
       "tag": "proxy",
       "protocol": "vless",
       "settings": {
-        "vnext": [{
-          "address": "test.grey-lance.test-cdn-kkk.com",
-          "port": 443,
-          "users": [{
-            "id": "5ae46adf-322d-4e8a-8c28-3f71ce56cd9d",
-            "encryption": "none",
-            "flow": "xtls-rprx-vision"
-          }]
-        }]
+        "vnext": [
+          {
+            "address": "test.grey-lance.test-cdn-kkk.com",
+            "port": 443,
+            "users": [
+              {
+                "id": "5ae46adf-322d-4e8a-8c28-3f71ce56cd9d",
+                "encryption": "none",
+                "flow": "xtls-rprx-vision"
+              }
+            ]
+          }
+        ]
       },
       "streamSettings": {
         "network": "tcp",
-        "sockopt": { "tcpNoDelay": true, "tcpFastOpen": true },
+        "sockopt": {
+          "tcpNoDelay": true,
+          "tcpFastOpen": true
+        },
         "security": "reality",
         "realitySettings": {
           "serverName": "tradingview.com",
@@ -90,13 +158,24 @@
           "show": false
         }
       },
-      "mux": { "enabled": true, "concurrency": 8 }
+      "mux": {
+        "enabled": true,
+        "concurrency": 8
+      }
     },
     {
       "tag": "direct",
       "protocol": "freedom",
-      "streamSettings": { "sockopt": { "tcpNoDelay": true, "tcpFastOpen": true } }
+      "streamSettings": {
+        "sockopt": {
+          "tcpNoDelay": true,
+          "tcpFastOpen": true
+        }
+      }
     },
-    { "tag": "block", "protocol": "blackhole" }
+    {
+      "tag": "block",
+      "protocol": "blackhole"
+    }
   ]
 }

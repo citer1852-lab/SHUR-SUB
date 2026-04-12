@@ -317,6 +317,38 @@
     "rules": [
       {
         "type": "field",
+        "domain": [
+          "geosite:category-ru",
+          "geosite:category-ru-social",
+          "geosite:category-ru-mail"
+        ],
+        "outboundTag": "direct"
+      },
+      {
+        "type": "field",
+        "ip": [
+          "geoip:ru"
+        ],
+        "outboundTag": "direct"
+      },
+      {
+        "type": "field",
+        "domain": [
+          "geosite:github"
+        ],
+        "outboundTag": "direct"
+      },
+      {
+        "type": "field",
+        "domain": [
+          "geosite:category-finance",
+          "geosite:bank",
+          "geosite:category-financial"
+        ],
+        "outboundTag": "direct"
+      },
+      {
+        "type": "field",
         "protocol": [
           "bittorrent"
         ],
@@ -348,6 +380,10 @@
         ],
         "network": "tcp,udp",
         "balancerTag": "bal_28"
+      },
+      {
+        "type": "field",
+        "outboundTag": "proxy"
       }
     ]
   }
