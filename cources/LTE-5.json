@@ -1,0 +1,309 @@
+{
+  "remarks": "🇫🇮 LTE №5",
+  "dns": {
+    "servers": [
+      "https://1.1.1.1/dns-query"
+    ],
+    "queryStrategy": "UseIPv4"
+  },
+  "inbounds": [
+    {
+      "listen": "127.0.0.1",
+      "port": 10808,
+      "protocol": "socks",
+      "settings": {
+        "auth": "noauth",
+        "udp": true,
+        "userLevel": 8
+      },
+      "sniffing": {
+        "destOverride": [
+          "http",
+          "tls"
+        ],
+        "enabled": true
+      },
+      "tag": "socks"
+    },
+    {
+      "listen": "127.0.0.1",
+      "port": 10809,
+      "protocol": "http",
+      "settings": {
+        "userLevel": 8
+      },
+      "sniffing": {
+        "destOverride": [
+          "http",
+          "tls"
+        ],
+        "enabled": true
+      },
+      "tag": "http"
+    },
+    {
+      "listen": "127.0.0.1",
+      "port": 11111,
+      "protocol": "dokodemo-door",
+      "settings": {
+        "address": "127.0.0.1"
+      },
+      "tag": "metrics_in"
+    }
+  ],
+  "observatory": {
+    "enableConcurrency": true,
+    "probeInterval": "1m",
+    "probeUrl": "https://www.google.com/generate_204",
+    "subjectSelector": [
+      "node_main",
+      "node_backup"
+    ]
+  },
+  "outbounds": [
+    {
+      "tag": "node_main",
+      "protocol": "vless",
+      "settings": {
+        "vnext": [
+          {
+            "address": "150.241.75.139",
+            "port": 443,
+            "users": [
+              {
+                "encryption": "none",
+                "flow": "xtls-rprx-vision",
+                "id": "5f98c4f8-19f4-471d-8ed5-10c0550c0423",
+                "level": 8,
+                "security": "auto"
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "sockopt": {
+          "tcpNoDelay": true,
+          "tcpFastOpen": false,
+          "tcpKeepAliveIdle": 60,
+          "tcpKeepAliveInterval": 15,
+          "tcpCongestion": "bbr"
+        },
+        "security": "reality",
+        "realitySettings": {
+          "allowInsecure": false,
+          "fingerprint": "chrome",
+          "publicKey": "K0J7MeoQdkINpubvpI7F0sqfx3TYonr35gCj3xlxRnw",
+          "serverName": "tunnel.vk-apps.com",
+          "shortId": "c34685e6",
+          "show": false,
+          "spiderX": "/"
+        },
+        "tcpSettings": {
+          "header": {
+            "type": "none"
+          }
+        }
+      },
+      "mux": {
+        "enabled": false
+      }
+    },
+    {
+      "tag": "node_backup",
+      "protocol": "vless",
+      "settings": {
+        "vnext": [
+          {
+            "address": "85.192.49.230",
+            "port": 443,
+            "users": [
+              {
+                "encryption": "none",
+                "id": "8de7627c-1995-41f7-93e6-7fd9715514a2",
+                "level": 8,
+                "security": "auto"
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "sockopt": {
+          "tcpNoDelay": true,
+          "tcpFastOpen": false,
+          "tcpKeepAliveIdle": 60,
+          "tcpKeepAliveInterval": 15,
+          "tcpCongestion": "bbr"
+        },
+        "security": "reality",
+        "realitySettings": {
+          "allowInsecure": false,
+          "fingerprint": "random",
+          "publicKey": "VMMc3QkOG66O2cD0Ki36VOEDQxpGT5aK8KAwLGklJzw",
+          "serverName": "www.google.com",
+          "shortId": "c2",
+          "show": false,
+          "spiderX": "/"
+        },
+        "tcpSettings": {
+          "header": {
+            "type": "none"
+          }
+        }
+      },
+      "mux": {
+        "enabled": false
+      }
+    },
+    {
+      "protocol": "freedom",
+      "settings": {
+        "domainStrategy": "UseIP"
+      },
+      "streamSettings": {
+        "sockopt": {
+          "tcpNoDelay": true,
+          "tcpFastOpen": false
+        }
+      },
+      "tag": "direct"
+    },
+    {
+      "protocol": "blackhole",
+      "settings": {
+        "response": {
+          "type": "http"
+        }
+      },
+      "tag": "block"
+    }
+  ],
+  "policy": {
+    "levels": {
+      "0": {
+        "statsUserDownlink": true,
+        "statsUserUplink": true
+      },
+      "8": {
+        "connIdle": 300,
+        "downlinkOnly": 1,
+        "handshake": 4,
+        "uplinkOnly": 1
+      }
+    },
+    "system": {
+      "statsInboundDownlink": true,
+      "statsInboundUplink": true,
+      "statsOutboundDownlink": true,
+      "statsOutboundUplink": true
+    }
+  },
+  "routing": {
+    "domainStrategy": "IPIfNonMatch",
+    "balancers": [
+      {
+        "tag": "balancer",
+        "selector": [
+          "node_main"
+        ],
+        "fallbackTag": "node_backup",
+        "strategy": {
+          "type": "leastLoad",
+          "settings": {
+            "baselines": [
+              "4s"
+            ],
+            "costs": [
+              {
+                "match": "node_main",
+                "regexp": false,
+                "value": 1
+              },
+              {
+                "match": "node_backup",
+                "regexp": false,
+                "value": 1000000
+              }
+            ],
+            "expected": 1,
+            "maxRTT": "6s"
+          }
+        }
+      }
+    ],
+    "rules": [
+      {
+        "type": "field",
+        "domain": [
+          "geosite:category-ru",
+          "geosite:category-ru-social",
+          "geosite:category-ru-mail"
+        ],
+        "outboundTag": "direct"
+      },
+      {
+        "type": "field",
+        "ip": [
+          "geoip:ru"
+        ],
+        "outboundTag": "direct"
+      },
+      {
+        "type": "field",
+        "domain": [
+          "geosite:github"
+        ],
+        "outboundTag": "direct"
+      },
+      {
+        "type": "field",
+        "domain": [
+          "geosite:category-finance",
+          "geosite:bank",
+          "geosite:category-financial"
+        ],
+        "outboundTag": "direct"
+      },
+      {
+        "type": "field",
+        "protocol": [
+          "bittorrent"
+        ],
+        "outboundTag": "block"
+      },
+      {
+        "type": "field",
+        "domain": [
+          "domain:mtalk.google.com",
+          "domain:push.apple.com",
+          "domain:api.push.apple.com"
+        ],
+        "outboundTag": "direct"
+      },
+      {
+        "type": "field",
+        "ip": [
+          "17.0.0.0/8"
+        ],
+        "outboundTag": "direct"
+      },
+      {
+        "type": "field",
+        "inboundTag": [
+          "socks",
+          "http"
+        ],
+        "network": "tcp,udp",
+        "balancerTag": "balancer"
+      },
+      {
+        "type": "field",
+        "outboundTag": "proxy"
+      }
+    ]
+  },
+  "stats": {}
+}
