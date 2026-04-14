@@ -38,80 +38,33 @@
   "outbounds": [
     {
       "tag": "node_main",
-      "protocol": "vless",
+      "protocol": "shadowsocks",
       "settings": {
-        "vnext": [{
-          "address": "82.97.248.167",
-          "port": 443,
-          "users": [{
-            "encryption": "none",
-            "flow": "xtls-rprx-vision",
-            "id": "a01881a8-3d9b-48bb-9a9c-e96e8b40b2c6",
-            "level": 8,
-            "security": "auto"
-          }]
-        }]
+        "servers": [
+          {
+            "address": "89.169.173.73",
+            "port": 10086,
+            "method": "2022-blake3-aes-128-gcm",
+            "password": "Z+vX7BprUd+oaO8leP87Yw=="
+          }
+        ]
       },
-      "streamSettings": {
-        "network": "tcp",
-        "sockopt": {
-          "tcpNoDelay": true,
-          "tcpFastOpen": false,
-          "tcpKeepAliveIdle": 60,
-          "tcpKeepAliveInterval": 15,
-          "tcpCongestion": "bbr"
-        },
-        "security": "reality",
-        "realitySettings": {
-          "allowInsecure": false,
-          "fingerprint": "chrome",
-          "publicKey": "7IOtSp0-n2_uNS5nMO9ywZbn2HibMRGy0KbLad3szXc",
-          "serverName": "eh.vk.com",
-          "shortId": "5e6f7a8b",
-          "show": false,
-          "spiderX": "/"
-        },
-        "tcpSettings": { "header": { "type": "none" } }
-      },
-      "mux": { "enabled": false }
+      "tag": "proxy"
     },
     {
       "tag": "node_backup",
-      "protocol": "vless",
+      "protocol": "shadowsocks",
       "settings": {
-        "vnext": [{
-          "address": "146.185.208.51",
-          "port": 5443,
-          "users": [{
-            "encryption": "none",
-            "id": "b8dd4a70-7ef8-49d7-8b32-40c0cb707abf",
-            "level": 8,
-            "security": "auto"
-          }]
-        }]
+        "servers": [
+          {
+            "address": "89.169.173.73",
+            "port": 10086,
+            "method": "2022-blake3-aes-128-gcm",
+            "password": "Z+vX7BprUd+oaO8leP87Yw=="
+          }
+        ]
       },
-      "streamSettings": {
-        "network": "tcp",
-        "sockopt": {
-          "tcpNoDelay": true,
-          "tcpFastOpen": false,
-          "tcpKeepAliveIdle": 60,
-          "tcpKeepAliveInterval": 15,
-          "tcpCongestion": "bbr"
-        },
-        "security": "reality",
-        "realitySettings": {
-          "allowInsecure": false,
-          "fingerprint": "qq",
-          "publicKey": "YCNQQnzebJy3ZiEWbJEQ_pKrqmRzT3EOFJhH-w5evFg",
-          "serverName": "ads.x5.ru",
-          "shortId": "5a54cb053b69aa7f",
-          "show": false,
-          "spiderX": "/"
-        },
-        "tcpSettings": { "header": { "type": "none" } }
-      },
-      "mux": { "enabled": false }
+      "tag": "proxy"
     },
     {
       "protocol": "freedom",
@@ -131,10 +84,8 @@
       "8": { "connIdle": 300, "downlinkOnly": 1, "handshake": 4, "uplinkOnly": 1 }
     },
     "system": {
-      "statsInboundDownlink": true,
-      "statsInboundUplink": true,
-      "statsOutboundDownlink": true,
-      "statsOutboundUplink": true
+      "statsInboundDownlink": true, "statsInboundUplink": true,
+      "statsOutboundDownlink": true, "statsOutboundUplink": true
     }
   },
   "routing": {
