@@ -38,80 +38,33 @@
   "outbounds": [
     {
       "tag": "node_main",
-      "protocol": "vless",
+      "protocol": "shadowsocks",
       "settings": {
-        "vnext": [{
-          "address": "150.241.75.139",
-          "port": 443,
-          "users": [{
-            "encryption": "none",
-            "flow": "xtls-rprx-vision",
-            "id": "5f98c4f8-19f4-471d-8ed5-10c0550c0423",
-            "level": 8,
-            "security": "auto"
-          }]
-        }]
+        "servers": [
+          {
+            "address": "89.169.173.73",
+            "port": 10086,
+            "method": "2022-blake3-aes-128-gcm",
+            "password": "Z+vX7BprUd+oaO8leP87Yw=="
+          }
+        ]
       },
-      "streamSettings": {
-        "network": "tcp",
-        "sockopt": {
-          "tcpNoDelay": true,
-          "tcpFastOpen": false,
-          "tcpKeepAliveIdle": 60,
-          "tcpKeepAliveInterval": 15,
-          "tcpCongestion": "bbr"
-        },
-        "security": "reality",
-        "realitySettings": {
-          "allowInsecure": false,
-          "fingerprint": "chrome",
-          "publicKey": "K0J7MeoQdkINpubvpI7F0sqfx3TYonr35gCj3xlxRnw",
-          "serverName": "tunnel.vk-apps.com",
-          "shortId": "c34685e6",
-          "show": false,
-          "spiderX": "/"
-        },
-        "tcpSettings": { "header": { "type": "none" } }
-      },
-      "mux": { "enabled": false }
+      "tag": "proxy"
     },
     {
       "tag": "node_backup",
-      "protocol": "vless",
+      "protocol": "shadowsocks",
       "settings": {
-        "vnext": [{
-          "address": "85.192.49.230",
-          "port": 443,
-          "users": [{
-            "encryption": "none",
-            "id": "8de7627c-1995-41f7-93e6-7fd9715514a2",
-            "level": 8,
-            "security": "auto"
-          }]
-        }]
+        "servers": [
+          {
+            "address": "89.169.173.73",
+            "port": 10086,
+            "method": "2022-blake3-aes-128-gcm",
+            "password": "Z+vX7BprUd+oaO8leP87Yw=="
+          }
+        ]
       },
-      "streamSettings": {
-        "network": "tcp",
-        "sockopt": {
-          "tcpNoDelay": true,
-          "tcpFastOpen": false,
-          "tcpKeepAliveIdle": 60,
-          "tcpKeepAliveInterval": 15,
-          "tcpCongestion": "bbr"
-        },
-        "security": "reality",
-        "realitySettings": {
-          "allowInsecure": false,
-          "fingerprint": "random",
-          "publicKey": "VMMc3QkOG66O2cD0Ki36VOEDQxpGT5aK8KAwLGklJzw",
-          "serverName": "www.google.com",
-          "shortId": "c2",
-          "show": false,
-          "spiderX": "/"
-        },
-        "tcpSettings": { "header": { "type": "none" } }
-      },
-      "mux": { "enabled": false }
+      "tag": "proxy"
     },
     {
       "protocol": "freedom",
@@ -131,10 +84,8 @@
       "8": { "connIdle": 300, "downlinkOnly": 1, "handshake": 4, "uplinkOnly": 1 }
     },
     "system": {
-      "statsInboundDownlink": true,
-      "statsInboundUplink": true,
-      "statsOutboundDownlink": true,
-      "statsOutboundUplink": true
+      "statsInboundDownlink": true, "statsInboundUplink": true,
+      "statsOutboundDownlink": true, "statsOutboundUplink": true
     }
   },
   "routing": {
