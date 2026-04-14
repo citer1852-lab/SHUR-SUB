@@ -1,143 +1,35 @@
 {
-    "dns": {
-        "port": 53,
-        "queryStrategy": "UseIPv4",
-        "servers": [
-            "8.8.4.4",
-            "8.8.8.8"
-        ]
-    },
-    "inbounds": [
-        {
-            "listen": "127.0.0.1",
-            "port": 10808,
-            "protocol": "socks",
-            "settings": {
-                "auth": "noauth",
-                "udp": true
-            },
-            "sniffing": {
-                "destOverride": [
-                    "http",
-                    "tls",
-                    "quic"
-                ],
-                "enabled": true,
-                "routeOnly": false
-            },
-            "tag": "socks"
-        },
-        {
-            "listen": "127.0.0.1",
-            "port": 10809,
-            "protocol": "http",
-            "settings": {
-                "allowTransparent": false
-            },
-            "sniffing": {
-                "destOverride": [
-                    "http",
-                    "tls",
-                    "quic"
-                ],
-                "enabled": true,
-                "routeOnly": false
-            },
-            "tag": "http"
-        }
-    ],
-    "meta": null,
-    "outbounds": [
-        {
-            "protocol": "vless",
-            "settings": {
-                "vnext": [
-                    {
-                        "address": "test.grey-lance.test-cdn-kkk.com",
-                        "port": 443,
-                        "users": [
-                            {
-                                "encryption": "none",
-                                "flow": "xtls-rprx-vision",
-                                "id": "5ae46adf-322d-4e8a-8c28-3f71ce56cd9d"
-                            }
-                        ]
-                    }
-                ]
-            },
-            "streamSettings": {
-                "network": "tcp",
-                "realitySettings": {
-                    "fingerprint": "qq",
-                    "publicKey": "-tePObR3oZwGAUOb5kqTYkNWl6rtUKl0RFuzuu06wgw",
-                    "serverName": "tradingview.com",
-                    "shortId": "50",
-                    "show": false
-                },
-                "security": "reality"
-            },
-            "tag": "proxy"
-        },
-        {
-            "protocol": "freedom",
-            "tag": "direct"
-        },
-        {
-            "protocol": "blackhole",
-            "tag": "block"
-        }
-    ],
-    "remarks": "🇷🇺 UPDATE SUB",
-    "routing": {
-        "domainStrategy": "IPIfNonMatch",
-        "rules": [
-            {
-                "outboundTag": "block",
-                "protocol": [
-                    "bittorrent"
-                ],
-                "type": "field"
-            },
-            {
-                "domain": [
-                    "domain:cloudflare.com",
-                    "domain:cloudflare.net",
-                    "domain:workers.dev",
-                    "domain:cloudflareinsights.com",
-                    "domain:speed.cloudflare.com",
-                    "domain:argo-tunnel.com",
-                    "domain:cloudflare-dns.com",
-                    "domain:one.one.one.one"
-                ],
-                "outboundTag": "proxy",
-                "type": "field"
-            },
-            {
-                "ip": [
-                    "173.245.48.0/20",
-                    "103.21.244.0/22",
-                    "103.22.200.0/22",
-                    "103.31.4.0/22",
-                    "141.101.64.0/18",
-                    "108.162.192.0/18",
-                    "190.93.240.0/20",
-                    "188.114.96.0/20",
-                    "197.234.240.0/22",
-                    "198.41.128.0/17",
-                    "162.158.0.0/15",
-                    "104.16.0.0/13",
-                    "104.24.0.0/14",
-                    "172.64.0.0/13",
-                    "131.0.72.0/22"
-                ],
-                "outboundTag": "proxy",
-                "type": "field"
-            },
-            {
-                "network": "tcp,udp",
-                "outboundTag": "direct",
-                "type": "field"
-            }
-        ]
+  "remarks": "🇷🇺 UPDATE SUB",
+  "inbounds": [
+    {
+      "port": 10808,
+      "protocol": "socks",
+      "settings": {
+        "udp": true
+      }
     }
+  ],
+  "outbounds": [
+    {
+      "protocol": "vless",
+      "settings": {
+        "vnext": [
+          {
+            "address": "89.169.173.73",
+            "port": 443,
+            "users": [
+              {
+                "id": "5ae46adf-322d-4e8a-8c28-3f71ce56cd9d",
+                "encryption": "none"
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "security": "none"
+      }
+    }
+  ]
 }
