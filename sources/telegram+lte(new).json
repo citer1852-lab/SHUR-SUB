@@ -6,7 +6,7 @@
       "https://dns.google/dns-query",
       "1.1.1.1"
     ],
-    "queryStrategy": "UseIPv4"
+    "queryStrategy": "UseIPv4" 
   },
   "inbounds": [
     {
