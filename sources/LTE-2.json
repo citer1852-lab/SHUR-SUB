@@ -1,5 +1,5 @@
 {
-  "remarks": "🇫🇮 LTE №2",
+  "remarks": "🇫🇮 LTE Universal 2",
   "dns": {
     "servers": ["1.1.1.1", "8.8.8.8"],
     "queryStrategy": "UseIPv4"
