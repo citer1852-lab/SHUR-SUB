@@ -15,7 +15,7 @@
       "listen": "127.0.0.1",
       "protocol": "socks",
       "settings": { "udp": true, "auth": "noauth" },
-      "sniffing": { "enabled": true, "destOverride": ["http", "tls"] }
+      "sniffing": { "enabled": true, "destOverride": ["http", "tls", "quic"] }
     },
     {
       "tag": "http",
@@ -23,7 +23,7 @@
       "listen": "127.0.0.1",
       "protocol": "http",
       "settings": { "allowTransparent": false },
-      "sniffing": { "enabled": true, "destOverride": ["http", "tls"] }
+      "sniffing": { "enabled": true, "destOverride": ["http", "tls", "quic"] }
     }
   ],
   "observatory": {
@@ -45,8 +45,7 @@
             "password": "Z+vX7BprUd+oaO8leP87Yw=="
           }
         ]
-      },
-      "mux": { "enabled": false }
+      }
     },
     {
       "tag": "srv2",
@@ -60,8 +59,7 @@
             "password": "Z+vX7BprUd+oaO8leP87Yw=="
           }
         ]
-      },
-      "mux": { "enabled": false }
+      }
     },
     {
       "tag": "srv3",
@@ -75,8 +73,7 @@
             "password": "Z+vX7BprUd+oaO8leP87Yw=="
           }
         ]
-      },
-      "mux": { "enabled": false }
+      }
     },
     {
       "tag": "srv4",
@@ -90,8 +87,7 @@
             "password": "Z+vX7BprUd+oaO8leP87Yw=="
           }
         ]
-      },
-      "mux": { "enabled": false }
+      }
     },
     {
       "tag": "srv5",
@@ -105,8 +101,7 @@
             "password": "Z+vX7BprUd+oaO8leP87Yw=="
           }
         ]
-      },
-      "mux": { "enabled": false }
+      }
     },
     {
       "tag": "srv6",
@@ -120,15 +115,17 @@
             "password": "Z+vX7BprUd+oaO8leP87Yw=="
           }
         ]
-      },
-      "mux": { "enabled": false }
+      }
     },
     {
       "tag": "direct",
       "protocol": "freedom",
       "streamSettings": { "sockopt": { "tcpNoDelay": true, "tcpFastOpen": false } }
     },
-    { "tag": "block", "protocol": "blackhole" }
+    {
+      "tag": "block",
+      "protocol": "blackhole"
+    }
   ],
   "routing": {
     "domainMatcher": "hybrid",
@@ -183,4 +180,4 @@
       }
     ]
   }
-}
+          }
