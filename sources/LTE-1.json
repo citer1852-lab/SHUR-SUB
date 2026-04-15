@@ -1,5 +1,5 @@
 {
-  "remarks": "🇫🇮 LTE №1",
+  "remarks": "🇫🇮 LTE Universal 1",
   "dns": {
     "servers": ["1.1.1.1", "8.8.8.8"],
     "queryStrategy": "UseIPv4"
@@ -51,6 +51,7 @@
     "domainStrategy": "IPIfNonMatch",
     "rules": [
       { "type": "field", "protocol": ["bittorrent"], "outboundTag": "block" },
+      { "type": "field", "ip": ["10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16", "127.0.0.0/8"], "outboundTag": "direct" },
       { "type": "field", "inboundTag": ["socks", "http"], "network": "tcp,udp", "outboundTag": "proxy" }
     ]
   }
