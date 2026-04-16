@@ -1,11 +1,8 @@
 {
-  "remarks": "🇳🇱 TikTok №2",
+  "remarks": "🇳🇱 TikTok NL",
   "dns": {
-    "servers": [
-      "1.1.1.1",
-      "8.8.8.8"
-    ],
-    "queryStrategy": "UseIPv4"
+    "queryStrategy": "UseIPv4",
+    "servers": ["1.1.1.1", "8.8.8.8"]
   },
   "inbounds": [
     {
@@ -13,33 +10,16 @@
       "port": 10808,
       "listen": "127.0.0.1",
       "protocol": "socks",
-      "settings": {
-        "udp": true,
-        "auth": "noauth"
-      },
-      "sniffing": {
-        "enabled": true,
-        "destOverride": [
-          "http",
-          "tls"
-        ]
-      }
+      "settings": { "udp": true, "auth": "noauth" },
+      "sniffing": { "enabled": true, "destOverride": ["http", "tls"] }
     },
     {
       "tag": "http",
       "port": 10809,
       "listen": "127.0.0.1",
       "protocol": "http",
-      "settings": {
-        "allowTransparent": false
-      },
-      "sniffing": {
-        "enabled": true,
-        "destOverride": [
-          "http",
-          "tls"
-        ]
-      }
+      "settings": { "allowTransparent": false },
+      "sniffing": { "enabled": true, "destOverride": ["http", "tls"] }
     }
   ],
   "outbounds": [
@@ -49,10 +29,10 @@
       "settings": {
         "servers": [
           {
-            "address": "89.169.173.73",
+            "address": "193.124.58.119",
             "port": 10086,
             "method": "2022-blake3-aes-128-gcm",
-            "password": "Z+vX7BprUd+oaO8leP87Yw=="
+            "password": "KEkcIzAapi+TKeJcxqHUZw=="
           }
         ]
       }
@@ -60,12 +40,7 @@
     {
       "tag": "direct",
       "protocol": "freedom",
-      "streamSettings": {
-        "sockopt": {
-          "tcpNoDelay": true,
-          "tcpFastOpen": true
-        }
-      }
+      "streamSettings": { "sockopt": { "tcpNoDelay": true, "tcpFastOpen": true } }
     },
     {
       "tag": "block",
@@ -75,22 +50,8 @@
   "routing": {
     "domainStrategy": "IPIfNonMatch",
     "rules": [
-      {
-        "type": "field",
-        "protocol": [
-          "bittorrent"
-        ],
-        "outboundTag": "block"
-      },
-      {
-        "type": "field",
-        "inboundTag": [
-          "socks",
-          "http"
-        ],
-        "network": "tcp,udp",
-        "outboundTag": "proxy"
-      }
+      { "type": "field", "protocol": ["bittorrent"], "outboundTag": "block" },
+      { "type": "field", "inboundTag": ["socks", "http"], "network": "tcp,udp", "outboundTag": "proxy" }
     ]
   }
 }
