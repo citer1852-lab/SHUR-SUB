@@ -37,7 +37,7 @@
       "settings": {
         "servers": [
           {
-            "address": "89.169.173.73",
+            "address": "111.88.158.210",
             "port": 10086,
             "method": "2022-blake3-aes-128-gcm",
             "password": "Z+vX7BprUd+oaO8leP87Yw=="
