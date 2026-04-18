@@ -1,12 +1,14 @@
 {
-  "remarks": "🇫🇮 LTE Universal 2",
-  "dns": { "servers": ["1.1.1.1", "8.8.8.8"], "queryStrategy": "UseIPv4" },
+  "remarks": "ru LTE Universal FULL",
+  "dns": {
+    "servers": ["https://1.1.1.1/dns-query", "https://dns.google/dns-query"],
+    "queryStrategy": "UseIPv4"
+  },
   "inbounds": [
-    { "tag": "socks", "port": 10808, "listen": "127.0.0.1", "protocol": "socks", "settings": { "udp": true, "auth": "noauth" }, "sniffing": { "enabled": true, "destOverride": ["http", "tls"] } },
-    { "tag": "http", "port": 10809, "listen": "127.0.0.1", "protocol": "http", "settings": { "allowTransparent": false }, "sniffing": { "enabled": true, "destOverride": ["http", "tls"] } }
+    { "tag": "socks", "port": 10808, "listen": "127.0.0.1", "protocol": "socks", "settings": { "udp": true, "auth": "noauth" }, "sniffing": { "enabled": true, "destOverride": ["http", "tls", "quic"] } }
   ],
   "outbounds": [
-    { "tag": "proxy", "protocol": "shadowsocks", "settings": { "servers": [{ "address": "93.77.169.139", "port": 11086, "method": "2022-blake3-aes-128-gcm", "password": "BpSQV81gS3qsK7kZWV29BA==" }] } },
+    { "tag": "proxy", "protocol": "shadowsocks", "settings": { "servers": [{ "address": "93.77.169.139", "port": 10086, "method": "2022-blake3-aes-128-gcm", "password": "Z+vX7BprUd+oaO8leP87Yw==" }] } },
     { "tag": "direct", "protocol": "freedom", "streamSettings": { "sockopt": { "tcpNoDelay": true, "tcpFastOpen": true } } },
     { "tag": "block", "protocol": "blackhole" }
   ],
@@ -14,32 +16,6 @@
     "domainStrategy": "IPIfNonMatch",
     "rules": [
       { "type": "field", "protocol": ["bittorrent"], "outboundTag": "block" },
-      { 
-        "type": "field", 
-        "domain": [
-          "domain:mtalk.google.com",
-          "domain:push.apple.com",
-          "domain:api.push.apple.com",
-          "domain:push-apple.com.akadns.net",
-          "domain:*-courier.push.apple.com",
-          "domain:vk.com",
-          "domain:vk.me",
-          "domain:vkontakte.ru",
-          "domain:userapi.com",
-          "domain:vk-cdn.net",
-          "domain:vkuseraudio.net",
-          "domain:vkuservideo.net",
-          "domain:max.ru",
-          "domain:vkws.net",
-          "domain:vk.ru",
-          "domain:vkuserphoto.ru",
-          "domain:vk-analytics.ru",
-          "domain:dnevnik.ru",
-          "domain:github.com",
-          "geosite:category-ru"
-        ], 
-        "outboundTag": "direct" 
-      },
       { "type": "field", "network": "tcp,udp", "outboundTag": "proxy" }
     ]
   }
