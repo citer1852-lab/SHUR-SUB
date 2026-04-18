@@ -15,12 +15,12 @@
     "subjectSelector": ["srv1", "srv2", "srv3", "srv4", "srv5", "srv6"]
   },
   "outbounds": [
-    { "tag": "srv1", "protocol": "shadowsocks", "settings": { "servers": [{ "address": "89.169.170.149", "port": 10086, "method": "2022-blake3-aes-128-gcm", "password": "ectjklwWjLhUSgb0kszxVw==" }] } },
-    { "tag": "srv2", "protocol": "shadowsocks", "settings": { "servers": [{ "address": "89.169.170.149", "port": 10086, "method": "2022-blake3-aes-128-gcm", "password": "ectjklwWjLhUSgb0kszxVw==" }] } },
-    { "tag": "srv3", "protocol": "shadowsocks", "settings": { "servers": [{ "address": "89.169.170.149", "port": 10086, "method": "2022-blake3-aes-128-gcm", "password": "ectjklwWjLhUSgb0kszxVw==" }] } },
-    { "tag": "srv4", "protocol": "shadowsocks", "settings": { "servers": [{ "address": "89.169.170.149", "port": 10086, "method": "2022-blake3-aes-128-gcm", "password": "ectjklwWjLhUSgb0kszxVw==" }] } },
-    { "tag": "srv5", "protocol": "shadowsocks", "settings": { "servers": [{ "address": "89.169.170.149", "port": 10086, "method": "2022-blake3-aes-128-gcm", "password": "ectjklwWjLhUSgb0kszxVw==" }] } },
-    { "tag": "srv6", "protocol": "shadowsocks", "settings": { "servers": [{ "address": "89.169.170.149", "port": 10086, "method": "2022-blake3-aes-128-gcm", "password": "ectjklwWjLhUSgb0kszxVw==" }] } },
+    { "tag": "srv1", "protocol": "shadowsocks", "settings": { "servers": [{ "address": "93.77.169.139", "port": 11086, "method": "2022-blake3-aes-128-gcm", "password": "BpSQV81gS3qsK7kZWV29BA==" }] } },
+    { "tag": "srv2", "protocol": "shadowsocks", "settings": { "servers": [{ "address": "93.77.169.139", "port": 11086, "method": "2022-blake3-aes-128-gcm", "password": "BpSQV81gS3qsK7kZWV29BA==" }] } },
+    { "tag": "srv3", "protocol": "shadowsocks", "settings": { "servers": [{ "address": "93.77.169.139", "port": 11086, "method": "2022-blake3-aes-128-gcm", "password": "BpSQV81gS3qsK7kZWV29BA==" }] } },
+    { "tag": "srv4", "protocol": "shadowsocks", "settings": { "servers": [{ "address": "93.77.169.139", "port": 11086, "method": "2022-blake3-aes-128-gcm", "password": "BpSQV81gS3qsK7kZWV29BA==" }] } },
+    { "tag": "srv5", "protocol": "shadowsocks", "settings": { "servers": [{ "address": "93.77.169.139", "port": 11086, "method": "2022-blake3-aes-128-gcm", "password": "BpSQV81gS3qsK7kZWV29BA==" }] } },
+    { "tag": "srv6", "protocol": "shadowsocks", "settings": { "servers": [{ "address": "93.77.169.139", "port": 11086, "method": "2022-blake3-aes-128-gcm", "password": "BpSQV81gS3qsK7kZWV29BA==" }] } },
     { "tag": "direct", "protocol": "freedom", "streamSettings": { "sockopt": { "tcpNoDelay": true, "tcpFastOpen": false } } },
     { "tag": "block", "protocol": "blackhole" }
   ],
