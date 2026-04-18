@@ -8,53 +8,10 @@
     { "tag": "socks", "port": 10808, "listen": "127.0.0.1", "protocol": "socks", "settings": { "udp": true, "auth": "noauth" }, "sniffing": { "enabled": true, "destOverride": ["http", "tls", "quic"] } },
     { "tag": "http", "port": 10809, "listen": "127.0.0.1", "protocol": "http", "settings": { "allowTransparent": false }, "sniffing": { "enabled": true, "destOverride": ["http", "tls", "quic"] } }
   ],
-  "observatory": {
-    "enableConcurrency": true,
-    "probeInterval": "1m",
-    "probeUrl": "https://www.google.com/generate_204",
-    "subjectSelector": ["srv1", "srv2", "srv3", "srv4", "srv5", "srv6"]
-  },
   "outbounds": [
-    { "tag": "srv1", "protocol": "shadowsocks", "settings": { "servers": [{ "address": "93.77.169.139", "port": 10086, "method": "2022-blake3-aes-128-gcm", "password": "Z+vX7BprUd+oaO8leP87Yw==" }] } },
-    { "tag": "srv2", "protocol": "shadowsocks", "settings": { "servers": [{ "address": "93.77.169.139", "port": 10086, "method": "2022-blake3-aes-128-gcm", "password": "Z+vX7BprUd+oaO8leP87Yw==" }] } },
-    { "tag": "srv3", "protocol": "shadowsocks", "settings": { "servers": [{ "address": "93.77.169.139", "port": 10086, "method": "2022-blake3-aes-128-gcm", "password": "Z+vX7BprUd+oaO8leP87Yw==" }] } },
-    { "tag": "srv4", "protocol": "shadowsocks", "settings": { "servers": [{ "address": "93.77.169.139", "port": 10086, "method": "2022-blake3-aes-128-gcm", "password": "Z+vX7BprUd+oaO8leP87Yw==" }] } },
-    { "tag": "srv5", "protocol": "shadowsocks", "settings": { "servers": [{ "address": "93.77.169.139", "port": 10086, "method": "2022-blake3-aes-128-gcm", "password": "Z+vX7BprUd+oaO8leP87Yw==" }] } },
-    { "tag": "srv6", "protocol": "shadowsocks", "settings": { "servers": [{ "address": "93.77.169.139", "port": 10086, "method": "2022-blake3-aes-128-gcm", "password": "Z+vX7BprUd+oaO8leP87Yw==" }] } },
-    { "tag": "direct", "protocol": "freedom", "streamSettings": { "sockopt": { "tcpNoDelay": true, "tcpFastOpen": false } } },
-    { "tag": "block", "protocol": "blackhole" }
+    { "tag": "proxy", "protocol": "shadowsocks", "settings": { "servers": [{ "address": "93.77.169.139", "port": 10086, "method": "2022-blake3-aes-128-gcm", "password": "Z+vX7BprUd+oaO8leP87Yw==" }] } }
   ],
   "routing": {
-    "domainMatcher": "hybrid",
-    "domainStrategy": "IPIfNonMatch",
-    "balancers": [{
-      "tag": "bal_tg",
-      "selector": ["srv1", "srv2", "srv4", "srv5", "srv6"],
-      "fallbackTag": "srv3",
-      "strategy": {
-        "type": "leastLoad",
-        "settings": {
-          "baselines": ["4s"],
-          "costs": [
-            { "match": "srv1", "value": 1 },
-            { "match": "srv2", "value": 400000000 },
-            { "match": "srv3", "value": 500000000 },
-            { "match": "srv4", "value": 300000000 },
-            { "match": "srv5", "value": 200000000 },
-            { "match": "srv6", "value": 100000000 }
-          ],
-          "expected": 1,
-          "maxRTT": "6s"
-        }
-      }
-    }],
-    "rules": [
-      { "type": "field", "protocol": ["bittorrent"], "outboundTag": "block" },
-      { "type": "field", "domain": ["domain:mtalk.google.com", "domain:push.apple.com"], "outboundTag": "direct" },
-      { "type": "field", "ip": ["17.0.0.0/8"], "outboundTag": "direct" },
-      { "type": "field", "domain": ["domain:telegram.org", "domain:t.me", "domain:tdesktop.com", "domain:usercontent.telegram.org"], "balancerTag": "bal_tg" },
-      { "type": "field", "ip": ["91.108.4.0/22", "91.108.8.0/22", "91.108.12.0/22", "91.108.16.0/22", "91.108.20.0/22", "95.161.64.0/20", "149.154.160.0/20"], "balancerTag": "bal_tg" },
-      { "type": "field", "network": "tcp,udp", "outboundTag": "direct" }
-    ]
+    "rules": [{ "type": "field", "inboundTag": ["socks", "http"], "outboundTag": "proxy" }]
   }
 }
