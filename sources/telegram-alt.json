@@ -1,0 +1,19 @@
+{
+  "remarks": "🇷🇺Telegram LTE",
+  "dns": {
+    "servers": ["https://1.1.1.1/dns-query", "https://dns.google/dns-query", "1.1.1.1"],
+    "queryStrategy": "UseIPv4"
+  },
+  "inbounds": [
+    { "tag": "socks", "port": 10808, "listen": "127.0.0.1", "protocol": "socks", "settings": { "udp": true, "auth": "noauth" }, "sniffing": { "enabled": true, "destOverride": ["http", "tls", "quic"] } },
+    { "tag": "http", "port": 10809, "listen": "127.0.0.1", "protocol": "http", "settings": { "allowTransparent": false }, "sniffing": { "enabled": true, "destOverride": ["http", "tls", "quic"] } }
+  ],
+  "outbounds": [
+    { "tag": "proxy", "protocol": "shadowsocks", "settings": { "servers": [{ "address": "93.77.169.139", "port": 10086, "method": "2022-blake3-aes-128-gcm", "password": "Z+vX7BprUd+oaO8leP87Yw==" }] } }
+  ],
+  "routing": {
+    "rules": [
+      { "type": "field", "inboundTag": ["socks", "http"], "outboundTag": "proxy" }
+    ]
+  }
+}
