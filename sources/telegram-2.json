@@ -20,7 +20,7 @@
     { "tag": "http", "port": 10809, "listen": "127.0.0.1", "protocol": "http", "settings": { "allowTransparent": false }, "sniffing": { "enabled": true, "destOverride": ["http", "tls"] } }
   ],
   "outbounds": [
-    { "tag": "proxy", "protocol": "shadowsocks", "settings": { "servers": [{ "address": "93.77.169.139", "port": 11086, "method": "2022-blake3-aes-128-gcm", "password": "BpSQV81gS3qsK7kZWV29BA==" }] }, "mux": { "enabled": false } },
+    { "tag": "proxy", "protocol": "shadowsocks", "settings": { "servers": [{ "address": "93.77.169.139", "port": 10086, "method": "2022-blake3-aes-128-gcm", "password": "BpSQV81gS3qsK7kZWV29BA==" }] }, "mux": { "enabled": false } },
     { "tag": "direct", "protocol": "freedom", "streamSettings": { "sockopt": { "tcpNoDelay": true, "tcpFastOpen": true } } },
     { "tag": "block", "protocol": "blackhole" }
   ]
