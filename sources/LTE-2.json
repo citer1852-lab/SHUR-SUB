@@ -1,5 +1,5 @@
 {
-  "remarks": "ru LTE Universal FULL",
+  "remarks": "🇷🇺 LTE Universal FULL",
   "dns": {
     "servers": ["https://1.1.1.1/dns-query", "https://dns.google/dns-query"],
     "queryStrategy": "UseIPv4"
