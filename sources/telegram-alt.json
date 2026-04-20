@@ -9,7 +9,35 @@
     { "tag": "http", "port": 10809, "listen": "127.0.0.1", "protocol": "http", "settings": { "allowTransparent": false }, "sniffing": { "enabled": true, "destOverride": ["http", "tls", "quic"] } }
   ],
   "outbounds": [
-    { "tag": "proxy", "protocol": "shadowsocks", "settings": { "servers": [{ "address": "93.77.169.139", "port": 10086, "method": "2022-blake3-aes-128-gcm", "password": "Z+vX7BprUd+oaO8leP87Yw==" }] } }
+    {
+      "tag": "proxy",
+      "protocol": "vless",
+      "settings": {
+        "vnext": [
+          {
+            "address": "93.77.169.139",
+            "port": 51392,
+            "users": [
+              {
+                "encryption": "none",
+                "flow": "xtls-rprx-vision",
+                "id": "1d5daa15-f719-4c9c-b1da-193716e21e7a"
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "security": "reality",
+        "realitySettings": {
+          "fingerprint": "chrome",
+          "serverName": "www.microsoft.com",
+          "publicKey": "QE69zb8c_r-QVEFCmuoojilaXUYKFRnDF6YkPVRNCBE",
+          "shortId": "111111"
+        }
+      }
+    }
   ],
   "routing": {
     "rules": [
