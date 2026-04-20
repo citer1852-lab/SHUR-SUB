@@ -30,7 +30,7 @@
           "users": [{
             "encryption": "none",
             "flow": "xtls-rprx-vision",
-            "id": "1d5daa15-f719-4c9c-b1da-193716e21e7a"
+            "id": "{{UUID}}"
           }]
         }]
       },
