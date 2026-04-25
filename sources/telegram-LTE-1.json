@@ -1,26 +1,65 @@
 {
-  "remarks": "🇷🇺Telegram + LTE №1",
   "dns": {
-    "servers": ["https://1.1.1.1/dns-query", "https://dns.google/dns-query", "1.1.1.1"],
-    "queryStrategy": "UseIPv4"
+    "queryStrategy": "UseIPv4",
+    "servers": [
+      "https://1.1.1.1/dns-query",
+      "https://dns.google/dns-query",
+      "1.1.1.1"
+    ]
   },
   "inbounds": [
-    { "tag": "socks", "port": 10808, "listen": "127.0.0.1", "protocol": "socks", "settings": { "udp": true, "auth": "noauth" }, "sniffing": { "enabled": true, "destOverride": ["http", "tls", "quic"] } },
-    { "tag": "http", "port": 10809, "listen": "127.0.0.1", "protocol": "http", "settings": { "allowTransparent": false }, "sniffing": { "enabled": true, "destOverride": ["http", "tls", "quic"] } }
+    {
+      "listen": "127.0.0.1",
+      "port": 10808,
+      "protocol": "socks",
+      "settings": { "auth": "noauth", "udp": true },
+      "sniffing": { "destOverride": ["http", "tls", "quic"], "enabled": true },
+      "tag": "socks"
+    },
+    {
+      "listen": "127.0.0.1",
+      "port": 10809,
+      "protocol": "http",
+      "settings": { "allowTransparent": false },
+      "sniffing": { "destOverride": ["http", "tls", "quic"], "enabled": true },
+      "tag": "http"
+    }
   ],
+  "observatory": {
+    "enabled": true,
+    "probeURL": "https://www.gstatic.com/generate_204",
+    "probeInterval": "30s"
+  },
   "outbounds": [
     {
-      "tag": "proxy",
+      "tag": "ms",
       "protocol": "vless",
       "settings": {
         "vnext": [{
           "address": "93.77.169.139",
           "port": 51392,
-          "users": [{
-            "encryption": "none",
-            "flow": "xtls-rprx-vision",
-            "id": "1d5daa15-f719-4c9c-b1da-193716e21e7a"
-          }]
+          "users": [{ "encryption": "none", "flow": "xtls-rprx-vision", "id": "1d5daa15-f719-4c9c-b1da-193716e21e7a" }]
+        }]
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "security": "reality",
+        "realitySettings": {
+          "fingerprint": "randomized",
+          "publicKey": "QE69zb8c_r-QVEFCmuoojilaXUYKFRnDF6YkPVRNCBE",
+          "serverName": "www.microsoft.com",
+          "shortId": "111111"
+        }
+      }
+    },
+    {
+      "tag": "vk",
+      "protocol": "vless",
+      "settings": {
+        "vnext": [{
+          "address": "93.77.169.139",
+          "port": 51392,
+          "users": [{ "encryption": "none", "flow": "xtls-rprx-vision", "id": "1d5daa15-f719-4c9c-b1da-193716e21e7a" }]
         }]
       },
       "streamSettings": {
@@ -28,14 +67,57 @@
         "security": "reality",
         "realitySettings": {
           "fingerprint": "chrome",
-          "serverName": "www.microsoft.com",
           "publicKey": "QE69zb8c_r-QVEFCmuoojilaXUYKFRnDF6YkPVRNCBE",
+          "serverName": "m.vk.com",
           "shortId": "111111"
         }
       }
+    },
+    {
+      "tag": "yandex",
+      "protocol": "vless",
+      "settings": {
+        "vnext": [{
+          "address": "93.77.169.139",
+          "port": 51392,
+          "users": [{ "encryption": "none", "flow": "xtls-rprx-vision", "id": "1d5daa15-f719-4c9c-b1da-193716e21e7a" }]
+        }]
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "security": "reality",
+        "realitySettings": {
+          "fingerprint": "safari",
+          "publicKey": "QE69zb8c_r-QVEFCmuoojilaXUYKFRnDF6YkPVRNCBE",
+          "serverName": "api-maps.yandex.ru",
+          "shortId": "111111"
+        }
+      }
+    },
+    {
+      "tag": "direct",
+      "protocol": "freedom",
+      "settings": { "domainStrategy": "UseIP" }
     }
   ],
+  "balancer": {
+    "tag": "balance",
+    "selector": ["ms", "vk", "yandex"],
+    "strategy": {
+      "type": "roundRobin",
+      "settings": { "fallbackTag": "direct" }
+    },
+    "observatory": "observatory"
+  },
   "routing": {
-    "rules": [{ "type": "field", "inboundTag": ["socks", "http"], "outboundTag": "proxy" }]
-  }
+    "rules": [
+      {
+        "inboundTag": ["socks", "http"],
+        "outboundTag": "balance",
+        "type": "field"
+      }
+    ]
+  },
+  "remarks": "🇷🇺Telegram + LTE №1",
+  "meta": null
 }
