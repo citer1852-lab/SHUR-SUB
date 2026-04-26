@@ -1,11 +1,12 @@
 {
+  "remarks": "🇷🇺Telegram + LTE",
+  "log": { "loglevel": "warning" },
   "dns": {
-    "queryStrategy": "UseIPv4",
     "servers": [
       "https://1.1.1.1/dns-query",
-      "https://dns.google/dns-query",
       "1.1.1.1"
-    ]
+    ],
+    "queryStrategy": "UseIPv4"
   },
   "inbounds": [
     {
@@ -13,22 +14,22 @@
       "port": 10808,
       "protocol": "socks",
       "settings": { "auth": "noauth", "udp": true },
-      "sniffing": { "destOverride": ["http", "tls", "quic"], "enabled": true },
+      "sniffing": { "enabled": true, "destOverride": ["http", "tls", "quic"] },
       "tag": "socks"
     },
     {
       "listen": "127.0.0.1",
       "port": 10809,
       "protocol": "http",
-      "settings": { "allowTransparent": false },
-      "sniffing": { "destOverride": ["http", "tls", "quic"], "enabled": true },
+      "sniffing": { "enabled": true, "destOverride": ["http", "tls", "quic"] },
       "tag": "http"
     }
   ],
   "observatory": {
     "enabled": true,
     "probeURL": "https://www.gstatic.com/generate_204",
-    "probeInterval": "30s"
+    "probeInterval": "30s",
+    "probeTimeout": "5s"
   },
   "outbounds": [
     {
@@ -38,16 +39,16 @@
         "vnext": [{
           "address": "93.77.169.139",
           "port": 6443,
-          "users": [{ "encryption": "none", "flow": "xtls-rprx-vision", "id": "acde1bc4-45b9-4d7c-ba06-24eb48cff2e9" }]
+          "users": [{ "id": "acde1bc4-45b9-4d7c-ba06-24eb48cff2e9", "flow": "xtls-rprx-vision", "encryption": "none" }]
         }]
       },
       "streamSettings": {
         "network": "tcp",
         "security": "reality",
         "realitySettings": {
+          "serverName": "www.microsoft.com",
           "fingerprint": "randomized",
           "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
-          "serverName": "www.microsoft.com",
           "shortId": "707f9f44e2b21d87"
         }
       }
@@ -59,16 +60,16 @@
         "vnext": [{
           "address": "93.77.169.139",
           "port": 6443,
-          "users": [{ "encryption": "none", "flow": "xtls-rprx-vision", "id": "acde1bc4-45b9-4d7c-ba06-24eb48cff2e9" }]
+          "users": [{ "id": "acde1bc4-45b9-4d7c-ba06-24eb48cff2e9", "flow": "xtls-rprx-vision", "encryption": "none" }]
         }]
       },
       "streamSettings": {
         "network": "tcp",
         "security": "reality",
         "realitySettings": {
+          "serverName": "m.vk.com",
           "fingerprint": "randomized",
           "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
-          "serverName": "m.vk.com",
           "shortId": "707f9f44e2b21d87"
         }
       }
@@ -80,16 +81,16 @@
         "vnext": [{
           "address": "93.77.169.139",
           "port": 6443,
-          "users": [{ "encryption": "none", "flow": "xtls-rprx-vision", "id": "acde1bc4-45b9-4d7c-ba06-24eb48cff2e9" }]
+          "users": [{ "id": "acde1bc4-45b9-4d7c-ba06-24eb48cff2e9", "flow": "xtls-rprx-vision", "encryption": "none" }]
         }]
       },
       "streamSettings": {
         "network": "tcp",
         "security": "reality",
         "realitySettings": {
+          "serverName": "api-maps.yandex.ru",
           "fingerprint": "randomized",
           "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
-          "serverName": "api-maps.yandex.ru",
           "shortId": "707f9f44e2b21d87"
         }
       }
@@ -110,14 +111,9 @@
     "observatory": "observatory"
   },
   "routing": {
+    "domainStrategy": "IPIfNonMatch",
     "rules": [
-      {
-        "inboundTag": ["socks", "http"],
-        "outboundTag": "balance",
-        "type": "field"
-      }
+      { "type": "field", "inboundTag": ["socks", "http"], "outboundTag": "balance" }
     ]
-  },
-  "remarks": "🇷🇺Telegram + LTE",
-  "meta": null
+  }
 }
