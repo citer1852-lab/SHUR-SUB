@@ -2,16 +2,8 @@
   "remarks": "🇷🇺 LTE Universal 1",
   "log": { "loglevel": "warning" },
   "dns": {
-    "hosts": {
-      "77.88.8.8": "77.88.8.8",
-      "dns.quad9.net": "9.9.9.9"
-    },
     "servers": [
-      "https://dns.quad9.net/dns-query",
-      {
-        "address": "https://77.88.8.8/dns-query",
-        "domains": ["geosite:ru", "geosite:private", "geosite:microsoft", "geosite:apple", "geosite:google-play", "geosite:steam", "domain:ru", "domain:su", "domain:rf"]
-      },
+      "https://1.1.1.1/dns-query",
       "1.1.1.1"
     ]
   },
@@ -30,9 +22,14 @@
       "sniffing": { "enabled": true, "destOverride": ["http", "tls", "quic"] }
     }
   ],
+  "observatory": {
+    "enabled": true,
+    "probeURL": "https://www.gstatic.com/generate_204",
+    "probeInterval": "30s"
+  },
   "outbounds": [
     {
-      "tag": "proxy-microsoft",
+      "tag": "out-microsoft",
       "protocol": "vless",
       "settings": {
         "vnext": [{
@@ -53,7 +50,7 @@
       }
     },
     {
-      "tag": "proxy-vk",
+      "tag": "out-vk",
       "protocol": "vless",
       "settings": {
         "vnext": [{
@@ -67,14 +64,14 @@
         "security": "reality",
         "realitySettings": {
           "serverName": "m.vk.com",
-          "fingerprint": "chrome",
+          "fingerprint": "randomized",
           "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
           "shortId": "707f9f44e2b21d87"
         }
       }
     },
     {
-      "tag": "proxy-yandex",
+      "tag": "out-yandex",
       "protocol": "vless",
       "settings": {
         "vnext": [{
@@ -88,14 +85,14 @@
         "security": "reality",
         "realitySettings": {
           "serverName": "api-maps.yandex.ru",
-          "fingerprint": "safari",
+          "fingerprint": "randomized",
           "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
           "shortId": "707f9f44e2b21d87"
         }
       }
     },
     {
-      "tag": "proxy-cloudflare",
+      "tag": "out-maxru",
       "protocol": "vless",
       "settings": {
         "vnext": [{
@@ -108,8 +105,134 @@
         "network": "tcp",
         "security": "reality",
         "realitySettings": {
-          "serverName": "www.cloudflare.com",
-          "fingerprint": "firefox",
+          "serverName": "max.ru",
+          "fingerprint": "randomized",
+          "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
+          "shortId": "707f9f44e2b21d87"
+        }
+      }
+    },
+    {
+      "tag": "out-hh",
+      "protocol": "vless",
+      "settings": {
+        "vnext": [{
+          "address": "93.77.169.139",
+          "port": 6443,
+          "users": [{ "id": "acde1bc4-45b9-4d7c-ba06-24eb48cff2e9", "flow": "xtls-rprx-vision", "encryption": "none" }]
+        }]
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "security": "reality",
+        "realitySettings": {
+          "serverName": "api.hh.ru",
+          "fingerprint": "randomized",
+          "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
+          "shortId": "707f9f44e2b21d87"
+        }
+      }
+    },
+    {
+      "tag": "out-gosuslugi",
+      "protocol": "vless",
+      "settings": {
+        "vnext": [{
+          "address": "93.77.169.139",
+          "port": 6443,
+          "users": [{ "id": "acde1bc4-45b9-4d7c-ba06-24eb48cff2e9", "flow": "xtls-rprx-vision", "encryption": "none" }]
+        }]
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "security": "reality",
+        "realitySettings": {
+          "serverName": "api.gosuslugi.ru",
+          "fingerprint": "randomized",
+          "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
+          "shortId": "707f9f44e2b21d87"
+        }
+      }
+    },
+    {
+      "tag": "out-ozon",
+      "protocol": "vless",
+      "settings": {
+        "vnext": [{
+          "address": "93.77.169.139",
+          "port": 6443,
+          "users": [{ "id": "acde1bc4-45b9-4d7c-ba06-24eb48cff2e9", "flow": "xtls-rprx-vision", "encryption": "none" }]
+        }]
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "security": "reality",
+        "realitySettings": {
+          "serverName": "api.ozon.ru",
+          "fingerprint": "randomized",
+          "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
+          "shortId": "707f9f44e2b21d87"
+        }
+      }
+    },
+    {
+      "tag": "out-mts",
+      "protocol": "vless",
+      "settings": {
+        "vnext": [{
+          "address": "93.77.169.139",
+          "port": 6443,
+          "users": [{ "id": "acde1bc4-45b9-4d7c-ba06-24eb48cff2e9", "flow": "xtls-rprx-vision", "encryption": "none" }]
+        }]
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "security": "reality",
+        "realitySettings": {
+          "serverName": "lk.mts.ru",
+          "fingerprint": "randomized",
+          "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
+          "shortId": "707f9f44e2b21d87"
+        }
+      }
+    },
+    {
+      "tag": "out-avito",
+      "protocol": "vless",
+      "settings": {
+        "vnext": [{
+          "address": "93.77.169.139",
+          "port": 6443,
+          "users": [{ "id": "acde1bc4-45b9-4d7c-ba06-24eb48cff2e9", "flow": "xtls-rprx-vision", "encryption": "none" }]
+        }]
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "security": "reality",
+        "realitySettings": {
+          "serverName": "api.avito.ru",
+          "fingerprint": "randomized",
+          "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
+          "shortId": "707f9f44e2b21d87"
+        }
+      }
+    },
+    {
+      "tag": "out-dzen",
+      "protocol": "vless",
+      "settings": {
+        "vnext": [{
+          "address": "93.77.169.139",
+          "port": 6443,
+          "users": [{ "id": "acde1bc4-45b9-4d7c-ba06-24eb48cff2e9", "flow": "xtls-rprx-vision", "encryption": "none" }]
+        }]
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "security": "reality",
+        "realitySettings": {
+          "serverName": "dzen.ru",
+          "fingerprint": "randomized",
           "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
           "shortId": "707f9f44e2b21d87"
         }
@@ -119,38 +242,29 @@
       "tag": "direct",
       "protocol": "freedom",
       "settings": { "domainStrategy": "UseIP" }
-    },
-    {
-      "tag": "block",
-      "protocol": "blackhole",
-      "settings": { "response": { "type": "http" } }
     }
   ],
+  "balancer": {
+    "tag": "balance",
+    "selector": [
+      "out-microsoft", "out-vk", "out-yandex", "out-maxru",
+      "out-hh", "out-gosuslugi", "out-ozon", "out-mts",
+      "out-avito", "out-dzen"
+    ],
+    "strategy": {
+      "type": "roundRobin",
+      "settings": { "fallbackTag": "direct" }
+    },
+    "observatory": "observatory"
+  },
   "routing": {
     "domainStrategy": "IPIfNonMatch",
     "rules": [
-      { "type": "field", "ip": ["9.9.9.9"], "outboundTag": "proxy-microsoft", "port": "443" },
-      { "type": "field", "ip": ["77.88.8.8"], "outboundTag": "direct", "port": "443" },
-      { "type": "field", "domain": ["geosite:telegram", "geosite:youtube", "geosite:twitch-ads"], "outboundTag": "proxy-microsoft" },
-      { "type": "field", "domain": ["geosite:ru", "domain:ru", "domain:su", "domain:rf", "geosite:microsoft", "geosite:apple", "geosite:steam"], "outboundTag": "direct" },
-      { "type": "field", "ip": ["geoip:private", "geoip:ru"], "outboundTag": "direct" },
-      { "type": "field", "network": "tcp,udp", "outboundTag": "proxy-microsoft" }
-    ]
-  },
-  "observatory": {
-    "enabled": true,
-    "probeURL": "https://www.google.com/generate_204",
-    "probeInterval": "30s"
-  },
-  "balancer": {
-    "tag": "balancer",
-    "selector": ["proxy-microsoft", "proxy-vk", "proxy-yandex", "proxy-cloudflare"],
-    "strategy": {
-      "type": "roundRobin",
-      "settings": {
-        "fallbackTag": "direct"
+      {
+        "type": "field",
+        "inboundTag": ["socks", "http"],
+        "outboundTag": "balance"
       }
-    },
-    "observatory": "observatory"
+    ]
   }
 }
