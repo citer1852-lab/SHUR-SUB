@@ -38,7 +38,7 @@
         "vnext": [{
           "address": "93.77.169.139",
           "port": 6443,
-          "users": [{ "encryption": "none", "flow": "xtls-rprx-vision", "id": "1d5daa15-f719-4c9c-b1da-193716e21e7a" }]
+          "users": [{ "encryption": "none", "flow": "xtls-rprx-vision", "id": "acde1bc4-45b9-4d7c-ba06-24eb48cff2e9" }]
         }]
       },
       "streamSettings": {
@@ -46,7 +46,7 @@
         "security": "reality",
         "realitySettings": {
           "fingerprint": "randomized",
-          "publicKey": "QE69zb8c_r-QVEFCmuoojilaXUYKFRnDF6YkPVRNCBE",
+          "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
           "serverName": "www.microsoft.com",
           "shortId": "707f9f44e2b21d87"
         }
@@ -59,15 +59,15 @@
         "vnext": [{
           "address": "93.77.169.139",
           "port": 6443,
-          "users": [{ "encryption": "none", "flow": "xtls-rprx-vision", "id": "1d5daa15-f719-4c9c-b1da-193716e21e7a" }]
+          "users": [{ "encryption": "none", "flow": "xtls-rprx-vision", "id": "acde1bc4-45b9-4d7c-ba06-24eb48cff2e9" }]
         }]
       },
       "streamSettings": {
         "network": "tcp",
         "security": "reality",
         "realitySettings": {
-          "fingerprint": "chrome",
-          "publicKey": "QE69zb8c_r-QVEFCmuoojilaXUYKFRnDF6YkPVRNCBE",
+          "fingerprint": "randomized",
+          "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
           "serverName": "m.vk.com",
           "shortId": "707f9f44e2b21d87"
         }
@@ -80,15 +80,15 @@
         "vnext": [{
           "address": "93.77.169.139",
           "port": 6443,
-          "users": [{ "encryption": "none", "flow": "xtls-rprx-vision", "id": "1d5daa15-f719-4c9c-b1da-193716e21e7a" }]
+          "users": [{ "encryption": "none", "flow": "xtls-rprx-vision", "id": "acde1bc4-45b9-4d7c-ba06-24eb48cff2e9" }]
         }]
       },
       "streamSettings": {
         "network": "tcp",
         "security": "reality",
         "realitySettings": {
-          "fingerprint": "chrome",
-          "publicKey": "QE69zb8c_r-QVEFCmuoojilaXUYKFRnDF6YkPVRNCBE",
+          "fingerprint": "randomized",
+          "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
           "serverName": "api-maps.yandex.ru",
           "shortId": "707f9f44e2b21d87"
         }
