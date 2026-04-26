@@ -13,8 +13,7 @@
                 "address": "https://dns.quad9.net/dns-query",
                 "domains": [
                     "geosite:youtube",
-                    "geosite:telegram",
-                    "geosite:twitch-ads"
+                    "geosite:telegram"
                 ]
             },
             {
@@ -22,7 +21,6 @@
                 "domains": [
                     "geosite:private",
                     "geosite:category-ru",
-                    "geosite:whitelist",
                     "geosite:microsoft",
                     "geosite:apple",
                     "geosite:google-play",
@@ -34,7 +32,6 @@
                     "geosite:twitch",
                     "geosite:pinterest",
                     "geosite:faceit",
-                    "domain:ru",
                     "domain:su",
                     "domain:rf",
                     "geosite:github"
@@ -213,8 +210,7 @@
             {
                 "domain": [
                     "geosite:youtube",
-                    "geosite:telegram",
-                    "geosite:twitch-ads"
+                    "geosite:telegram"
                 ],
                 "outboundTag": "proxy"
             },
@@ -222,7 +218,6 @@
                 "domain": [
                     "geosite:private",
                     "geosite:category-ru",
-                    "geosite:whitelist",
                     "geosite:microsoft",
                     "geosite:apple",
                     "geosite:google-play",
@@ -234,7 +229,6 @@
                     "geosite:twitch",
                     "geosite:pinterest",
                     "geosite:faceit",
-                    "domain:ru",
                     "domain:su",
                     "domain:rf",
                     "geosite:github"
@@ -243,8 +237,7 @@
             },
             {
                 "ip": [
-                    "geoip:private",
-                    "geoip:direct"
+                    "geoip:private"
                 ],
                 "outboundTag": "direct"
             }
