@@ -87,7 +87,7 @@
         "network": "tcp",
         "security": "reality",
         "realitySettings": {
-          "fingerprint": "safari",
+          "fingerprint": "chrome",
           "publicKey": "QE69zb8c_r-QVEFCmuoojilaXUYKFRnDF6YkPVRNCBE",
           "serverName": "api-maps.yandex.ru",
           "shortId": "111111"
