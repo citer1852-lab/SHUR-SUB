@@ -110,7 +110,7 @@
             "users": [
               {
                 "encryption": "none",
-                "flow": "xtls-rprx-vision",
+                
                 "id": "{UUID}",
                 "level": 8,
                 "security": "auto"
