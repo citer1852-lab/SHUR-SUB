@@ -39,7 +39,7 @@
         "vnext": [{
           "address": "93.77.169.139",
           "port": 6443,
-          "users": [{ "id": "acde1bc4-45b9-4d7c-ba06-24eb48cff2e9", "flow": "xtls-rprx-vision", "encryption": "none" }]
+          "users": [{ "id": "{UUID}", "flow": "xtls-rprx-vision", "encryption": "none" }]
         }]
       },
       "streamSettings": {
@@ -60,7 +60,7 @@
         "vnext": [{
           "address": "93.77.169.139",
           "port": 6443,
-          "users": [{ "id": "acde1bc4-45b9-4d7c-ba06-24eb48cff2e9", "flow": "xtls-rprx-vision", "encryption": "none" }]
+          "users": [{ "id": "{UUID}", "flow": "xtls-rprx-vision", "encryption": "none" }]
         }]
       },
       "streamSettings": {
@@ -81,7 +81,7 @@
         "vnext": [{
           "address": "93.77.169.139",
           "port": 6443,
-          "users": [{ "id": "acde1bc4-45b9-4d7c-ba06-24eb48cff2e9", "flow": "xtls-rprx-vision", "encryption": "none" }]
+          "users": [{ "id": "{UUID}", "flow": "xtls-rprx-vision", "encryption": "none" }]
         }]
       },
       "streamSettings": {
