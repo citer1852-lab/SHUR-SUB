@@ -29,7 +29,7 @@
           "port": 6443,
           "users": [{
             "encryption": "none",
-            "flow": "xtls-rprx-vision",
+            
             "id": "{UUID}"
           }]
         }]
