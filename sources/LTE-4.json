@@ -108,7 +108,7 @@
             "level": 1,
             "method": "chacha20",
             "ota": false,
-            "password": "acde1bc4-45b9-4d7c-ba06-24eb48cff2e9",
+            "password": "{UUID}",
             "port": 6443
           }
         ]
