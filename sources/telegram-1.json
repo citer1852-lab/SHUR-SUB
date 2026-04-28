@@ -1,5 +1,5 @@
 {
-  "remarks": "Telegram 🇷🇺",
+  "remarks": "🇷🇺 Telegram",
   "dns": {
     "servers": ["https://1.1.1.1/dns-query", "https://dns.google/dns-query", "https://dns.quad9.net/dns-query"],
     "queryStrategy": "UseIPv4"
