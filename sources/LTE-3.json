@@ -111,7 +111,7 @@
               {
                 "encryption": "none",
                 "flow": "xtls-rprx-vision",
-                "id": "acde1bc4-45b9-4d7c-ba06-24eb48cff2e9",
+                "id": "{UUID}",
                 "level": 8,
                 "security": "auto"
               }
