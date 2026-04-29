@@ -1,96 +1,27 @@
 {
-  "observatory": {
-    "enabled": true,
-    "probeURL": "https://www.gstatic.com/generate_204",
-    "probeInterval": "1m",
-    "enableConcurrency": true,
-    "subjectSelector": ["xhttp-vision", "tcp-vision"]
-  },
+  "remarks": "🇷🇺 LTE AUTO (XHTTP)",
+  "log": { "loglevel": "warning" },
+  "dns": { "servers": [ "https://1.1.1.1/dns-query", "1.1.1.1" ] },
   "inbounds": [
-    {
-      "listen": "127.0.0.1",
-      "port": 10808,
-      "protocol": "socks",
-      "settings": { "auth": "noauth", "udp": true },
-      "sniffing": { "enabled": true, "destOverride": ["http", "tls", "quic"] }
-    },
-    {
-      "listen": "127.0.0.1",
-      "port": 10809,
-      "protocol": "http",
-      "sniffing": { "enabled": true, "destOverride": ["http", "tls", "quic"] }
-    }
+    { "listen": "127.0.0.1", "port": 10808, "protocol": "socks", "settings": { "auth": "noauth", "udp": true }, "sniffing": { "enabled": true, "destOverride": ["http", "tls", "quic"] } },
+    { "listen": "127.0.0.1", "port": 10809, "protocol": "http", "sniffing": { "enabled": true, "destOverride": ["http", "tls", "quic"] } }
   ],
   "outbounds": [
     {
-      "tag": "xhttp-vision",
+      "tag": "xhttp-out",
       "protocol": "vless",
-      "settings": {
-        "vnext": [{
-          "address": "93.77.169.139",
-          "port": 6443,
-          "users": [{
-            "id": "{UUID}",
-            "flow": "xtls-rprx-vision",
-            "encryption": "none"
-          }]
-        }]
-      },
+      "settings": { "vnext": [{ "address": "93.77.169.139", "port": 6443, "users": [{ "id": "{UUID}", "encryption": "none" }] }] },
       "streamSettings": {
         "network": "xhttp",
         "security": "reality",
         "xhttpSettings": { "mode": "auto", "host": "www.microsoft.com", "path": "/" },
-        "realitySettings": {
-          "serverName": "max.ru",
-          "fingerprint": "chrome",
-          "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
-          "shortId": "707f9f44e2b21d87"
-        }
+        "realitySettings": { "serverName": "max.ru", "fingerprint": "chrome", "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co", "shortId": "707f9f44e2b21d87" }
       }
     },
-    {
-      "tag": "tcp-vision",
-      "protocol": "vless",
-      "settings": {
-        "vnext": [{
-          "address": "93.77.169.139",
-          "port": 6443,
-          "users": [{
-            "id": "{UUID}",
-            "flow": "xtls-rprx-vision",
-            "encryption": "none"
-          }]
-        }]
-      },
-      "streamSettings": {
-        "network": "tcp",
-        "security": "reality",
-        "realitySettings": {
-          "serverName": "max.ru",
-          "fingerprint": "chrome",
-          "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
-          "shortId": "707f9f44e2b21d87"
-        }
-      }
-    },
-    {
-      "tag": "direct",
-      "protocol": "freedom"
-    }
+    { "tag": "direct", "protocol": "freedom" }
   ],
   "routing": {
-    "rules": [{
-      "type": "field",
-      "inboundTag": ["socks", "http"],
-      "balancerTag": "loadbalancer"
-    }]
-  },
-  "balancers": [{
-    "tag": "loadbalancer",
-    "selector": ["xhttp-vision", "tcp-vision"],
-    "strategy": {
-      "type": "leastPing",
-      "settings": { "observatory": "observatory" }
-    }
-  }]
+    "domainStrategy": "IPIfNonMatch",
+    "rules": [ { "type": "field", "inboundTag": ["socks", "http"], "outboundTag": "xhttp-out" } ]
+  }
 }
