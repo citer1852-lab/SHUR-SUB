@@ -53,7 +53,7 @@
           {
             "address": "93.77.169.139",
             "password": "{UUID}",
-            "port": 6443,
+            "port": 56747,
             "level": 1
           }
         ]
