@@ -6,6 +6,21 @@
     "enableConcurrency": true,
     "subjectSelector": ["xhttp-vision", "tcp-vision"]
   },
+  "inbounds": [
+    {
+      "listen": "127.0.0.1",
+      "port": 10808,
+      "protocol": "socks",
+      "settings": { "auth": "noauth", "udp": true },
+      "sniffing": { "enabled": true, "destOverride": ["http", "tls", "quic"] }
+    },
+    {
+      "listen": "127.0.0.1",
+      "port": 10809,
+      "protocol": "http",
+      "sniffing": { "enabled": true, "destOverride": ["http", "tls", "quic"] }
+    }
+  ],
   "outbounds": [
     {
       "tag": "xhttp-vision",
@@ -58,7 +73,10 @@
         }
       }
     },
-    { "tag": "direct", "protocol": "freedom" }
+    {
+      "tag": "direct",
+      "protocol": "freedom"
+    }
   ],
   "routing": {
     "rules": [{
