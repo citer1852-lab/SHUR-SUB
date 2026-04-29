@@ -22,7 +22,7 @@
     {
       "tag": "out-microsoft",
       "protocol": "vless",
-      "settings": { "vnext": [{ "address": "93.77.169.139", "port": 6443, "users": [{ "id": "{UUID}", "encryption": "none" }] }] },
+      "settings": { "vnext": [{ "address": "93.77.169.139", "port": 56747, "users": [{ "id": "{UUID}", "encryption": "none" }] }] },
       "streamSettings": {
         "network": "tcp", "security": "reality",
         "realitySettings": {
@@ -34,7 +34,7 @@
     {
       "tag": "out-vk",
       "protocol": "vless",
-      "settings": { "vnext": [{ "address": "93.77.169.139", "port": 6443, "users": [{ "id": "{UUID}", "encryption": "none" }] }] },
+      "settings": { "vnext": [{ "address": "93.77.169.139", "port": 56747, "users": [{ "id": "{UUID}", "encryption": "none" }] }] },
       "streamSettings": {
         "network": "tcp", "security": "reality",
         "realitySettings": {
@@ -46,7 +46,7 @@
     {
       "tag": "out-yandex",
       "protocol": "vless",
-      "settings": { "vnext": [{ "address": "93.77.169.139", "port": 6443, "users": [{ "id": "{UUID}", "encryption": "none" }] }] },
+      "settings": { "vnext": [{ "address": "93.77.169.139", "port": 56747, "users": [{ "id": "{UUID}", "encryption": "none" }] }] },
       "streamSettings": {
         "network": "tcp", "security": "reality",
         "realitySettings": {
@@ -58,7 +58,7 @@
     {
       "tag": "out-maxru",
       "protocol": "vless",
-      "settings": { "vnext": [{ "address": "93.77.169.139", "port": 6443, "users": [{ "id": "{UUID}", "encryption": "none" }] }] },
+      "settings": { "vnext": [{ "address": "93.77.169.139", "port": 56747, "users": [{ "id": "{UUID}", "encryption": "none" }] }] },
       "streamSettings": {
         "network": "tcp", "security": "reality",
         "realitySettings": {
@@ -70,7 +70,7 @@
     {
       "tag": "out-hh",
       "protocol": "vless",
-      "settings": { "vnext": [{ "address": "93.77.169.139", "port": 6443, "users": [{ "id": "{UUID}", "encryption": "none" }] }] },
+      "settings": { "vnext": [{ "address": "93.77.169.139", "port": 56747, "users": [{ "id": "{UUID}", "encryption": "none" }] }] },
       "streamSettings": {
         "network": "tcp", "security": "reality",
         "realitySettings": {
@@ -82,7 +82,7 @@
     {
       "tag": "out-gosuslugi",
       "protocol": "vless",
-      "settings": { "vnext": [{ "address": "93.77.169.139", "port": 6443, "users": [{ "id": "{UUID}", "encryption": "none" }] }] },
+      "settings": { "vnext": [{ "address": "93.77.169.139", "port": 56747, "users": [{ "id": "{UUID}", "encryption": "none" }] }] },
       "streamSettings": {
         "network": "tcp", "security": "reality",
         "realitySettings": {
@@ -94,7 +94,7 @@
     {
       "tag": "out-ozon",
       "protocol": "vless",
-      "settings": { "vnext": [{ "address": "93.77.169.139", "port": 6443, "users": [{ "id": "{UUID}", "encryption": "none" }] }] },
+      "settings": { "vnext": [{ "address": "93.77.169.139", "port": 56747, "users": [{ "id": "{UUID}", "encryption": "none" }] }] },
       "streamSettings": {
         "network": "tcp", "security": "reality",
         "realitySettings": {
@@ -106,7 +106,7 @@
     {
       "tag": "out-mts",
       "protocol": "vless",
-      "settings": { "vnext": [{ "address": "93.77.169.139", "port": 6443, "users": [{ "id": "{UUID}", "encryption": "none" }] }] },
+      "settings": { "vnext": [{ "address": "93.77.169.139", "port": 56747, "users": [{ "id": "{UUID}", "encryption": "none" }] }] },
       "streamSettings": {
         "network": "tcp", "security": "reality",
         "realitySettings": {
@@ -118,7 +118,7 @@
     {
       "tag": "out-avito",
       "protocol": "vless",
-      "settings": { "vnext": [{ "address": "93.77.169.139", "port": 6443, "users": [{ "id": "{UUID}", "encryption": "none" }] }] },
+      "settings": { "vnext": [{ "address": "93.77.169.139", "port": 56747, "users": [{ "id": "{UUID}", "encryption": "none" }] }] },
       "streamSettings": {
         "network": "tcp", "security": "reality",
         "realitySettings": {
@@ -130,7 +130,7 @@
     {
       "tag": "out-dzen",
       "protocol": "vless",
-      "settings": { "vnext": [{ "address": "93.77.169.139", "port": 6443, "users": [{ "id": "{UUID}", "encryption": "none" }] }] },
+      "settings": { "vnext": [{ "address": "93.77.169.139", "port": 56747, "users": [{ "id": "{UUID}", "encryption": "none" }] }] },
       "streamSettings": {
         "network": "tcp", "security": "reality",
         "realitySettings": {
