@@ -49,7 +49,7 @@
     {
       "protocol": "vless",
       "settings": {
-        "vnext": [{ "address": "93.77.169.139", "port": 6443, "users": [{ "encryption": "none", "id": "{UUID}", "level": 8 }] }]
+        "vnext": [{ "address": "93.77.169.139", "port": 56747, "users": [{ "encryption": "none", "id": "{UUID}", "level": 8 }] }]
       },
       "streamSettings": {
         "network": "tcp", "security": "reality",
