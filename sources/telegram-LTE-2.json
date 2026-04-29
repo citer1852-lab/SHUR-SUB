@@ -1,103 +1,73 @@
 {
-  "remarks": "🇷🇺 TELEGRAM + LTE",
-  "log": {
-    "loglevel": "warning"
-  },
-  "dns": {
-    "servers": ["https://1.1.1.1/dns-query", "1.1.1.1"]
-  },
+  "remarks": "🇷🇺 TELEGRAM + LTE AUTO",
+  "log": { "loglevel": "warning" },
+  "dns": { "servers": ["https://1.1.1.1/dns-query", "1.1.1.1"] },
   "inbounds": [
     {
-      "listen": "127.0.0.1",
-      "port": 10808,
-      "protocol": "socks",
+      "listen": "127.0.0.1", "port": 10808, "protocol": "socks",
       "settings": { "auth": "noauth", "udp": true },
       "sniffing": { "enabled": true, "destOverride": ["http", "tls", "quic"] }
     },
     {
-      "listen": "127.0.0.1",
-      "port": 10809,
-      "protocol": "http",
+      "listen": "127.0.0.1", "port": 10809, "protocol": "http",
       "sniffing": { "enabled": true, "destOverride": ["http", "tls", "quic"] }
     }
   ],
   "observatory": {
     "enabled": true,
     "probeURL": "https://www.gstatic.com/generate_204",
-    "probeInterval": "1m",
-    "enableConcurrency": true,
-    "subjectSelector": ["out-vk", "out-maxru", "out-yandex", "out-gosuslugi"]
+    "probeInterval": "30s"
   },
   "outbounds": [
     {
       "tag": "out-vk",
       "protocol": "vless",
-      "settings": {
-        "vnext": [{ "address": "93.77.169.139", "port": 6443, "users": [{ "id": "{UUID}", "encryption": "none" }] }]
-      },
+      "settings": { "vnext": [{ "address": "93.77.169.139", "port": 6443, "users": [{ "id": "{UUID}", "encryption": "none" }] }] },
       "streamSettings": {
-        "network": "xhttp",
+        "network": "tcp",
         "security": "reality",
-        "xhttpSettings": { "mode": "auto", "host": "www.microsoft.com", "path": "/" },
         "realitySettings": {
-          "serverName": "m.vk.com",
-          "fingerprint": "chrome",
-          "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
-          "shortId": "707f9f44e2b21d87"
+          "serverName": "m.vk.com", "fingerprint": "chrome",
+          "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co", "shortId": "707f9f44e2b21d87"
         }
       }
     },
     {
       "tag": "out-maxru",
       "protocol": "vless",
-      "settings": {
-        "vnext": [{ "address": "93.77.169.139", "port": 6443, "users": [{ "id": "{UUID}", "encryption": "none" }] }]
-      },
+      "settings": { "vnext": [{ "address": "93.77.169.139", "port": 6443, "users": [{ "id": "{UUID}", "encryption": "none" }] }] },
       "streamSettings": {
-        "network": "xhttp",
+        "network": "tcp",
         "security": "reality",
-        "xhttpSettings": { "mode": "auto", "host": "www.microsoft.com", "path": "/" },
         "realitySettings": {
-          "serverName": "max.ru",
-          "fingerprint": "chrome",
-          "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
-          "shortId": "707f9f44e2b21d87"
+          "serverName": "max.ru", "fingerprint": "chrome",
+          "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co", "shortId": "707f9f44e2b21d87"
         }
       }
     },
     {
       "tag": "out-yandex",
       "protocol": "vless",
-      "settings": {
-        "vnext": [{ "address": "93.77.169.139", "port": 6443, "users": [{ "id": "{UUID}", "encryption": "none" }] }]
-      },
+      "settings": { "vnext": [{ "address": "93.77.169.139", "port": 6443, "users": [{ "id": "{UUID}", "encryption": "none" }] }] },
       "streamSettings": {
-        "network": "xhttp",
+        "network": "tcp",
         "security": "reality",
-        "xhttpSettings": { "mode": "auto", "host": "www.microsoft.com", "path": "/" },
         "realitySettings": {
-          "serverName": "ads.yandex.ru",
-          "fingerprint": "chrome",
-          "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
-          "shortId": "707f9f44e2b21d87"
+          "serverName": "api-maps.yandex.ru", "fingerprint": "chrome",
+          "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co", "shortId": "707f9f44e2b21d87"
         }
       }
     },
     {
       "tag": "out-gosuslugi",
       "protocol": "vless",
-      "settings": {
-        "vnext": [{ "address": "93.77.169.139", "port": 6443, "users": [{ "id": "{UUID}", "encryption": "none" }] }]
-      },
+      "settings": { "vnext": [{ "address": "93.77.169.139", "port": 6443, "users": [{ "id": "{UUID}", "encryption": "none" }] }] },
       "streamSettings": {
-        "network": "xhttp",
+        "network": "tcp",
         "security": "reality",
-        "xhttpSettings": { "mode": "auto", "host": "www.microsoft.com", "path": "/" },
         "realitySettings": {
-          "serverName": "api.gosuslugi.ru",
-          "fingerprint": "chrome",
-          "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
-          "shortId": "707f9f44e2b21d87"
+          "serverName": "api.gosuslugi.ru", "fingerprint": "chrome",
+          "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co", "shortId": "707f9f44e2b21d87"
         }
       }
     },
@@ -107,20 +77,19 @@
       "settings": { "domainStrategy": "UseIP" }
     }
   ],
-  "balancers": [
-    {
-      "tag": "loadbalancer",
-      "selector": ["out-vk", "out-maxru", "out-yandex", "out-gosuslugi"],
-      "strategy": {
-        "type": "leastPing",
-        "settings": { "observatory": "observatory" }
-      }
-    }
-  ],
+  "balancer": {
+    "tag": "balance",
+    "selector": ["out-vk", "out-maxru", "out-yandex", "out-gosuslugi"],
+    "strategy": {
+      "type": "roundRobin",
+      "settings": { "fallbackTag": "direct" }
+    },
+    "observatory": "observatory"
+  },
   "routing": {
     "domainStrategy": "IPIfNonMatch",
     "rules": [
-      { "type": "field", "inboundTag": ["socks", "http"], "balancerTag": "loadbalancer" }
+      { "type": "field", "inboundTag": ["socks", "http"], "outboundTag": "balance" }
     ]
   }
 }
