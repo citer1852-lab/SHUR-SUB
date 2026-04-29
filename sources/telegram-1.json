@@ -26,7 +26,7 @@
       "settings": {
         "vnext": [{
           "address": "93.77.169.139",
-          "port": 6443,
+          "port": 56747,
           "users": [{
             "encryption": "none",
             
