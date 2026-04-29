@@ -1,5 +1,5 @@
 {
-  "remarks": "🇷🇺 TELEGRAM + LTE AUTO",
+  "remarks": "🇷🇺 TELEGRAM + LTE",
   "log": { "loglevel": "warning" },
   "dns": { "servers": ["https://1.1.1.1/dns-query", "1.1.1.1"] },
   "inbounds": [
@@ -31,8 +31,10 @@
         "network": "tcp",
         "security": "reality",
         "realitySettings": {
-          "serverName": "m.vk.com", "fingerprint": "chrome",
-          "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co", "shortId": "707f9f44e2b21d87"
+          "serverName": "m.vk.com",
+          "fingerprint": "chrome",
+          "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
+          "shortId": "707f9f44e2b21d87"
         }
       }
     },
@@ -44,8 +46,10 @@
         "network": "tcp",
         "security": "reality",
         "realitySettings": {
-          "serverName": "max.ru", "fingerprint": "chrome",
-          "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co", "shortId": "707f9f44e2b21d87"
+          "serverName": "max.ru",
+          "fingerprint": "chrome",
+          "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
+          "shortId": "707f9f44e2b21d87"
         }
       }
     },
@@ -57,8 +61,10 @@
         "network": "tcp",
         "security": "reality",
         "realitySettings": {
-          "serverName": "api-maps.yandex.ru", "fingerprint": "chrome",
-          "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co", "shortId": "707f9f44e2b21d87"
+          "serverName": "api-maps.yandex.ru",
+          "fingerprint": "chrome",
+          "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
+          "shortId": "707f9f44e2b21d87"
         }
       }
     },
@@ -70,8 +76,25 @@
         "network": "tcp",
         "security": "reality",
         "realitySettings": {
-          "serverName": "api.gosuslugi.ru", "fingerprint": "chrome",
-          "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co", "shortId": "707f9f44e2b21d87"
+          "serverName": "api.gosuslugi.ru",
+          "fingerprint": "chrome",
+          "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
+          "shortId": "707f9f44e2b21d87"
+        }
+      }
+    },
+    {
+      "tag": "out-ozon",
+      "protocol": "vless",
+      "settings": { "vnext": [{ "address": "93.77.169.139", "port": 6443, "users": [{ "id": "{UUID}", "encryption": "none" }] }] },
+      "streamSettings": {
+        "network": "tcp",
+        "security": "reality",
+        "realitySettings": {
+          "serverName": "api.ozon.ru",
+          "fingerprint": "chrome",
+          "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
+          "shortId": "707f9f44e2b21d87"
         }
       }
     },
@@ -83,7 +106,7 @@
   ],
   "balancer": {
     "tag": "balance",
-    "selector": ["out-vk", "out-maxru", "out-yandex", "out-gosuslugi"],
+    "selector": ["out-vk", "out-maxru", "out-yandex", "out-gosuslugi", "out-ozon"],
     "strategy": {
       "type": "roundRobin",
       "settings": { "fallbackTag": "direct" }
@@ -93,7 +116,16 @@
   "routing": {
     "domainStrategy": "IPIfNonMatch",
     "rules": [
-      { "type": "field", "inboundTag": ["socks", "http"], "outboundTag": "balance" }
+      {
+        "type": "field",
+        "domain": ["geosite:telegram"],
+        "outboundTag": "balance"
+      },
+      {
+        "type": "field",
+        "inboundTag": ["socks", "http"],
+        "outboundTag": "direct"
+      }
     ]
   }
 }
