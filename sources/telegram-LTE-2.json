@@ -3,13 +3,17 @@
   "log": { "loglevel": "warning" },
   "dns": { "servers": ["https://1.1.1.1/dns-query", "1.1.1.1"] },
   "inbounds": [
-    { 
-      "listen": "127.0.0.1", "port": 10808, "protocol": "socks",
+    {
+      "listen": "127.0.0.1",
+      "port": 10808,
+      "protocol": "socks",
       "settings": { "auth": "noauth", "udp": true },
       "sniffing": { "enabled": true, "destOverride": ["http", "tls", "quic"] }
     },
     {
-      "listen": "127.0.0.1", "port": 10809, "protocol": "http",
+      "listen": "127.0.0.1",
+      "port": 10809,
+      "protocol": "http",
       "sniffing": { "enabled": true, "destOverride": ["http", "tls", "quic"] }
     }
   ],
