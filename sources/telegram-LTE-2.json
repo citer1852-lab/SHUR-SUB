@@ -26,7 +26,7 @@
     {
       "tag": "out-vk",
       "protocol": "vless",
-      "settings": { "vnext": [{ "address": "93.77.169.139", "port": 6443, "users": [{ "id": "{UUID}", "encryption": "none" }] }] },
+      "settings": { "vnext": [{ "address": "93.77.169.139", "port": 56747, "users": [{ "id": "{UUID}", "encryption": "none" }] }] },
       "streamSettings": {
         "network": "tcp",
         "security": "reality",
@@ -41,7 +41,7 @@
     {
       "tag": "out-maxru",
       "protocol": "vless",
-      "settings": { "vnext": [{ "address": "93.77.169.139", "port": 6443, "users": [{ "id": "{UUID}", "encryption": "none" }] }] },
+      "settings": { "vnext": [{ "address": "93.77.169.139", "port": 56747, "users": [{ "id": "{UUID}", "encryption": "none" }] }] },
       "streamSettings": {
         "network": "tcp",
         "security": "reality",
@@ -56,7 +56,7 @@
     {
       "tag": "out-yandex",
       "protocol": "vless",
-      "settings": { "vnext": [{ "address": "93.77.169.139", "port": 6443, "users": [{ "id": "{UUID}", "encryption": "none" }] }] },
+      "settings": { "vnext": [{ "address": "93.77.169.139", "port": 56747, "users": [{ "id": "{UUID}", "encryption": "none" }] }] },
       "streamSettings": {
         "network": "tcp",
         "security": "reality",
@@ -71,7 +71,7 @@
     {
       "tag": "out-gosuslugi",
       "protocol": "vless",
-      "settings": { "vnext": [{ "address": "93.77.169.139", "port": 6443, "users": [{ "id": "{UUID}", "encryption": "none" }] }] },
+      "settings": { "vnext": [{ "address": "93.77.169.139", "port": 56747, "users": [{ "id": "{UUID}", "encryption": "none" }] }] },
       "streamSettings": {
         "network": "tcp",
         "security": "reality",
@@ -86,7 +86,7 @@
     {
       "tag": "out-ozon",
       "protocol": "vless",
-      "settings": { "vnext": [{ "address": "93.77.169.139", "port": 6443, "users": [{ "id": "{UUID}", "encryption": "none" }] }] },
+      "settings": { "vnext": [{ "address": "93.77.169.139", "port": 56747, "users": [{ "id": "{UUID}", "encryption": "none" }] }] },
       "streamSettings": {
         "network": "tcp",
         "security": "reality",
