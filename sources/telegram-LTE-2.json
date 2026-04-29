@@ -1,12 +1,10 @@
 {
-  "remarks": "🇷🇺Telegram + LTE",
-  "log": { "loglevel": "warning" },
+  "remarks": "🇷🇺 TELEGRAM + LTE",
+  "log": {
+    "loglevel": "warning"
+  },
   "dns": {
-    "servers": [
-      "https://1.1.1.1/dns-query",
-      "1.1.1.1"
-    ],
-    "queryStrategy": "UseIPv4"
+    "servers": ["https://1.1.1.1/dns-query", "1.1.1.1"]
   },
   "inbounds": [
     {
@@ -14,82 +12,90 @@
       "port": 10808,
       "protocol": "socks",
       "settings": { "auth": "noauth", "udp": true },
-      "sniffing": { "enabled": true, "destOverride": ["http", "tls", "quic"] },
-      "tag": "socks"
+      "sniffing": { "enabled": true, "destOverride": ["http", "tls", "quic"] }
     },
     {
       "listen": "127.0.0.1",
       "port": 10809,
       "protocol": "http",
-      "sniffing": { "enabled": true, "destOverride": ["http", "tls", "quic"] },
-      "tag": "http"
+      "sniffing": { "enabled": true, "destOverride": ["http", "tls", "quic"] }
     }
   ],
   "observatory": {
     "enabled": true,
     "probeURL": "https://www.gstatic.com/generate_204",
-    "probeInterval": "30s",
-    "probeTimeout": "5s"
+    "probeInterval": "1m",
+    "enableConcurrency": true,
+    "subjectSelector": ["out-vk", "out-maxru", "out-yandex", "out-gosuslugi"]
   },
   "outbounds": [
     {
-      "tag": "ms",
+      "tag": "out-vk",
       "protocol": "vless",
       "settings": {
-        "vnext": [{
-          "address": "93.77.169.139",
-          "port": 6443,
-          "users": [{ "id": "{UUID}",  "encryption": "none" }]
-        }]
+        "vnext": [{ "address": "93.77.169.139", "port": 6443, "users": [{ "id": "{UUID}", "encryption": "none" }] }]
       },
       "streamSettings": {
-        "network": "tcp",
+        "network": "xhttp",
         "security": "reality",
-        "realitySettings": {
-          "serverName": "www.microsoft.com",
-          "fingerprint": "randomized",
-          "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
-          "shortId": "707f9f44e2b21d87"
-        }
-      }
-    },
-    {
-      "tag": "vk",
-      "protocol": "vless",
-      "settings": {
-        "vnext": [{
-          "address": "93.77.169.139",
-          "port": 6443,
-          "users": [{ "id": "{UUID}",  "encryption": "none" }]
-        }]
-      },
-      "streamSettings": {
-        "network": "tcp",
-        "security": "reality",
+        "xhttpSettings": { "mode": "auto", "host": "www.microsoft.com", "path": "/" },
         "realitySettings": {
           "serverName": "m.vk.com",
-          "fingerprint": "randomized",
+          "fingerprint": "chrome",
           "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
           "shortId": "707f9f44e2b21d87"
         }
       }
     },
     {
-      "tag": "yandex",
+      "tag": "out-maxru",
       "protocol": "vless",
       "settings": {
-        "vnext": [{
-          "address": "93.77.169.139",
-          "port": 6443,
-          "users": [{ "id": "{UUID}",  "encryption": "none" }]
-        }]
+        "vnext": [{ "address": "93.77.169.139", "port": 6443, "users": [{ "id": "{UUID}", "encryption": "none" }] }]
       },
       "streamSettings": {
-        "network": "tcp",
+        "network": "xhttp",
         "security": "reality",
+        "xhttpSettings": { "mode": "auto", "host": "www.microsoft.com", "path": "/" },
         "realitySettings": {
-          "serverName": "api-maps.yandex.ru",
-          "fingerprint": "randomized",
+          "serverName": "max.ru",
+          "fingerprint": "chrome",
+          "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
+          "shortId": "707f9f44e2b21d87"
+        }
+      }
+    },
+    {
+      "tag": "out-yandex",
+      "protocol": "vless",
+      "settings": {
+        "vnext": [{ "address": "93.77.169.139", "port": 6443, "users": [{ "id": "{UUID}", "encryption": "none" }] }]
+      },
+      "streamSettings": {
+        "network": "xhttp",
+        "security": "reality",
+        "xhttpSettings": { "mode": "auto", "host": "www.microsoft.com", "path": "/" },
+        "realitySettings": {
+          "serverName": "ads.yandex.ru",
+          "fingerprint": "chrome",
+          "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
+          "shortId": "707f9f44e2b21d87"
+        }
+      }
+    },
+    {
+      "tag": "out-gosuslugi",
+      "protocol": "vless",
+      "settings": {
+        "vnext": [{ "address": "93.77.169.139", "port": 6443, "users": [{ "id": "{UUID}", "encryption": "none" }] }]
+      },
+      "streamSettings": {
+        "network": "xhttp",
+        "security": "reality",
+        "xhttpSettings": { "mode": "auto", "host": "www.microsoft.com", "path": "/" },
+        "realitySettings": {
+          "serverName": "api.gosuslugi.ru",
+          "fingerprint": "chrome",
           "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
           "shortId": "707f9f44e2b21d87"
         }
@@ -101,19 +107,20 @@
       "settings": { "domainStrategy": "UseIP" }
     }
   ],
-  "balancer": {
-    "tag": "balance",
-    "selector": ["ms", "vk", "yandex"],
-    "strategy": {
-      "type": "roundRobin",
-      "settings": { "fallbackTag": "direct" }
-    },
-    "observatory": "observatory"
-  },
+  "balancers": [
+    {
+      "tag": "loadbalancer",
+      "selector": ["out-vk", "out-maxru", "out-yandex", "out-gosuslugi"],
+      "strategy": {
+        "type": "leastPing",
+        "settings": { "observatory": "observatory" }
+      }
+    }
+  ],
   "routing": {
     "domainStrategy": "IPIfNonMatch",
     "rules": [
-      { "type": "field", "inboundTag": ["socks", "http"], "outboundTag": "balance" }
+      { "type": "field", "inboundTag": ["socks", "http"], "balancerTag": "loadbalancer" }
     ]
   }
 }
