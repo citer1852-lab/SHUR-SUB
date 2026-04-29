@@ -1,5 +1,5 @@
 {
-  "remarks": "🇷🇺 LTE AUTO (XHTTP)",
+  "remarks": "🇷🇺 LTE AUTO test",
   "log": { "loglevel": "warning" },
   "dns": { "servers": [ "https://1.1.1.1/dns-query", "1.1.1.1" ] },
   "inbounds": [
@@ -8,20 +8,32 @@
   ],
   "outbounds": [
     {
-      "tag": "xhttp-out",
+      "tag": "out",
       "protocol": "vless",
-      "settings": { "vnext": [{ "address": "93.77.169.139", "port": 6443, "users": [{ "id": "{UUID}", "encryption": "none" }] }] },
+      "settings": {
+        "vnext": [
+          {
+            "address": "93.77.169.139",
+            "port": 6443,
+            "users": [ { "id": "{UUID}", "encryption": "none" } ]
+          }
+        ]
+      },
       "streamSettings": {
-        "network": "xhttp",
+        "network": "tcp",
         "security": "reality",
-        "xhttpSettings": { "mode": "auto", "host": "www.microsoft.com", "path": "/" },
-        "realitySettings": { "serverName": "max.ru", "fingerprint": "chrome", "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co", "shortId": "707f9f44e2b21d87" }
+        "realitySettings": {
+          "serverName": "max.ru",
+          "fingerprint": "chrome",
+          "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
+          "shortId": "707f9f44e2b21d87"
+        }
       }
     },
     { "tag": "direct", "protocol": "freedom" }
   ],
   "routing": {
     "domainStrategy": "IPIfNonMatch",
-    "rules": [ { "type": "field", "inboundTag": ["socks", "http"], "outboundTag": "xhttp-out" } ]
+    "rules": [ { "type": "field", "inboundTag": ["socks", "http"], "outboundTag": "out" } ]
   }
 }
