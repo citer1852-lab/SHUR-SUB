@@ -109,7 +109,7 @@
             "method": "chacha20",
             "ota": false,
             "password": "{UUID}",
-            "port": 6443
+            "port": 56747
           }
         ]
       },
