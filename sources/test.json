@@ -1,28 +1,50 @@
 {
   "remarks": "🇷🇺 LTE AUTO(test)",
-  "log": { "loglevel": "warning" },
-  "dns": { "servers": ["https://1.1.1.1/dns-query", "1.1.1.1"] },
+  "log": {
+    "loglevel": "warning"
+  },
+  "dns": {
+    "servers": [
+      "https://1.1.1.1/dns-query",
+      "1.1.1.1"
+    ]
+  },
   "inbounds": [
     {
       "listen": "127.0.0.1",
       "port": 10808,
       "protocol": "socks",
-      "settings": { "auth": "noauth", "udp": true },
-      "sniffing": { "enabled": true, "destOverride": ["http", "tls", "quic"] }
+      "settings": {
+        "auth": "noauth",
+        "udp": true
+      },
+      "sniffing": {
+        "enabled": true,
+        "destOverride": [
+          "http",
+          "tls",
+          "quic"
+        ]
+      }
     },
     {
       "listen": "127.0.0.1",
       "port": 10809,
       "protocol": "http",
-      "sniffing": { "enabled": true, "destOverride": ["http", "tls", "quic"] }
+      "sniffing": {
+        "enabled": true,
+        "destOverride": [
+          "http",
+          "tls",
+          "quic"
+        ]
+      }
     }
   ],
   "observatory": {
     "enabled": true,
     "probeURL": "https://www.gstatic.com/generate_204",
-    "probeInterval": "1m",
-    "enableConcurrency": true,
-    "subjectSelector": ["vh", "vh-meta"]
+    "probeInterval": "1m"
   },
   "outbounds": [
     {
@@ -59,7 +81,9 @@
           "show": false
         }
       },
-      "mux": { "enabled": false }
+      "mux": {
+        "enabled": false
+      }
     },
     {
       "tag": "vh-meta",
@@ -95,31 +119,42 @@
           "show": false
         }
       },
-      "mux": { "enabled": false }
+      "mux": {
+        "enabled": false
+      }
     },
     {
       "tag": "direct",
       "protocol": "freedom",
-      "settings": { "domainStrategy": "UseIP" }
-    }
-  ],
-  "balancers": [
-    {
-      "tag": "balance",
-      "selector": ["vh", "vh-meta"],
-      "strategy": {
-        "type": "leastPing",
-        "settings": { "observatory": "observatory" }
+      "settings": {
+        "domainStrategy": "UseIP"
       }
     }
   ],
+  "balancer": {
+    "tag": "balance",
+    "selector": [
+      "vh",
+      "vh-meta"
+    ],
+    "strategy": {
+      "type": "roundRobin",
+      "settings": {
+        "fallbackTag": "direct"
+      }
+    },
+    "observatory": "observatory"
+  },
   "routing": {
     "domainStrategy": "IPIfNonMatch",
     "rules": [
       {
         "type": "field",
-        "inboundTag": ["socks", "http"],
-        "balancerTag": "balance"
+        "inboundTag": [
+          "socks",
+          "http"
+        ],
+        "outboundTag": "balance"
       }
     ]
   }
