@@ -1,44 +1,20 @@
 {
-  "remarks": "🇷🇺 LTE AUTO(test)",
-  "log": {
-    "loglevel": "warning"
-  },
-  "dns": {
-    "servers": [
-      "https://1.1.1.1/dns-query",
-      "1.1.1.1"
-    ]
-  },
+  "remarks": "🇷🇺 LTE MEGA AUTO (xhttp+reality)",
+  "log": { "loglevel": "warning" },
+  "dns": { "servers": ["https://1.1.1.1/dns-query", "1.1.1.1"] },
   "inbounds": [
     {
       "listen": "127.0.0.1",
       "port": 10808,
       "protocol": "socks",
-      "settings": {
-        "auth": "noauth",
-        "udp": true
-      },
-      "sniffing": {
-        "enabled": true,
-        "destOverride": [
-          "http",
-          "tls",
-          "quic"
-        ]
-      }
+      "settings": { "auth": "noauth", "udp": true },
+      "sniffing": { "enabled": true, "destOverride": ["http", "tls", "quic"] }
     },
     {
       "listen": "127.0.0.1",
       "port": 10809,
       "protocol": "http",
-      "sniffing": {
-        "enabled": true,
-        "destOverride": [
-          "http",
-          "tls",
-          "quic"
-        ]
-      }
+      "sniffing": { "enabled": true, "destOverride": ["http", "tls", "quic"] }
     }
   ],
   "observatory": {
@@ -48,7 +24,7 @@
   },
   "outbounds": [
     {
-      "tag": "vh",
+      "tag": "out-xhttp1",
       "protocol": "vless",
       "settings": {
         "vnext": [
@@ -68,25 +44,17 @@
       "streamSettings": {
         "network": "xhttp",
         "security": "reality",
-        "xhttpSettings": {
-          "mode": "auto",
-          "host": "www.microsoft.com",
-          "path": "/"
-        },
+        "xhttpSettings": { "mode": "auto", "host": "www.microsoft.com", "path": "/" },
         "realitySettings": {
           "serverName": "cdn-ru.sbertech.ru",
           "fingerprint": "chrome",
           "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
-          "shortId": "707f9f44e2b21d87",
-          "show": false
+          "shortId": "707f9f44e2b21d87"
         }
-      },
-      "mux": {
-        "enabled": false
       }
     },
     {
-      "tag": "vh-meta",
+      "tag": "out-xhttp2",
       "protocol": "vless",
       "settings": {
         "vnext": [
@@ -106,42 +74,27 @@
       "streamSettings": {
         "network": "xhttp",
         "security": "reality",
-        "xhttpSettings": {
-          "mode": "auto",
-          "host": "www.microsoft.com",
-          "path": "/"
-        },
+        "xhttpSettings": { "mode": "auto", "host": "www.microsoft.com", "path": "/" },
         "realitySettings": {
           "serverName": "max.ru",
           "fingerprint": "chrome",
           "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
-          "shortId": "707f9f44e2b21d87",
-          "show": false
+          "shortId": "707f9f44e2b21d87"
         }
-      },
-      "mux": {
-        "enabled": false
       }
     },
     {
       "tag": "direct",
       "protocol": "freedom",
-      "settings": {
-        "domainStrategy": "UseIP"
-      }
+      "settings": { "domainStrategy": "UseIP" }
     }
   ],
   "balancer": {
     "tag": "balance",
-    "selector": [
-      "vh",
-      "vh-meta"
-    ],
+    "selector": ["out-xhttp1", "out-xhttp2"],
     "strategy": {
       "type": "roundRobin",
-      "settings": {
-        "fallbackTag": "direct"
-      }
+      "settings": { "fallbackTag": "direct" }
     },
     "observatory": "observatory"
   },
@@ -150,10 +103,7 @@
     "rules": [
       {
         "type": "field",
-        "inboundTag": [
-          "socks",
-          "http"
-        ],
+        "inboundTag": ["socks", "http"],
         "outboundTag": "balance"
       }
     ]
