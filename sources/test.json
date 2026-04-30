@@ -1,5 +1,5 @@
 {
-  "remarks": "🇷🇺 LTE AUTO (Full traffic)",
+  "remarks": "🇷🇺 LTE AUTO",
   "log": { "loglevel": "warning" },
   "dns": { "servers": ["https://1.1.1.1/dns-query", "1.1.1.1"] },
   "inbounds": [
