@@ -17,15 +17,9 @@
       "sniffing": { "enabled": true, "destOverride": ["http", "tls", "quic"] }
     }
   ],
-  "observatory": {
-    "enabled": true,
-    "probeURL": "https://www.gstatic.com/generate_204",
-    "probeInterval": "30s",
-    "subjectSelector": ["out-vk", "out-maxru", "out-yandex", "out-gosuslugi"]
-  },
   "outbounds": [
     {
-      "tag": "out-vk",
+      "tag": "proxy",
       "protocol": "vless",
       "settings": {
         "vnext": [{
@@ -38,70 +32,7 @@
         "network": "tcp",
         "security": "reality",
         "realitySettings": {
-          "serverName": "m.vk.com",
-          "fingerprint": "chrome",
-          "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
-          "shortId": "707f9f44e2b21d87"
-        }
-      }
-    },
-    {
-      "tag": "out-maxru",
-      "protocol": "vless",
-      "settings": {
-        "vnext": [{
-          "address": "93.77.169.139",
-          "port": 56747,
-          "users": [{ "id": "{UUID}", "encryption": "none" }]
-        }]
-      },
-      "streamSettings": {
-        "network": "tcp",
-        "security": "reality",
-        "realitySettings": {
-          "serverName": "max.ru",
-          "fingerprint": "chrome",
-          "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
-          "shortId": "707f9f44e2b21d87"
-        }
-      }
-    },
-    {
-      "tag": "out-yandex",
-      "protocol": "vless",
-      "settings": {
-        "vnext": [{
-          "address": "93.77.169.139",
-          "port": 56747,
-          "users": [{ "id": "{UUID}", "encryption": "none" }]
-        }]
-      },
-      "streamSettings": {
-        "network": "tcp",
-        "security": "reality",
-        "realitySettings": {
-          "serverName": "ads.yandex.ru",
-          "fingerprint": "chrome",
-          "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
-          "shortId": "707f9f44e2b21d87"
-        }
-      }
-    },
-    {
-      "tag": "out-gosuslugi",
-      "protocol": "vless",
-      "settings": {
-        "vnext": [{
-          "address": "93.77.169.139",
-          "port": 56747,
-          "users": [{ "id": "{UUID}", "encryption": "none" }]
-        }]
-      },
-      "streamSettings": {
-        "network": "tcp",
-        "security": "reality",
-        "realitySettings": {
-          "serverName": "gosuslugi.ru",
+          "serverName": "{BEST_SNI}",
           "fingerprint": "chrome",
           "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
           "shortId": "707f9f44e2b21d87"
@@ -114,18 +45,10 @@
       "settings": { "domainStrategy": "UseIP" }
     }
   ],
-  "balancer": {
-    "tag": "balance",
-    "selector": ["out-vk", "out-maxru", "out-yandex", "out-gosuslugi"],
-    "strategy": {
-      "type": "leastPing",
-      "settings": { "observatory": "observatory" }
-    }
-  },
   "routing": {
     "domainStrategy": "IPIfNonMatch",
     "rules": [
-      { "type": "field", "inboundTag": ["socks", "http"], "outboundTag": "balance" }
+      { "type": "field", "inboundTag": ["socks", "http"], "outboundTag": "proxy" }
     ]
   }
 }
