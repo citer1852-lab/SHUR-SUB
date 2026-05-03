@@ -22,16 +22,80 @@
     "probeURL": "https://www.gstatic.com/generate_204",
     "probeInterval": "30s",
     "subjectSelector": [
+      "out-adsx5",
+      "out-sun6",
+      "out-ehvk",
       "out-alfa",
       "out-music",
       "out-ozon",
-      "out-sber",
       "out-vk",
-      "out-maxru",
-      "out-gosuslugi"
+      "out-maxru"
     ]
   },
   "outbounds": [
+    {
+      "tag": "out-adsx5",
+      "protocol": "vless",
+      "settings": {
+        "vnext": [{
+          "address": "93.77.169.139",
+          "port": 56747,
+          "users": [{ "id": "{UUID}", "encryption": "none" }]
+        }]
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "security": "reality",
+        "realitySettings": {
+          "serverName": "ads.x5.ru",
+          "fingerprint": "qq",
+          "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
+          "shortId": "707f9f44e2b21d87"
+        }
+      }
+    },
+    {
+      "tag": "out-sun6",
+      "protocol": "vless",
+      "settings": {
+        "vnext": [{
+          "address": "93.77.169.139",
+          "port": 56747,
+          "users": [{ "id": "{UUID}", "encryption": "none" }]
+        }]
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "security": "reality",
+        "realitySettings": {
+          "serverName": "sun6-21.userapi.com",
+          "fingerprint": "qq",
+          "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
+          "shortId": "707f9f44e2b21d87"
+        }
+      }
+    },
+    {
+      "tag": "out-ehvk",
+      "protocol": "vless",
+      "settings": {
+        "vnext": [{
+          "address": "93.77.169.139",
+          "port": 56747,
+          "users": [{ "id": "{UUID}", "encryption": "none" }]
+        }]
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "security": "reality",
+        "realitySettings": {
+          "serverName": "eh.vk.com",
+          "fingerprint": "qq",
+          "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
+          "shortId": "707f9f44e2b21d87"
+        }
+      }
+    },
     {
       "tag": "out-alfa",
       "protocol": "vless",
@@ -47,7 +111,7 @@
         "security": "reality",
         "realitySettings": {
           "serverName": "alfa-bank.ru",
-          "fingerprint": "chrome",
+          "fingerprint": "qq",
           "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
           "shortId": "707f9f44e2b21d87"
         }
@@ -68,7 +132,7 @@
         "security": "reality",
         "realitySettings": {
           "serverName": "music.yandex.ru",
-          "fingerprint": "chrome",
+          "fingerprint": "qq",
           "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
           "shortId": "707f9f44e2b21d87"
         }
@@ -89,28 +153,7 @@
         "security": "reality",
         "realitySettings": {
           "serverName": "ozon.ru",
-          "fingerprint": "chrome",
-          "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
-          "shortId": "707f9f44e2b21d87"
-        }
-      }
-    },
-    {
-      "tag": "out-sber",
-      "protocol": "vless",
-      "settings": {
-        "vnext": [{
-          "address": "93.77.169.139",
-          "port": 56747,
-          "users": [{ "id": "{UUID}", "encryption": "none" }]
-        }]
-      },
-      "streamSettings": {
-        "network": "tcp",
-        "security": "reality",
-        "realitySettings": {
-          "serverName": "cdn.sberbank.ru",
-          "fingerprint": "chrome",
+          "fingerprint": "qq",
           "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
           "shortId": "707f9f44e2b21d87"
         }
@@ -131,7 +174,7 @@
         "security": "reality",
         "realitySettings": {
           "serverName": "m.vk.com",
-          "fingerprint": "chrome",
+          "fingerprint": "qq",
           "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
           "shortId": "707f9f44e2b21d87"
         }
@@ -152,28 +195,7 @@
         "security": "reality",
         "realitySettings": {
           "serverName": "max.ru",
-          "fingerprint": "chrome",
-          "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
-          "shortId": "707f9f44e2b21d87"
-        }
-      }
-    },
-    {
-      "tag": "out-gosuslugi",
-      "protocol": "vless",
-      "settings": {
-        "vnext": [{
-          "address": "93.77.169.139",
-          "port": 56747,
-          "users": [{ "id": "{UUID}", "encryption": "none" }]
-        }]
-      },
-      "streamSettings": {
-        "network": "tcp",
-        "security": "reality",
-        "realitySettings": {
-          "serverName": "gosuslugi.ru",
-          "fingerprint": "chrome",
+          "fingerprint": "qq",
           "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
           "shortId": "707f9f44e2b21d87"
         }
@@ -188,13 +210,14 @@
   "balancer": {
     "tag": "balance",
     "selector": [
+      "out-adsx5",
+      "out-sun6",
+      "out-ehvk",
       "out-alfa",
       "out-music",
       "out-ozon",
-      "out-sber",
       "out-vk",
-      "out-maxru",
-      "out-gosuslugi"
+      "out-maxru"
     ],
     "strategy": {
       "type": "roundRobin",
