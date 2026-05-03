@@ -17,171 +17,9 @@
       "sniffing": { "enabled": true, "destOverride": ["http", "tls", "quic"] }
     }
   ],
-  "observatory": {
-    "enabled": true,
-    "probeURL": "https://www.gstatic.com/generate_204",
-    "probeInterval": "30s",
-    "subjectSelector": [
-      "out-adsx5",
-      "out-sun6",
-      "out-ehvk",
-      "out-alfa",
-      "out-music",
-      "out-ozon",
-      "out-vk",
-      "out-maxru"
-    ]
-  },
   "outbounds": [
     {
-      "tag": "out-adsx5",
-      "protocol": "vless",
-      "settings": {
-        "vnext": [{
-          "address": "93.77.169.139",
-          "port": 56747,
-          "users": [{ "id": "{UUID}", "encryption": "none" }]
-        }]
-      },
-      "streamSettings": {
-        "network": "tcp",
-        "security": "reality",
-        "realitySettings": {
-          "serverName": "ads.x5.ru",
-          "fingerprint": "qq",
-          "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
-          "shortId": "707f9f44e2b21d87"
-        }
-      }
-    },
-    {
-      "tag": "out-sun6",
-      "protocol": "vless",
-      "settings": {
-        "vnext": [{
-          "address": "93.77.169.139",
-          "port": 56747,
-          "users": [{ "id": "{UUID}", "encryption": "none" }]
-        }]
-      },
-      "streamSettings": {
-        "network": "tcp",
-        "security": "reality",
-        "realitySettings": {
-          "serverName": "sun6-21.userapi.com",
-          "fingerprint": "qq",
-          "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
-          "shortId": "707f9f44e2b21d87"
-        }
-      }
-    },
-    {
-      "tag": "out-ehvk",
-      "protocol": "vless",
-      "settings": {
-        "vnext": [{
-          "address": "93.77.169.139",
-          "port": 56747,
-          "users": [{ "id": "{UUID}", "encryption": "none" }]
-        }]
-      },
-      "streamSettings": {
-        "network": "tcp",
-        "security": "reality",
-        "realitySettings": {
-          "serverName": "eh.vk.com",
-          "fingerprint": "qq",
-          "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
-          "shortId": "707f9f44e2b21d87"
-        }
-      }
-    },
-    {
-      "tag": "out-alfa",
-      "protocol": "vless",
-      "settings": {
-        "vnext": [{
-          "address": "93.77.169.139",
-          "port": 56747,
-          "users": [{ "id": "{UUID}", "encryption": "none" }]
-        }]
-      },
-      "streamSettings": {
-        "network": "tcp",
-        "security": "reality",
-        "realitySettings": {
-          "serverName": "alfa-bank.ru",
-          "fingerprint": "qq",
-          "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
-          "shortId": "707f9f44e2b21d87"
-        }
-      }
-    },
-    {
-      "tag": "out-music",
-      "protocol": "vless",
-      "settings": {
-        "vnext": [{
-          "address": "93.77.169.139",
-          "port": 56747,
-          "users": [{ "id": "{UUID}", "encryption": "none" }]
-        }]
-      },
-      "streamSettings": {
-        "network": "tcp",
-        "security": "reality",
-        "realitySettings": {
-          "serverName": "music.yandex.ru",
-          "fingerprint": "qq",
-          "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
-          "shortId": "707f9f44e2b21d87"
-        }
-      }
-    },
-    {
-      "tag": "out-ozon",
-      "protocol": "vless",
-      "settings": {
-        "vnext": [{
-          "address": "93.77.169.139",
-          "port": 56747,
-          "users": [{ "id": "{UUID}", "encryption": "none" }]
-        }]
-      },
-      "streamSettings": {
-        "network": "tcp",
-        "security": "reality",
-        "realitySettings": {
-          "serverName": "ozon.ru",
-          "fingerprint": "qq",
-          "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
-          "shortId": "707f9f44e2b21d87"
-        }
-      }
-    },
-    {
-      "tag": "out-vk",
-      "protocol": "vless",
-      "settings": {
-        "vnext": [{
-          "address": "93.77.169.139",
-          "port": 56747,
-          "users": [{ "id": "{UUID}", "encryption": "none" }]
-        }]
-      },
-      "streamSettings": {
-        "network": "tcp",
-        "security": "reality",
-        "realitySettings": {
-          "serverName": "m.vk.com",
-          "fingerprint": "qq",
-          "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
-          "shortId": "707f9f44e2b21d87"
-        }
-      }
-    },
-    {
-      "tag": "out-maxru",
+      "tag": "proxy",
       "protocol": "vless",
       "settings": {
         "vnext": [{
@@ -195,7 +33,7 @@
         "security": "reality",
         "realitySettings": {
           "serverName": "max.ru",
-          "fingerprint": "qq",
+          "fingerprint": "chrome",
           "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
           "shortId": "707f9f44e2b21d87"
         }
@@ -207,28 +45,10 @@
       "settings": { "domainStrategy": "UseIP" }
     }
   ],
-  "balancer": {
-    "tag": "balance",
-    "selector": [
-      "out-adsx5",
-      "out-sun6",
-      "out-ehvk",
-      "out-alfa",
-      "out-music",
-      "out-ozon",
-      "out-vk",
-      "out-maxru"
-    ],
-    "strategy": {
-      "type": "roundRobin",
-      "settings": { "fallbackTag": "direct" }
-    },
-    "observatory": "observatory"
-  },
   "routing": {
     "domainStrategy": "IPIfNonMatch",
     "rules": [
-      { "type": "field", "inboundTag": ["socks", "http"], "outboundTag": "balance" }
+      { "type": "field", "inboundTag": ["socks", "http"], "outboundTag": "proxy" }
     ]
   }
 }
