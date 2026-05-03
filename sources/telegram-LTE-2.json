@@ -44,7 +44,7 @@
   "observatory": {
     "enabled": true,
     "probeURL": "https://www.gstatic.com/generate_204",
-    "probeInterval": "30s",
+    "probeInterval": "1s",
     "subjectSelector": [
       "out-vk",
       "out-maxru",
