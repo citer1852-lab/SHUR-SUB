@@ -1,5 +1,5 @@
 {
-  "remarks": "🇷🇺 LTE AUTO 2",
+  "remarks": "🇷🇺 LTE AUTO (VLESS+SS)",
   "log": { "loglevel": "warning" },
   "dns": { "servers": ["https://1.1.1.1/dns-query", "1.1.1.1"] },
   "inbounds": [
@@ -17,14 +17,20 @@
       "sniffing": { "enabled": true, "destOverride": ["http", "tls", "quic"] }
     }
   ],
+  "observatory": {
+    "enabled": true,
+    "probeURL": "https://www.gstatic.com/generate_204",
+    "probeInterval": "30s",
+    "subjectSelector": ["vless-proxy", "ss-proxy"]
+  },
   "outbounds": [
     {
-      "tag": "proxy",
+      "tag": "vless-proxy",
       "protocol": "vless",
       "settings": {
         "vnext": [{
           "address": "93.77.169.139",
-          "port": 56749,
+          "port": 56747,
           "users": [{
             "id": "{UUID}",
             "encryption": "none",
@@ -36,11 +42,23 @@
         "network": "tcp",
         "security": "reality",
         "realitySettings": {
-          "serverName": "max.ru",
-          "fingerprint": "chrome",
+          "serverName": "m.vk.com",
+          "fingerprint": "random",
           "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
           "shortId": "707f9f44e2b21d87"
         }
+      }
+    },
+    {
+      "tag": "ss-proxy",
+      "protocol": "shadowsocks",
+      "settings": {
+        "servers": [{
+          "address": "93.77.169.139",
+          "port": 56748,
+          "method": "2022-blake3-aes-128-gcm",
+          "password": "UKr1956qZbGPG7iuNBsTC-AaobSup-U0Yd0p0mFdwUE"
+        }]
       }
     },
     {
@@ -48,10 +66,18 @@
       "protocol": "freedom"
     }
   ],
+  "balancer": {
+    "tag": "balance",
+    "selector": ["vless-proxy", "ss-proxy"],
+    "strategy": {
+      "type": "leastPing",
+      "settings": { "observatory": "observatory" }
+    }
+  },
   "routing": {
     "domainStrategy": "IPIfNonMatch",
     "rules": [
-      { "type": "field", "inboundTag": ["socks", "http"], "outboundTag": "proxy" }
+      { "type": "field", "inboundTag": ["socks", "http"], "balancerTag": "balance" }
     ]
   }
 }
