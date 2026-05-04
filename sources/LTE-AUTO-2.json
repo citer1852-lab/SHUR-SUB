@@ -1,5 +1,5 @@
 {
-  "remarks": "🇷🇺 LTE AUTO",
+  "remarks": "🇷🇺 LTE AUTO (Shadowsocks)",
   "log": { "loglevel": "warning" },
   "dns": { "servers": ["https://1.1.1.1/dns-query", "1.1.1.1"] },
   "inbounds": [
@@ -19,39 +19,23 @@
   ],
   "outbounds": [
     {
-      "tag": "proxy",
-      "protocol": "vless",
+      "tag": "ss-proxy",
+      "protocol": "shadowsocks",
       "settings": {
-        "vnext": [{
+        "servers": [{
           "address": "93.77.169.139",
-          "port": 56747,
-          "users": [{
-            "id": "{UUID}",
-            "encryption": "none",
-            "flow": "xtls-rprx-vision"
-          }]
+          "port": 56749,
+          "method": "2022-blake3-aes-128-gcm",
+          "password": "f83cefb9-5b76-462d-95ee-285614215ef5"
         }]
-      },
-      "streamSettings": {
-        "network": "tcp",
-        "security": "reality",
-        "realitySettings": {
-          "serverName": "m.vk.com",
-          "fingerprint": "random",
-          "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
-          "shortId": "707f9f44e2b21d87"
-        }
       }
     },
-    {
-      "tag": "direct",
-      "protocol": "freedom"
-    }
+    { "tag": "direct", "protocol": "freedom" }
   ],
   "routing": {
     "domainStrategy": "IPIfNonMatch",
     "rules": [
-      { "type": "field", "inboundTag": ["socks", "http"], "outboundTag": "proxy" }
+      { "type": "field", "inboundTag": ["socks", "http"], "outboundTag": "ss-proxy" }
     ]
   }
 }
