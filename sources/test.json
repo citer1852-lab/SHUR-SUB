@@ -1,5 +1,5 @@
 {
-  "remarks": "🇷🇺 LTE MEGA AUTO (xhttp+reality)",
+  "remarks": "🇷🇺 SHUR-VPN | TELEGRAM",
   "log": { "loglevel": "warning" },
   "dns": { "servers": ["https://1.1.1.1/dns-query", "1.1.1.1"] },
   "inbounds": [
@@ -17,95 +17,55 @@
       "sniffing": { "enabled": true, "destOverride": ["http", "tls", "quic"] }
     }
   ],
-  "observatory": {
-    "enabled": true,
-    "probeURL": "https://www.gstatic.com/generate_204",
-    "probeInterval": "1m"
-  },
   "outbounds": [
     {
-      "tag": "out-xhttp1",
+      "tag": "proxy",
       "protocol": "vless",
       "settings": {
-        "vnext": [
-          {
-            "address": "93.77.169.139",
-            "port": 56748,
-            "users": [
-              {
-                "id": "{UUID}",
-                "flow": "xtls-rprx-vision",
-                "encryption": "none"
-              }
-            ]
-          }
-        ]
+        "vnext": [{
+          "address": "93.77.169.139",
+          "port": 56748,
+          "users": [{
+            "id": "{UUID}",
+            "encryption": "none",
+            "flow": "xtls-rprx-vision"
+          }]
+        }]
       },
       "streamSettings": {
         "network": "xhttp",
         "security": "reality",
-        "xhttpSettings": { "mode": "auto", "host": "www.microsoft.com", "path": "/" },
+        "xhttpSettings": {
+          "mode": "packet-up",
+          "host": "www.microsoft.com",
+          "path": "/"
+        },
         "realitySettings": {
-          "serverName": "cdn-ru.sbertech.ru",
+          "serverName": "sun6-21.userapi.com",
           "fingerprint": "chrome",
           "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
           "shortId": "707f9f44e2b21d87"
+        },
+        "sockopt": {
+          "tcpKeepAliveIdle": 30,
+          "tcpKeepAliveInterval": 15,
+          "tcpFastOpen": true,
+          "tcpNoDelay": true
         }
-      }
-    },
-    {
-      "tag": "out-xhttp2",
-      "protocol": "vless",
-      "settings": {
-        "vnext": [
-          {
-            "address": "93.77.169.139",
-            "port": 56748,
-            "users": [
-              {
-                "id": "{UUID}",
-                "flow": "xtls-rprx-vision",
-                "encryption": "none"
-              }
-            ]
-          }
-        ]
       },
-      "streamSettings": {
-        "network": "xhttp",
-        "security": "reality",
-        "xhttpSettings": { "mode": "auto", "host": "www.microsoft.com", "path": "/" },
-        "realitySettings": {
-          "serverName": "max.ru",
-          "fingerprint": "chrome",
-          "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
-          "shortId": "707f9f44e2b21d87"
-        }
+      "mux": {
+        "enabled": true,
+        "concurrency": 8,
+        "xudpConcurrency": 8
       }
     },
-    {
-      "tag": "direct",
-      "protocol": "freedom",
-      "settings": { "domainStrategy": "UseIP" }
-    }
+    { "tag": "direct", "protocol": "freedom" }
   ],
-  "balancer": {
-    "tag": "balance",
-    "selector": ["out-xhttp1", "out-xhttp2"],
-    "strategy": {
-      "type": "roundRobin",
-      "settings": { "fallbackTag": "direct" }
-    },
-    "observatory": "observatory"
-  },
   "routing": {
     "domainStrategy": "IPIfNonMatch",
     "rules": [
-      {
-        "type": "field",
-        "inboundTag": ["socks", "http"],
-        "outboundTag": "balance"
-      }
+      { "type": "field", "domain": ["geosite:telegram"], "outboundTag": "proxy" },
+      { "type": "field", "inboundTag": ["socks", "http"], "outboundTag": "direct" }
     ]
   }
 }
