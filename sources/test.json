@@ -1,5 +1,5 @@
 {
-  "remarks": "🇷🇺 SHUR-VPN | TELEGRAM",
+  "remarks": "🇷🇺 LTE AUTO test",
   "log": { "loglevel": "warning" },
   "dns": { "servers": ["https://1.1.1.1/dns-query", "1.1.1.1"] },
   "inbounds": [
@@ -17,9 +17,49 @@
       "sniffing": { "enabled": true, "destOverride": ["http", "tls", "quic"] }
     }
   ],
+  
+  "observatory": {
+    "enabled": true,
+    "probeURL": "https://www.gstatic.com/generate_204",
+    "probeInterval": "60s",
+    "enableConcurrency": true,
+    "subjectSelector": ["out-vk", "out-ozon", "out-alfa"]
+  },
+
   "outbounds": [
     {
-      "tag": "proxy",
+      "tag": "out-vk",
+      "protocol": "vless",
+      "settings": {
+        "vnext": [{
+          "address": "93.77.169.139",
+          "port": 56747,
+          "users": [{
+            "id": "{UUID}",
+            "encryption": "none",
+            "flow": "xtls-rprx-vision"
+          }]
+        }]
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "security": "reality",
+        "realitySettings": {
+          "serverName": "m.vk.com",
+          "fingerprint": "chrome",
+          "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
+          "shortId": "707f9f44e2b21d87"
+        },
+        "sockopt": {
+          "tcpKeepAliveIdle": 30,
+          "tcpKeepAliveInterval": 15,
+          "tcpFastOpen": true,
+          "tcpNoDelay": true
+        }
+      }
+    },
+    {
+      "tag": "out-ozon",
       "protocol": "vless",
       "settings": {
         "vnext": [{
@@ -33,15 +73,10 @@
         }]
       },
       "streamSettings": {
-        "network": "xhttp",
+        "network": "tcp",
         "security": "reality",
-        "xhttpSettings": {
-          "mode": "packet-up",
-          "host": "www.microsoft.com",
-          "path": "/"
-        },
         "realitySettings": {
-          "serverName": "sun6-21.userapi.com",
+          "serverName": "www.ozon.ru",
           "fingerprint": "chrome",
           "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
           "shortId": "707f9f44e2b21d87"
@@ -52,20 +87,58 @@
           "tcpFastOpen": true,
           "tcpNoDelay": true
         }
-      },
-      "mux": {
-        "enabled": true,
-        "concurrency": 8,
-        "xudpConcurrency": 8
       }
     },
-    { "tag": "direct", "protocol": "freedom" }
+    {
+      "tag": "out-alfa",
+      "protocol": "vless",
+      "settings": {
+        "vnext": [{
+          "address": "93.77.169.139",
+          "port": 56749,
+          "users": [{
+            "id": "{UUID}",
+            "encryption": "none",
+            "flow": "xtls-rprx-vision"
+          }]
+        }]
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "security": "reality",
+        "realitySettings": {
+          "serverName": "alfabank.ru",
+          "fingerprint": "chrome",
+          "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
+          "shortId": "707f9f44e2b21d87"
+        },
+        "sockopt": {
+          "tcpKeepAliveIdle": 30,
+          "tcpKeepAliveInterval": 15,
+          "tcpFastOpen": true,
+          "tcpNoDelay": true
+        }
+      }
+    },
+    {
+      "tag": "direct",
+      "protocol": "freedom"
+    }
   ],
+  
+  "balancer": {
+    "tag": "balance",
+    "selector": ["out-vk", "out-ozon", "out-alfa"],
+    "strategy": {
+      "type": "leastPing",
+      "settings": { "observatory": "observatory" }
+    }
+  },
+  
   "routing": {
     "domainStrategy": "IPIfNonMatch",
     "rules": [
-      { "type": "field", "domain": ["geosite:telegram"], "outboundTag": "proxy" },
-      { "type": "field", "inboundTag": ["socks", "http"], "outboundTag": "direct" }
+      { "type": "field", "inboundTag": ["socks", "http"], "balancerTag": "balance" }
     ]
   }
 }
