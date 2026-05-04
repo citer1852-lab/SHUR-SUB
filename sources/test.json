@@ -1,5 +1,5 @@
 {
-  "remarks": "🇷🇺 LTE AUTO  TEST",
+  "remarks": "🇷🇺 SHUR-VPN | LTE (m.vk.com)",
   "log": { "loglevel": "warning" },
   "dns": { "servers": ["https://1.1.1.1/dns-query", "1.1.1.1"] },
   "inbounds": [
@@ -17,17 +17,9 @@
       "sniffing": { "enabled": true, "destOverride": ["http", "tls", "quic"] }
     }
   ],
-
-  "observatory": {
-    "enabled": true,
-    "probeURL": "https://www.gstatic.com/generate_204",
-    "probeInterval": "60s",
-    "subjectSelector": ["out-vk", "out-ozon", "out-alfa"]
-  },
-
   "outbounds": [
     {
-      "tag": "out-vk",
+      "tag": "proxy",
       "protocol": "vless",
       "settings": {
         "vnext": [{
@@ -58,86 +50,14 @@
       }
     },
     {
-      "tag": "out-ozon",
-      "protocol": "vless",
-      "settings": {
-        "vnext": [{
-          "address": "93.77.169.139",
-          "port": 56748,
-          "users": [{
-            "id": "{UUID}",
-            "encryption": "none",
-            "flow": "xtls-rprx-vision"
-          }]
-        }]
-      },
-      "streamSettings": {
-        "network": "tcp",
-        "security": "reality",
-        "realitySettings": {
-          "serverName": "www.ozon.ru",
-          "fingerprint": "chrome",
-          "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
-          "shortId": "707f9f44e2b21d87"
-        },
-        "sockopt": {
-          "tcpKeepAliveIdle": 30,
-          "tcpKeepAliveInterval": 15,
-          "tcpFastOpen": true,
-          "tcpNoDelay": true
-        }
-      }
-    },
-    {
-      "tag": "out-alfa",
-      "protocol": "vless",
-      "settings": {
-        "vnext": [{
-          "address": "93.77.169.139",
-          "port": 56749,
-          "users": [{
-            "id": "{UUID}",
-            "encryption": "none",
-            "flow": "xtls-rprx-vision"
-          }]
-        }]
-      },
-      "streamSettings": {
-        "network": "tcp",
-        "security": "reality",
-        "realitySettings": {
-          "serverName": "alfabank.ru",
-          "fingerprint": "chrome",
-          "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
-          "shortId": "707f9f44e2b21d87"
-        },
-        "sockopt": {
-          "tcpKeepAliveIdle": 30,
-          "tcpKeepAliveInterval": 15,
-          "tcpFastOpen": true,
-          "tcpNoDelay": true
-        }
-      }
-    },
-    {
       "tag": "direct",
       "protocol": "freedom"
     }
   ],
-
-  "balancer": {
-    "tag": "balance",
-    "selector": ["out-vk", "out-ozon", "out-alfa"],
-    "strategy": {
-      "type": "leastPing",
-      "settings": { "observatory": "observatory" }
-    }
-  },
-
   "routing": {
     "domainStrategy": "IPIfNonMatch",
     "rules": [
-      { "type": "field", "inboundTag": ["socks", "http"], "outboundTag": "balance" }
+      { "type": "field", "inboundTag": ["socks", "http"], "outboundTag": "proxy" }
     ]
   }
 }
