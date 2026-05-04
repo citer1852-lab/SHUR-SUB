@@ -1,5 +1,5 @@
 {
-  "remarks": "🇷🇺 LTE AUTO (XHTTP)", 
+  "remarks": "🇷🇺 SHUR-VPN | TCP",
   "log": { "loglevel": "warning" },
   "dns": { "servers": ["https://1.1.1.1/dns-query", "1.1.1.1"] },
   "inbounds": [
@@ -8,6 +8,12 @@
       "port": 10808,
       "protocol": "socks",
       "settings": { "auth": "noauth", "udp": true },
+      "sniffing": { "enabled": true, "destOverride": ["http", "tls", "quic"] }
+    },
+    {
+      "listen": "127.0.0.1",
+      "port": 10809,
+      "protocol": "http",
       "sniffing": { "enabled": true, "destOverride": ["http", "tls", "quic"] }
     }
   ],
@@ -18,7 +24,7 @@
       "settings": {
         "vnext": [{
           "address": "93.77.169.139",
-          "port": 56748,
+          "port": 56747,
           "users": [{
             "id": "{UUID}",
             "encryption": "none",
@@ -27,18 +33,24 @@
         }]
       },
       "streamSettings": {
-        "network": "xhttp",
+        "network": "tcp",
         "security": "reality",
-        "xhttpSettings": {
-          "mode": "auto",
-          "host": "www.microsoft.com",
-          "path": "/"
+        "tcpSettings": {
+          "keepAliveInterval": 15,
+          "keepAliveIdle": 30,
+          "keepAliveCount": 5
         },
         "realitySettings": {
-          "serverName": "m.vk.com",     // проверенный SNI в белом списке
+          "serverName": "music.yandex.ru",
           "fingerprint": "chrome",
           "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
           "shortId": "707f9f44e2b21d87"
+        },
+        "sockopt": {
+          "tcpKeepAliveIdle": 30,
+          "tcpKeepAliveInterval": 15,
+          "tcpFastOpen": true,
+          "tcpNoDelay": true
         }
       }
     },
