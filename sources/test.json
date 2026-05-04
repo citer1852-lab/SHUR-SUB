@@ -1,5 +1,5 @@
 {
-  "remarks": "🇷🇺 LTE AUTO test",
+  "remarks": "🇷🇺 LTE AUTO TEST",
   "log": { "loglevel": "warning" },
   "dns": { "servers": ["https://1.1.1.1/dns-query", "1.1.1.1"] },
   "inbounds": [
@@ -17,12 +17,11 @@
       "sniffing": { "enabled": true, "destOverride": ["http", "tls", "quic"] }
     }
   ],
-  
+
   "observatory": {
     "enabled": true,
     "probeURL": "https://www.gstatic.com/generate_204",
     "probeInterval": "60s",
-    "enableConcurrency": true,
     "subjectSelector": ["out-vk", "out-ozon", "out-alfa"]
   },
 
@@ -125,7 +124,7 @@
       "protocol": "freedom"
     }
   ],
-  
+
   "balancer": {
     "tag": "balance",
     "selector": ["out-vk", "out-ozon", "out-alfa"],
@@ -134,11 +133,11 @@
       "settings": { "observatory": "observatory" }
     }
   },
-  
+
   "routing": {
     "domainStrategy": "IPIfNonMatch",
     "rules": [
-      { "type": "field", "inboundTag": ["socks", "http"], "balancerTag": "balance" }
+      { "type": "field", "inboundTag": ["socks", "http"], "outboundTag": "balance" }
     ]
   }
 }
