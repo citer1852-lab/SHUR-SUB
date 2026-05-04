@@ -1,5 +1,5 @@
 {
-  "remarks": "🇷🇺 LTE AUTO (Shadowsocks)",
+  "remarks": "🇷🇺 SHUR-VPN | XHTTP",
   "log": { "loglevel": "warning" },
   "dns": { "servers": ["https://1.1.1.1/dns-query", "1.1.1.1"] },
   "inbounds": [
@@ -19,15 +19,44 @@
   ],
   "outbounds": [
     {
-      "tag": "ss-proxy",
-      "protocol": "shadowsocks",
+      "tag": "proxy",
+      "protocol": "vless",
       "settings": {
-        "servers": [{
+        "vnext": [{
           "address": "93.77.169.139",
-          "port": 56749,
-          "method": "2022-blake3-aes-128-gcm",
-          "password": "HI9iIlwWj8dNoN3v2Xg9YGpJh45bFYhwkmxb84yJp6Q="
+          "port": 56748,
+          "users": [{
+            "id": "{UUID}",
+            "encryption": "none",
+            "flow": "xtls-rprx-vision"
+          }]
         }]
+      },
+      "streamSettings": {
+        "network": "xhttp",
+        "security": "reality",
+        "xhttpSettings": {
+          "mode": "packet-up",
+          "host": "www.microsoft.com",
+          "path": "/"
+        },
+        "realitySettings": {
+          "serverName": "music.yandex.ru",
+          "fingerprint": "chrome",
+          "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
+          "shortId": "707f9f44e2b21d87"
+        },
+        "sockopt": {
+          "tcpKeepAliveIdle": 30,
+          "tcpKeepAliveInterval": 15,
+          "tcpFastOpen": true,
+          "tcpNoDelay": true
+        }
+      },
+      "mux": {
+        "enabled": true,
+        "concurrency": 8,
+        "xudpConcurrency": 8
       }
     },
     { "tag": "direct", "protocol": "freedom" }
@@ -35,7 +64,7 @@
   "routing": {
     "domainStrategy": "IPIfNonMatch",
     "rules": [
-      { "type": "field", "inboundTag": ["socks", "http"], "outboundTag": "ss-proxy" }
+      { "type": "field", "inboundTag": ["socks", "http"], "outboundTag": "proxy" }
     ]
   }
 }
