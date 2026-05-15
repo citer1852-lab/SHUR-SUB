@@ -1,50 +1,34 @@
 {
-  "remarks": "🇷🇺 LTE AUTO",
-  "log": { "loglevel": "warning" },
-  "dns": { "servers": ["https://1.1.1.1/dns-query", "1.1.1.1"] },
-  "inbounds": [
-    {
-      "listen": "127.0.0.1",
-      "port": 10808,
-      "protocol": "socks",
-      "settings": { "auth": "noauth", "udp": true },
-      "sniffing": { "enabled": true, "destOverride": ["http", "tls", "quic"] }
-    },
-    {
-      "listen": "127.0.0.1",
-      "port": 10809,
-      "protocol": "http",
-      "sniffing": { "enabled": true, "destOverride": ["http", "tls", "quic"] }
-    }
-  ],
+  "remarks": "🇷🇺 РОССИЯ | LTE",
   "outbounds": [
     {
-      "tag": "proxy",
       "protocol": "vless",
       "settings": {
-        "vnext": [{
-          "address": "93.77.169.139",
-          "port": 56747,
-          "users": [{ "id": "{UUID}", "encryption": "none" }]
-        }]
+        "vnext": [
+          {
+            "address": "78.132.174.249",
+            "port": 8443,
+            "users": [
+              {
+                "id": "{UUID}",
+                "encryption": "none",
+                "flow": "xtls-rprx-vision"
+              }
+            ]
+          }
+        ]
       },
       "streamSettings": {
         "network": "tcp",
         "security": "reality",
         "realitySettings": {
-          "serverName": "m.vk.com",
-          "fingerprint": "chrome",
+          "serverName": "login.vk.com",
+          "fingerprint": "qq",
           "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
-          "shortId": "707f9f44e2b21d87"
+          "shortId": "707f9f44e2b21d87",
+          "spiderX": "/"
         }
       }
-    },
-    { "tag": "direct", "protocol": "freedom" }
-  ],
-  "routing": {
-    "domainStrategy": "IPIfNonMatch",
-    "rules": [
-      { "type": "field", "inboundTag": ["socks", "http"], "outboundTag": "proxy" }
-    ]
-  }
+    }
+  ]
 }
