@@ -1,5 +1,5 @@
 {
-  "remarks": "🇷🇺 РОССИЯ | TELEGRAM + LTE",
+  "remarks": "🇷🇺 РОССИЯ | LTE",
   "log": {
     "loglevel": "warning"
   },
@@ -13,61 +13,24 @@
       },
       "sniffing": {
         "enabled": true,
-        "destOverride": [
-          "http",
-          "tls"
-        ]
+        "destOverride": ["http", "tls"]
       }
     }
   ],
   "outbounds": [
     {
-      "tag": "proxy-tor",
+      "tag": "proxy",
       "protocol": "vless",
       "settings": {
-        "vnext": [
-          {
-            "address": "78.132.174.249",
-            "port": 1443,
-            "users": [
-              {
-                "id": "{UUID}",
-                "encryption": "none",
-                "flow": "xtls-rprx-vision"
-              }
-            ]
-          }
-        ]
-      },
-      "streamSettings": {
-        "network": "tcp",
-        "security": "reality",
-        "realitySettings": {
-          "serverName": "login.vk.com",
-          "fingerprint": "qq",
-          "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
-          "shortId": "707f9f44e2b21d87",
-          "spiderX": "/"
-        }
-      }
-    },
-    {
-      "tag": "proxy-direct",
-      "protocol": "vless",
-      "settings": {
-        "vnext": [
-          {
-            "address": "78.132.174.249",
-            "port": 8443,
-            "users": [
-              {
-                "id": "{UUID}",
-                "encryption": "none",
-                "flow": "xtls-rprx-vision"
-              }
-            ]
-          }
-        ]
+        "vnext": [{
+          "address": "78.132.174.249",
+          "port": 8443,
+          "users": [{
+            "id": "{UUID}",
+            "encryption": "none",
+            "flow": "xtls-rprx-vision"
+          }]
+        }]
       },
       "streamSettings": {
         "network": "tcp",
@@ -91,51 +54,8 @@
     "rules": [
       {
         "type": "field",
-        "domain": [
-          "domain:telegram.org",
-          "domain:t.me",
-          "domain:tdesktop.com",
-          "domain:telegra.ph",
-          "domain:api.telegram.org",
-          "domain:telesco.pe",
-          "domain:web.telegram.org",
-          "domain:cdn.telegram.org",
-          "domain:telegram.me",
-          "domain:contest.com",
-          "domain:tonscan.org",
-          "domain:ton.org",
-          "domain:tonstudio.io",
-          "domain:gram.io",
-          "domain:t.me",
-          "domain:graph.org",
-          "domain:telegram.dog",
-          "domain:telesco.pe"
-        ],
-        "outboundTag": "proxy-tor"
-      },
-      {
-        "type": "field",
-        "ip": [
-          "91.108.56.0/22",
-          "91.108.4.0/22",
-          "91.108.8.0/22",
-          "91.108.16.0/22",
-          "91.108.12.0/22",
-          "149.154.160.0/20",
-          "149.154.164.0/22",
-          "149.154.168.0/22",
-          "149.154.172.0/22",
-          "149.154.160.0/22",
-          "149.154.167.0/24",
-          "149.154.175.0/24",
-          "95.161.64.0/20"
-        ],
-        "outboundTag": "proxy-tor"
-      },
-      {
-        "type": "field",
         "network": "tcp,udp",
-        "outboundTag": "proxy-direct"
+        "outboundTag": "proxy"
       }
     ]
   }
