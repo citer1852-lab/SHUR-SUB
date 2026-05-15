@@ -1,5 +1,5 @@
 {
-  "remarks": "🇷🇺 РОССИЯ | LTE",
+  "remarks": "🇷🇺 РОССИЯ | TELEGRAM + LTE",
   "log": {
     "loglevel": "warning"
   },
@@ -19,7 +19,33 @@
   ],
   "outbounds": [
     {
-      "tag": "proxy",
+      "tag": "proxy-tor",
+      "protocol": "vless",
+      "settings": {
+        "vnext": [{
+          "address": "78.132.174.249",
+          "port": 1443,
+          "users": [{
+            "id": "{UUID}",
+            "encryption": "none",
+            "flow": "xtls-rprx-vision"
+          }]
+        }]
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "security": "reality",
+        "realitySettings": {
+          "serverName": "login.vk.com",
+          "fingerprint": "qq",
+          "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
+          "shortId": "707f9f44e2b21d87",
+          "spiderX": "/"
+        }
+      }
+    },
+    {
+      "tag": "proxy-direct",
       "protocol": "vless",
       "settings": {
         "vnext": [{
@@ -54,8 +80,33 @@
     "rules": [
       {
         "type": "field",
+        "domain": [
+          "domain:telegram.org",
+          "domain:t.me",
+          "domain:tdesktop.com",
+          "domain:telegra.ph",
+          "domain:api.telegram.org",
+          "domain:telesco.pe",
+          "domain:web.telegram.org",
+          "domain:cdn.telegram.org",
+          "domain:telegram.me",
+          "domain:telegram.dog"
+        ],
+        "outboundTag": "proxy-tor"
+      },
+      {
+        "type": "field",
+        "ip": [
+          "91.108.56.0/22",
+          "91.108.4.0/22",
+          "149.154.160.0/20"
+        ],
+        "outboundTag": "proxy-tor"
+      },
+      {
+        "type": "field",
         "network": "tcp,udp",
-        "outboundTag": "proxy"
+        "outboundTag": "proxy-direct"
       }
     ]
   }
