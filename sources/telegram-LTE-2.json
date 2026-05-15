@@ -1,99 +1,142 @@
 {
-    "dns": {
-        "hosts": {
-            "domain:googleapis.cn": "googleapis.com"
-        },
-        "servers": [
-            "1.1.1.1",
-            "8.8.8.8"
+  "remarks": "🇷🇺 РОССИЯ | TELEGRAM + LTE",
+  "log": {
+    "loglevel": "warning"
+  },
+  "inbounds": [
+    {
+      "tag": "socks",
+      "port": 10808,
+      "protocol": "socks",
+      "settings": {
+        "udp": true
+      },
+      "sniffing": {
+        "enabled": true,
+        "destOverride": [
+          "http",
+          "tls"
         ]
-    },
-    "inbounds": [
-        {
-            "listen": "127.0.0.1",
-            "port": 10808,
-            "protocol": "socks",
-            "settings": {
-                "auth": "noauth",
-                "udp": true
-            },
-            "tag": "socks"
-        },
-        {
-            "listen": "127.0.0.1",
-            "port": 10809,
-            "protocol": "http",
-            "tag": "http"
-        }
-    ],
-    "log": {
-        "loglevel": "warning"
-    },
-    "outbounds": [
-        {
-            "mux": {
-                "concurrency": 8,
-                "enabled": false
-            },
-            "protocol": "vless",
-            "settings": {
-                "vnext": [
-                    {
-                        "address": "78.132.174.249",
-                        "port": 443,
-                        "users": [
-                            {
-                                "encryption": "none",
-                                "flow": "xtls-rprx-vision",
-                                "id": "{UUID}",
-                                "level": 8
-                            }
-                        ]
-                    }
-                ]
-            },
-            "streamSettings": {
-                "network": "tcp",
-                "realitySettings": {
-                    "allowInsecure": false,
-                    "fingerprint": "qq",
-                    "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
-                    "serverName": "login.vk.com",
-                    "shortId": "707f9f44e2b21d87",
-                    "spiderX": "/"
-                },
-                "security": "reality",
-                "tcpSettings": {
-                    "header": {
-                        "type": "none"
-                    }
-                }
-            },
-            "tag": "proxy"
-        },
-        {
-            "protocol": "freedom",
-            "settings": {
-                "domainStrategy": "UseIP"
-            },
-            "tag": "direct"
-        },
-        {
-            "protocol": "blackhole",
-            "settings": {},
-            "tag": "block"
-        }
-    ],
-    "remarks": "🇷🇺 РОССИЯ | TELEGRAM + LTE",
-    "routing": {
-        "domainStrategy": "IPIfNonMatch",
-        "rules": [
-            {
-                "type": "field",
-                "ip": ["1.1.1.1", "8.8.8.8"],
-                "outboundTag": "direct",
-                "port": "53"
-            }
-        ]
+      }
     }
+  ],
+  "outbounds": [
+    {
+      "tag": "proxy-tor",
+      "protocol": "vless",
+      "settings": {
+        "vnext": [
+          {
+            "address": "78.132.174.249",
+            "port": 1443,
+            "users": [
+              {
+                "id": "{UUID}",
+                "encryption": "none",
+                "flow": "xtls-rprx-vision"
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "security": "reality",
+        "realitySettings": {
+          "serverName": "login.vk.com",
+          "fingerprint": "qq",
+          "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
+          "shortId": "707f9f44e2b21d87",
+          "spiderX": "/"
+        }
+      }
+    },
+    {
+      "tag": "proxy-direct",
+      "protocol": "vless",
+      "settings": {
+        "vnext": [
+          {
+            "address": "78.132.174.249",
+            "port": 8443,
+            "users": [
+              {
+                "id": "{UUID}",
+                "encryption": "none",
+                "flow": "xtls-rprx-vision"
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "security": "reality",
+        "realitySettings": {
+          "serverName": "login.vk.com",
+          "fingerprint": "qq",
+          "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
+          "shortId": "707f9f44e2b21d87",
+          "spiderX": "/"
+        }
+      }
+    },
+    {
+      "tag": "direct",
+      "protocol": "freedom"
+    }
+  ],
+  "routing": {
+    "domainStrategy": "IPIfNonMatch",
+    "rules": [
+      {
+        "type": "field",
+        "domain": [
+          "domain:telegram.org",
+          "domain:t.me",
+          "domain:tdesktop.com",
+          "domain:telegra.ph",
+          "domain:api.telegram.org",
+          "domain:telesco.pe",
+          "domain:web.telegram.org",
+          "domain:cdn.telegram.org",
+          "domain:telegram.me",
+          "domain:contest.com",
+          "domain:tonscan.org",
+          "domain:ton.org",
+          "domain:tonstudio.io",
+          "domain:gram.io",
+          "domain:t.me",
+          "domain:graph.org",
+          "domain:telegram.dog",
+          "domain:telesco.pe"
+        ],
+        "outboundTag": "proxy-tor"
+      },
+      {
+        "type": "field",
+        "ip": [
+          "91.108.56.0/22",
+          "91.108.4.0/22",
+          "91.108.8.0/22",
+          "91.108.16.0/22",
+          "91.108.12.0/22",
+          "149.154.160.0/20",
+          "149.154.164.0/22",
+          "149.154.168.0/22",
+          "149.154.172.0/22",
+          "149.154.160.0/22",
+          "149.154.167.0/24",
+          "149.154.175.0/24",
+          "95.161.64.0/20"
+        ],
+        "outboundTag": "proxy-tor"
+      },
+      {
+        "type": "field",
+        "network": "tcp,udp",
+        "outboundTag": "proxy-direct"
+      }
+    ]
+  }
 }
