@@ -1,511 +1,237 @@
 {
-    "dns": {
-        "queryStrategy": "UseIP",
-        "servers": ["1.1.1.1", "8.8.8.8"]
-    },
-    "inbounds": [
-        {
-            "listen": "127.0.0.1",
-            "port": 10808,
-            "protocol": "socks",
-            "settings": {"auth": "noauth", "udp": true},
-            "sniffing": {"enabled": true, "destOverride": ["http", "tls", "quic"], "routeOnly": false},
-            "tag": "socks"
-        },
-        {
-            "listen": "127.0.0.1",
-            "port": 10809,
-            "protocol": "http",
-            "settings": {"allowTransparent": false},
-            "sniffing": {"enabled": true, "destOverride": ["http", "tls", "quic"], "routeOnly": false},
-            "tag": "http"
-        }
-    ],
-    "observatory": {
-        "enableConcurrency": true,
-        "probeInterval": "1m",
-        "probeUrl": "https://www.gstatic.com/generate_204",
-        "subjectSelector": [
-            "tor-vk", "tor-ok", "tor-yamusic", "tor-metrica",
-            "tor-maps", "tor-vkqueue", "tor-mts", "tor-passport",
-            "lte-vk", "lte-ok", "lte-yamusic", "lte-metrica",
-            "lte-maps", "lte-vkqueue", "lte-mts", "lte-passport"
-        ]
-    },
-    "outbounds": [
-        {
-            "tag": "tor-vk",
-            "protocol": "vless",
-            "settings": {
-                "vnext": [{
-                    "address": "78.132.174.249",
-                    "port": 1443,
-                    "users": [{"id": "{UUID}", "encryption": "none", "flow": "xtls-rprx-vision"}]
-                }]
-            },
-            "streamSettings": {
-                "network": "tcp",
-                "security": "reality",
-                "realitySettings": {
-                    "serverName": "login.vk.com",
-                    "fingerprint": "qq",
-                    "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
-                    "shortId": "707f9f44e2b21d87",
-                    "spiderX": "/",
-                    "show": false
-                },
-                "tcpSettings": {}
-            }
-        },
-        {
-            "tag": "tor-ok",
-            "protocol": "vless",
-            "settings": {
-                "vnext": [{
-                    "address": "78.132.174.249",
-                    "port": 1443,
-                    "users": [{"id": "{UUID}", "encryption": "none", "flow": "xtls-rprx-vision"}]
-                }]
-            },
-            "streamSettings": {
-                "network": "tcp",
-                "security": "reality",
-                "realitySettings": {
-                    "serverName": "m.ok.ru",
-                    "fingerprint": "edge",
-                    "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
-                    "shortId": "707f9f44e2b21d87",
-                    "spiderX": "/",
-                    "show": false
-                },
-                "tcpSettings": {}
-            }
-        },
-        {
-            "tag": "tor-yamusic",
-            "protocol": "vless",
-            "settings": {
-                "vnext": [{
-                    "address": "78.132.174.249",
-                    "port": 1443,
-                    "users": [{"id": "{UUID}", "encryption": "none", "flow": "xtls-rprx-vision"}]
-                }]
-            },
-            "streamSettings": {
-                "network": "tcp",
-                "security": "reality",
-                "realitySettings": {
-                    "serverName": "ynison.music.yandex.net",
-                    "fingerprint": "safari",
-                    "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
-                    "shortId": "707f9f44e2b21d87",
-                    "spiderX": "/",
-                    "show": false
-                },
-                "tcpSettings": {}
-            }
-        },
-        {
-            "tag": "tor-metrica",
-            "protocol": "vless",
-            "settings": {
-                "vnext": [{
-                    "address": "78.132.174.249",
-                    "port": 1443,
-                    "users": [{"id": "{UUID}", "encryption": "none", "flow": "xtls-rprx-vision"}]
-                }]
-            },
-            "streamSettings": {
-                "network": "tcp",
-                "security": "reality",
-                "realitySettings": {
-                    "serverName": "mc.yandex.ru",
-                    "fingerprint": "chrome",
-                    "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
-                    "shortId": "707f9f44e2b21d87",
-                    "spiderX": "/",
-                    "show": false
-                },
-                "tcpSettings": {}
-            }
-        },
-        {
-            "tag": "tor-maps",
-            "protocol": "vless",
-            "settings": {
-                "vnext": [{
-                    "address": "78.132.174.249",
-                    "port": 1443,
-                    "users": [{"id": "{UUID}", "encryption": "none", "flow": "xtls-rprx-vision"}]
-                }]
-            },
-            "streamSettings": {
-                "network": "tcp",
-                "security": "reality",
-                "realitySettings": {
-                    "serverName": "proxy.mob.maps.yandex.net",
-                    "fingerprint": "edge",
-                    "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
-                    "shortId": "707f9f44e2b21d87",
-                    "spiderX": "/",
-                    "show": false
-                },
-                "tcpSettings": {}
-            }
-        },
-        {
-            "tag": "tor-vkqueue",
-            "protocol": "vless",
-            "settings": {
-                "vnext": [{
-                    "address": "78.132.174.249",
-                    "port": 1443,
-                    "users": [{"id": "{UUID}", "encryption": "none", "flow": "xtls-rprx-vision"}]
-                }]
-            },
-            "streamSettings": {
-                "network": "tcp",
-                "security": "reality",
-                "realitySettings": {
-                    "serverName": "queuev4.vk.com",
-                    "fingerprint": "firefox",
-                    "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
-                    "shortId": "707f9f44e2b21d87",
-                    "spiderX": "/",
-                    "show": false
-                },
-                "tcpSettings": {}
-            }
-        },
-        {
-            "tag": "tor-mts",
-            "protocol": "vless",
-            "settings": {
-                "vnext": [{
-                    "address": "78.132.174.249",
-                    "port": 1443,
-                    "users": [{"id": "{UUID}", "encryption": "none", "flow": "xtls-rprx-vision"}]
-                }]
-            },
-            "streamSettings": {
-                "network": "tcp",
-                "security": "reality",
-                "realitySettings": {
-                    "serverName": "freecom-app.mts.ru",
-                    "fingerprint": "randomized",
-                    "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
-                    "shortId": "707f9f44e2b21d87",
-                    "spiderX": "/",
-                    "show": false
-                },
-                "tcpSettings": {}
-            }
-        },
-        {
-            "tag": "tor-passport",
-            "protocol": "vless",
-            "settings": {
-                "vnext": [{
-                    "address": "78.132.174.249",
-                    "port": 1443,
-                    "users": [{"id": "{UUID}", "encryption": "none", "flow": "xtls-rprx-vision"}]
-                }]
-            },
-            "streamSettings": {
-                "network": "tcp",
-                "security": "reality",
-                "realitySettings": {
-                    "serverName": "sso.passport.yandex.ru",
-                    "fingerprint": "ios",
-                    "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
-                    "shortId": "707f9f44e2b21d87",
-                    "spiderX": "/",
-                    "show": false
-                },
-                "tcpSettings": {}
-            }
-        },
-        {
-            "tag": "lte-vk",
-            "protocol": "vless",
-            "settings": {
-                "vnext": [{
-                    "address": "78.132.174.249",
-                    "port": 8443,
-                    "users": [{"id": "{UUID}", "encryption": "none", "flow": "xtls-rprx-vision"}]
-                }]
-            },
-            "streamSettings": {
-                "network": "tcp",
-                "security": "reality",
-                "realitySettings": {
-                    "serverName": "login.vk.com",
-                    "fingerprint": "qq",
-                    "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
-                    "shortId": "707f9f44e2b21d87",
-                    "spiderX": "/",
-                    "show": false
-                },
-                "tcpSettings": {}
-            }
-        },
-        {
-            "tag": "lte-ok",
-            "protocol": "vless",
-            "settings": {
-                "vnext": [{
-                    "address": "78.132.174.249",
-                    "port": 8443,
-                    "users": [{"id": "{UUID}", "encryption": "none", "flow": "xtls-rprx-vision"}]
-                }]
-            },
-            "streamSettings": {
-                "network": "tcp",
-                "security": "reality",
-                "realitySettings": {
-                    "serverName": "m.ok.ru",
-                    "fingerprint": "edge",
-                    "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
-                    "shortId": "707f9f44e2b21d87",
-                    "spiderX": "/",
-                    "show": false
-                },
-                "tcpSettings": {}
-            }
-        },
-        {
-            "tag": "lte-yamusic",
-            "protocol": "vless",
-            "settings": {
-                "vnext": [{
-                    "address": "78.132.174.249",
-                    "port": 8443,
-                    "users": [{"id": "{UUID}", "encryption": "none", "flow": "xtls-rprx-vision"}]
-                }]
-            },
-            "streamSettings": {
-                "network": "tcp",
-                "security": "reality",
-                "realitySettings": {
-                    "serverName": "ynison.music.yandex.net",
-                    "fingerprint": "safari",
-                    "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
-                    "shortId": "707f9f44e2b21d87",
-                    "spiderX": "/",
-                    "show": false
-                },
-                "tcpSettings": {}
-            }
-        },
-        {
-            "tag": "lte-metrica",
-            "protocol": "vless",
-            "settings": {
-                "vnext": [{
-                    "address": "78.132.174.249",
-                    "port": 8443,
-                    "users": [{"id": "{UUID}", "encryption": "none", "flow": "xtls-rprx-vision"}]
-                }]
-            },
-            "streamSettings": {
-                "network": "tcp",
-                "security": "reality",
-                "realitySettings": {
-                    "serverName": "mc.yandex.ru",
-                    "fingerprint": "chrome",
-                    "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
-                    "shortId": "707f9f44e2b21d87",
-                    "spiderX": "/",
-                    "show": false
-                },
-                "tcpSettings": {}
-            }
-        },
-        {
-            "tag": "lte-maps",
-            "protocol": "vless",
-            "settings": {
-                "vnext": [{
-                    "address": "78.132.174.249",
-                    "port": 8443,
-                    "users": [{"id": "{UUID}", "encryption": "none", "flow": "xtls-rprx-vision"}]
-                }]
-            },
-            "streamSettings": {
-                "network": "tcp",
-                "security": "reality",
-                "realitySettings": {
-                    "serverName": "proxy.mob.maps.yandex.net",
-                    "fingerprint": "edge",
-                    "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
-                    "shortId": "707f9f44e2b21d87",
-                    "spiderX": "/",
-                    "show": false
-                },
-                "tcpSettings": {}
-            }
-        },
-        {
-            "tag": "lte-vkqueue",
-            "protocol": "vless",
-            "settings": {
-                "vnext": [{
-                    "address": "78.132.174.249",
-                    "port": 8443,
-                    "users": [{"id": "{UUID}", "encryption": "none", "flow": "xtls-rprx-vision"}]
-                }]
-            },
-            "streamSettings": {
-                "network": "tcp",
-                "security": "reality",
-                "realitySettings": {
-                    "serverName": "queuev4.vk.com",
-                    "fingerprint": "firefox",
-                    "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
-                    "shortId": "707f9f44e2b21d87",
-                    "spiderX": "/",
-                    "show": false
-                },
-                "tcpSettings": {}
-            }
-        },
-        {
-            "tag": "lte-mts",
-            "protocol": "vless",
-            "settings": {
-                "vnext": [{
-                    "address": "78.132.174.249",
-                    "port": 8443,
-                    "users": [{"id": "{UUID}", "encryption": "none", "flow": "xtls-rprx-vision"}]
-                }]
-            },
-            "streamSettings": {
-                "network": "tcp",
-                "security": "reality",
-                "realitySettings": {
-                    "serverName": "freecom-app.mts.ru",
-                    "fingerprint": "randomized",
-                    "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
-                    "shortId": "707f9f44e2b21d87",
-                    "spiderX": "/",
-                    "show": false
-                },
-                "tcpSettings": {}
-            }
-        },
-        {
-            "tag": "lte-passport",
-            "protocol": "vless",
-            "settings": {
-                "vnext": [{
-                    "address": "78.132.174.249",
-                    "port": 8443,
-                    "users": [{"id": "{UUID}", "encryption": "none", "flow": "xtls-rprx-vision"}]
-                }]
-            },
-            "streamSettings": {
-                "network": "tcp",
-                "security": "reality",
-                "realitySettings": {
-                    "serverName": "sso.passport.yandex.ru",
-                    "fingerprint": "ios",
-                    "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
-                    "shortId": "707f9f44e2b21d87",
-                    "spiderX": "/",
-                    "show": false
-                },
-                "tcpSettings": {}
-            }
-        },
-        {
-            "tag": "direct",
-            "protocol": "freedom"
-        },
-        {
-            "tag": "block",
-            "protocol": "blackhole"
-        }
-    ],
-    "remarks": "🇷🇺 TELEGRAM + LTE AUTO",
-    "routing": {
-        "domainMatcher": "hybrid",
-        "domainStrategy": "IPIfNonMatch",
-        "balancers": [
-            {
-                "tag": "bal_tor",
-                "selector": [
-                    "tor-vk", "tor-ok", "tor-yamusic", "tor-metrica",
-                    "tor-maps", "tor-vkqueue", "tor-mts", "tor-passport"
-                ],
-                "fallbackTag": "lte-vk",
-                "strategy": {
-                    "type": "leastLoad",
-                    "settings": {
-                        "expected": 1,
-                        "maxRTT": "3s",
-                        "baselines": ["1s"],
-                        "costs": [
-                            {"match": "tor-vk", "value": 1},
-                            {"match": "tor-ok", "value": 1},
-                            {"match": "tor-yamusic", "value": 1},
-                            {"match": "tor-metrica", "value": 1},
-                            {"match": "tor-maps", "value": 1},
-                            {"match": "tor-vkqueue", "value": 1},
-                            {"match": "tor-mts", "value": 1},
-                            {"match": "tor-passport", "value": 1}
-                        ]
-                    }
-                }
-            },
-            {
-                "tag": "bal_lte",
-                "selector": [
-                    "lte-vk", "lte-ok", "lte-yamusic", "lte-metrica",
-                    "lte-maps", "lte-vkqueue", "lte-mts", "lte-passport"
-                ],
-                "fallbackTag": "direct",
-                "strategy": {
-                    "type": "leastLoad",
-                    "settings": {
-                        "expected": 1,
-                        "maxRTT": "3s",
-                        "baselines": ["1s"],
-                        "costs": [
-                            {"match": "lte-vk", "value": 1},
-                            {"match": "lte-ok", "value": 1},
-                            {"match": "lte-yamusic", "value": 1},
-                            {"match": "lte-metrica", "value": 1},
-                            {"match": "lte-maps", "value": 1},
-                            {"match": "lte-vkqueue", "value": 1},
-                            {"match": "lte-mts", "value": 1},
-                            {"match": "lte-passport", "value": 1}
-                        ]
-                    }
-                }
-            }
-        ],
-        "rules": [
-            {
-                "type": "field",
-                "domain": [
-                    "domain:telegram.org", "domain:t.me", "domain:tdesktop.com",
-                    "domain:telegra.ph", "domain:api.telegram.org", "domain:telesco.pe",
-                    "domain:web.telegram.org", "domain:cdn.telegram.org",
-                    "domain:telegram.me", "domain:telegram.dog"
-                ],
-                "balancerTag": "bal_tor"
-            },
-            {
-                "type": "field",
-                "ip": ["91.108.56.0/22", "91.108.4.0/22", "149.154.160.0/20"],
-                "balancerTag": "bal_tor"
-            },
-            {
-                "type": "field",
-                "inboundTag": ["socks", "http"],
-                "network": "tcp,udp",
-                "balancerTag": "bal_lte"
-            }
-        ]
+  "remarks": "🇷🇺 TELEGRAM + LTE AUTO",
+  "log": { "loglevel": "warning" },
+  "dns": {
+    "queryStrategy": "UseIP",
+    "servers": ["1.1.1.1", "8.8.8.8"]
+  },
+  "inbounds": [
+    {
+      "listen": "127.0.0.1",
+      "port": 10808,
+      "protocol": "socks",
+      "settings": { "auth": "noauth", "udp": true },
+      "sniffing": { "enabled": true, "destOverride": ["http", "tls", "quic"] },
+      "tag": "socks"
     }
+  ],
+  "observatory": {
+    "enableConcurrency": true,
+    "probeInterval": "10m",
+    "probeUrl": "https://www.gstatic.com/generate_204",
+    "subjectSelector": ["tor-1", "tor-2", "tor-3", "lte-1", "lte-2", "lte-3", "lte-4", "lte-5"]
+  },
+  "outbounds": [
+    {
+      "tag": "tor-1",
+      "protocol": "vless",
+      "settings": {
+        "vnext": [{
+          "address": "78.132.174.249", "port": 1443,
+          "users": [{ "id": "{UUID}", "encryption": "none", "flow": "xtls-rprx-vision" }]
+        }]
+      },
+      "streamSettings": {
+        "network": "tcp", "security": "reality",
+        "realitySettings": {
+          "serverName": "mc.yandex.ru", "fingerprint": "ios",
+          "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
+          "shortId": "707f9f44e2b21d87", "spiderX": "/", "show": false
+        }
+      }
+    },
+    {
+      "tag": "tor-2",
+      "protocol": "vless",
+      "settings": {
+        "vnext": [{
+          "address": "78.132.174.249", "port": 1443,
+          "users": [{ "id": "{UUID}", "encryption": "none", "flow": "xtls-rprx-vision" }]
+        }]
+      },
+      "streamSettings": {
+        "network": "tcp", "security": "reality",
+        "realitySettings": {
+          "serverName": "mymts.apm-proxy.obs.mts.ru", "fingerprint": "edge",
+          "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
+          "shortId": "707f9f44e2b21d87", "spiderX": "/", "show": false
+        }
+      }
+    },
+    {
+      "tag": "tor-3",
+      "protocol": "vless",
+      "settings": {
+        "vnext": [{
+          "address": "78.132.174.249", "port": 1443,
+          "users": [{ "id": "{UUID}", "encryption": "none", "flow": "xtls-rprx-vision" }]
+        }]
+      },
+      "streamSettings": {
+        "network": "tcp", "security": "reality",
+        "realitySettings": {
+          "serverName": "frontend.vh.yandex.ru", "fingerprint": "safari",
+          "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
+          "shortId": "707f9f44e2b21d87", "spiderX": "/", "show": false
+        }
+      }
+    },
+    {
+      "tag": "lte-1",
+      "protocol": "vless",
+      "settings": {
+        "vnext": [{
+          "address": "78.132.174.249", "port": 8443,
+          "users": [{ "id": "{UUID}", "encryption": "none", "flow": "xtls-rprx-vision" }]
+        }]
+      },
+      "streamSettings": {
+        "network": "tcp", "security": "reality",
+        "realitySettings": {
+          "serverName": "mc.yandex.ru", "fingerprint": "ios",
+          "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
+          "shortId": "707f9f44e2b21d87", "spiderX": "/", "show": false
+        }
+      }
+    },
+    {
+      "tag": "lte-2",
+      "protocol": "vless",
+      "settings": {
+        "vnext": [{
+          "address": "78.132.174.249", "port": 8443,
+          "users": [{ "id": "{UUID}", "encryption": "none", "flow": "xtls-rprx-vision" }]
+        }]
+      },
+      "streamSettings": {
+        "network": "tcp", "security": "reality",
+        "realitySettings": {
+          "serverName": "mymts.apm-proxy.obs.mts.ru", "fingerprint": "edge",
+          "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
+          "shortId": "707f9f44e2b21d87", "spiderX": "/", "show": false
+        }
+      }
+    },
+    {
+      "tag": "lte-3",
+      "protocol": "vless",
+      "settings": {
+        "vnext": [{
+          "address": "78.132.174.249", "port": 8443,
+          "users": [{ "id": "{UUID}", "encryption": "none", "flow": "xtls-rprx-vision" }]
+        }]
+      },
+      "streamSettings": {
+        "network": "tcp", "security": "reality",
+        "realitySettings": {
+          "serverName": "frontend.vh.yandex.ru", "fingerprint": "safari",
+          "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
+          "shortId": "707f9f44e2b21d87", "spiderX": "/", "show": false
+        }
+      }
+    },
+    {
+      "tag": "lte-4",
+      "protocol": "vless",
+      "settings": {
+        "vnext": [{
+          "address": "78.132.174.249", "port": 8443,
+          "users": [{ "id": "{UUID}", "encryption": "none", "flow": "xtls-rprx-vision" }]
+        }]
+      },
+      "streamSettings": {
+        "network": "tcp", "security": "reality",
+        "realitySettings": {
+          "serverName": "tools.messenger.yandex.net", "fingerprint": "edge",
+          "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
+          "shortId": "707f9f44e2b21d87", "spiderX": "/", "show": false
+        }
+      }
+    },
+    {
+      "tag": "lte-5",
+      "protocol": "vless",
+      "settings": {
+        "vnext": [{
+          "address": "78.132.174.249", "port": 8443,
+          "users": [{ "id": "{UUID}", "encryption": "none", "flow": "xtls-rprx-vision" }]
+        }]
+      },
+      "streamSettings": {
+        "network": "tcp", "security": "reality",
+        "realitySettings": {
+          "serverName": "geointernal.mob.maps.yandex.net", "fingerprint": "edge",
+          "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
+          "shortId": "707f9f44e2b21d87", "spiderX": "/", "show": false
+        }
+      }
+    },
+    { "tag": "direct", "protocol": "freedom" }
+  ],
+  "routing": {
+    "domainStrategy": "IPIfNonMatch",
+    "balancers": [
+      {
+        "tag": "bal_tor",
+        "selector": ["tor-1", "tor-2", "tor-3"],
+        "fallbackTag": "lte-1",
+        "strategy": {
+          "type": "leastLoad",
+          "settings": {
+            "expected": 1,
+            "maxRTT": "1s",
+            "baselines": ["500ms"],
+            "costs": [
+              {"match": "tor-1", "value": 1},
+              {"match": "tor-2", "value": 1},
+              {"match": "tor-3", "value": 1}
+            ]
+          }
+        }
+      },
+      {
+        "tag": "bal_lte",
+        "selector": ["lte-1", "lte-2", "lte-3", "lte-4", "lte-5"],
+        "fallbackTag": "direct",
+        "strategy": {
+          "type": "leastLoad",
+          "settings": {
+            "expected": 1,
+            "maxRTT": "500ms",
+            "baselines": ["300ms"],
+            "costs": [
+              {"match": "lte-1", "value": 1},
+              {"match": "lte-2", "value": 1},
+              {"match": "lte-3", "value": 1},
+              {"match": "lte-4", "value": 1},
+              {"match": "lte-5", "value": 1}
+            ]
+          }
+        }
+      }
+    ],
+    "rules": [
+      {
+        "type": "field",
+        "domain": [
+          "domain:telegram.org", "domain:t.me", "domain:tdesktop.com",
+          "domain:telegra.ph", "domain:api.telegram.org",
+          "domain:web.telegram.org", "domain:cdn.telegram.org",
+          "domain:telegram.me", "domain:telegram.dog"
+        ],
+        "balancerTag": "bal_tor"
+      },
+      {
+        "type": "field",
+        "ip": ["91.108.56.0/22", "91.108.4.0/22", "149.154.160.0/20"],
+        "balancerTag": "bal_tor"
+      },
+      {
+        "type": "field",
+        "inboundTag": ["socks"],
+        "network": "tcp,udp",
+        "balancerTag": "bal_lte"
+      }
+    ]
+  }
 }
