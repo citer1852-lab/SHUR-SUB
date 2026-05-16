@@ -1,12 +1,17 @@
 {
-  "remarks": "🇷🇺 РОССИЯ | LTE AUTO",
+  "remarks": "🇷🇺 LTE AUTO",
   "log": { "loglevel": "warning" },
+  "dns": {
+    "queryStrategy": "UseIP",
+    "servers": ["1.1.1.1", "8.8.8.8"]
+  },
   "inbounds": [
     {
       "tag": "socks",
       "port": 10808,
+      "listen": "127.0.0.1",
       "protocol": "socks",
-      "settings": { "udp": true },
+      "settings": { "udp": true, "auth": "noauth" },
       "sniffing": { "enabled": true, "destOverride": ["http", "tls"] }
     }
   ],
@@ -16,7 +21,7 @@
       "protocol": "vless",
       "settings": {
         "vnext": [{
-          "address": "78.132.174.249",
+          "address": "shur-vpn.duckdns.org",
           "port": 8443,
           "users": [{ "id": "{UUID}", "encryption": "none", "flow": "xtls-rprx-vision" }]
         }]
@@ -38,7 +43,7 @@
       "protocol": "vless",
       "settings": {
         "vnext": [{
-          "address": "78.132.174.249",
+          "address": "shur-vpn.duckdns.org",
           "port": 8443,
           "users": [{ "id": "{UUID}", "encryption": "none", "flow": "xtls-rprx-vision" }]
         }]
@@ -60,7 +65,7 @@
       "protocol": "vless",
       "settings": {
         "vnext": [{
-          "address": "78.132.174.249",
+          "address": "shur-vpn.duckdns.org",
           "port": 8443,
           "users": [{ "id": "{UUID}", "encryption": "none", "flow": "xtls-rprx-vision" }]
         }]
@@ -82,7 +87,7 @@
       "protocol": "vless",
       "settings": {
         "vnext": [{
-          "address": "78.132.174.249",
+          "address": "shur-vpn.duckdns.org",
           "port": 8443,
           "users": [{ "id": "{UUID}", "encryption": "none", "flow": "xtls-rprx-vision" }]
         }]
@@ -104,7 +109,7 @@
       "protocol": "vless",
       "settings": {
         "vnext": [{
-          "address": "78.132.174.249",
+          "address": "shur-vpn.duckdns.org",
           "port": 8443,
           "users": [{ "id": "{UUID}", "encryption": "none", "flow": "xtls-rprx-vision" }]
         }]
@@ -126,7 +131,7 @@
       "protocol": "vless",
       "settings": {
         "vnext": [{
-          "address": "78.132.174.249",
+          "address": "shur-vpn.duckdns.org",
           "port": 8443,
           "users": [{ "id": "{UUID}", "encryption": "none", "flow": "xtls-rprx-vision" }]
         }]
@@ -148,7 +153,7 @@
       "protocol": "vless",
       "settings": {
         "vnext": [{
-          "address": "78.132.174.249",
+          "address": "shur-vpn.duckdns.org",
           "port": 8443,
           "users": [{ "id": "{UUID}", "encryption": "none", "flow": "xtls-rprx-vision" }]
         }]
@@ -170,7 +175,7 @@
       "protocol": "vless",
       "settings": {
         "vnext": [{
-          "address": "78.132.174.249",
+          "address": "shur-vpn.duckdns.org",
           "port": 8443,
           "users": [{ "id": "{UUID}", "encryption": "none", "flow": "xtls-rprx-vision" }]
         }]
@@ -196,30 +201,30 @@
       "protocol": "blackhole"
     }
   ],
-  "balancers": [
-    {
-      "tag": "balancer-lte",
-      "selector": [
-        "lte-vk",
-        "lte-ok",
-        "lte-yamusic",
-        "lte-metrica",
-        "lte-maps",
-        "lte-vkqueue",
-        "lte-mts",
-        "lte-passport"
-      ],
-      "strategy": {
-        "type": "leastPing",
-        "observation": {
-          "enable": true,
-          "interval": "10s"
-        }
-      }
-    }
-  ],
   "routing": {
     "domainStrategy": "IPIfNonMatch",
+    "balancers": [
+      {
+        "tag": "balancer-lte",
+        "selector": [
+          "lte-vk",
+          "lte-ok",
+          "lte-yamusic",
+          "lte-metrica",
+          "lte-maps",
+          "lte-vkqueue",
+          "lte-mts",
+          "lte-passport"
+        ],
+        "strategy": {
+          "type": "leastPing",
+          "observation": {
+            "enable": true,
+            "interval": "1m"
+          }
+        }
+      }
+    ],
     "rules": [
       {
         "type": "field",
