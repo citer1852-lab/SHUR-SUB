@@ -1,35 +1,24 @@
 {
-  "remarks": "🇷🇺 РОССИЯ | TELEGRAM + LTE",
-  "log": {
-    "loglevel": "warning"
-  },
+  "remarks": "🇷🇺 РОССИЯ | TELEGRAM + LTE AUTO",
+  "log": { "loglevel": "warning" },
   "inbounds": [
     {
-      "tag": "socks", 
+      "tag": "socks",
       "port": 10808,
       "protocol": "socks",
-      "settings": {
-        "udp": true
-      },
-      "sniffing": {
-        "enabled": true,
-        "destOverride": ["http", "tls"]
-      }
+      "settings": { "udp": true },
+      "sniffing": { "enabled": true, "destOverride": ["http", "tls"] }
     }
   ],
   "outbounds": [
     {
-      "tag": "proxy-tor",
+      "tag": "tor-vk",
       "protocol": "vless",
       "settings": {
         "vnext": [{
-          "address": "shur-vpn.duckdns.org",
+          "address": "78.132.174.249",
           "port": 1443,
-          "users": [{
-            "id": "{UUID}",
-            "encryption": "none",
-            "flow": "xtls-rprx-vision"
-          }]
+          "users": [{ "id": "{UUID}", "encryption": "none", "flow": "xtls-rprx-vision" }]
         }]
       },
       "streamSettings": {
@@ -45,17 +34,167 @@
       }
     },
     {
-      "tag": "proxy-direct",
+      "tag": "tor-ok",
+      "protocol": "vless",
+      "settings": {
+        "vnext": [{
+          "address": "78.132.174.249",
+          "port": 1443,
+          "users": [{ "id": "{UUID}", "encryption": "none", "flow": "xtls-rprx-vision" }]
+        }]
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "security": "reality",
+        "realitySettings": {
+          "serverName": "m.ok.ru",
+          "fingerprint": "edge",
+          "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
+          "shortId": "707f9f44e2b21d87",
+          "spiderX": "/"
+        }
+      }
+    },
+    {
+      "tag": "tor-yamusic",
+      "protocol": "vless",
+      "settings": {
+        "vnext": [{
+          "address": "78.132.174.249",
+          "port": 1443,
+          "users": [{ "id": "{UUID}", "encryption": "none", "flow": "xtls-rprx-vision" }]
+        }]
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "security": "reality",
+        "realitySettings": {
+          "serverName": "ynison.music.yandex.net",
+          "fingerprint": "safari",
+          "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
+          "shortId": "707f9f44e2b21d87",
+          "spiderX": "/"
+        }
+      }
+    },
+    {
+      "tag": "tor-metrica",
+      "protocol": "vless",
+      "settings": {
+        "vnext": [{
+          "address": "78.132.174.249",
+          "port": 1443,
+          "users": [{ "id": "{UUID}", "encryption": "none", "flow": "xtls-rprx-vision" }]
+        }]
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "security": "reality",
+        "realitySettings": {
+          "serverName": "mc.yandex.ru",
+          "fingerprint": "chrome",
+          "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
+          "shortId": "707f9f44e2b21d87",
+          "spiderX": "/"
+        }
+      }
+    },
+    {
+      "tag": "tor-maps",
+      "protocol": "vless",
+      "settings": {
+        "vnext": [{
+          "address": "78.132.174.249",
+          "port": 1443,
+          "users": [{ "id": "{UUID}", "encryption": "none", "flow": "xtls-rprx-vision" }]
+        }]
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "security": "reality",
+        "realitySettings": {
+          "serverName": "proxy.mob.maps.yandex.net",
+          "fingerprint": "edge",
+          "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
+          "shortId": "707f9f44e2b21d87",
+          "spiderX": "/"
+        }
+      }
+    },
+    {
+      "tag": "tor-vkqueue",
+      "protocol": "vless",
+      "settings": {
+        "vnext": [{
+          "address": "78.132.174.249",
+          "port": 1443,
+          "users": [{ "id": "{UUID}", "encryption": "none", "flow": "xtls-rprx-vision" }]
+        }]
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "security": "reality",
+        "realitySettings": {
+          "serverName": "queuev4.vk.com",
+          "fingerprint": "firefox",
+          "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
+          "shortId": "707f9f44e2b21d87",
+          "spiderX": "/"
+        }
+      }
+    },
+    {
+      "tag": "tor-mts",
+      "protocol": "vless",
+      "settings": {
+        "vnext": [{
+          "address": "78.132.174.249",
+          "port": 1443,
+          "users": [{ "id": "{UUID}", "encryption": "none", "flow": "xtls-rprx-vision" }]
+        }]
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "security": "reality",
+        "realitySettings": {
+          "serverName": "freecom-app.mts.ru",
+          "fingerprint": "randomized",
+          "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
+          "shortId": "707f9f44e2b21d87",
+          "spiderX": "/"
+        }
+      }
+    },
+    {
+      "tag": "tor-passport",
+      "protocol": "vless",
+      "settings": {
+        "vnext": [{
+          "address": "78.132.174.249",
+          "port": 1443,
+          "users": [{ "id": "{UUID}", "encryption": "none", "flow": "xtls-rprx-vision" }]
+        }]
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "security": "reality",
+        "realitySettings": {
+          "serverName": "sso.passport.yandex.ru",
+          "fingerprint": "ios",
+          "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
+          "shortId": "707f9f44e2b21d87",
+          "spiderX": "/"
+        }
+      }
+    },
+    {
+      "tag": "lte-vk",
       "protocol": "vless",
       "settings": {
         "vnext": [{
           "address": "78.132.174.249",
           "port": 8443,
-          "users": [{
-            "id": "{UUID}",
-            "encryption": "none",
-            "flow": "xtls-rprx-vision"
-          }]
+          "users": [{ "id": "{UUID}", "encryption": "none", "flow": "xtls-rprx-vision" }]
         }]
       },
       "streamSettings": {
@@ -64,6 +203,160 @@
         "realitySettings": {
           "serverName": "login.vk.com",
           "fingerprint": "qq",
+          "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
+          "shortId": "707f9f44e2b21d87",
+          "spiderX": "/"
+        }
+      }
+    },
+    {
+      "tag": "lte-ok",
+      "protocol": "vless",
+      "settings": {
+        "vnext": [{
+          "address": "78.132.174.249",
+          "port": 8443,
+          "users": [{ "id": "{UUID}", "encryption": "none", "flow": "xtls-rprx-vision" }]
+        }]
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "security": "reality",
+        "realitySettings": {
+          "serverName": "m.ok.ru",
+          "fingerprint": "edge",
+          "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
+          "shortId": "707f9f44e2b21d87",
+          "spiderX": "/"
+        }
+      }
+    },
+    {
+      "tag": "lte-yamusic",
+      "protocol": "vless",
+      "settings": {
+        "vnext": [{
+          "address": "78.132.174.249",
+          "port": 8443,
+          "users": [{ "id": "{UUID}", "encryption": "none", "flow": "xtls-rprx-vision" }]
+        }]
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "security": "reality",
+        "realitySettings": {
+          "serverName": "ynison.music.yandex.net",
+          "fingerprint": "safari",
+          "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
+          "shortId": "707f9f44e2b21d87",
+          "spiderX": "/"
+        }
+      }
+    },
+    {
+      "tag": "lte-metrica",
+      "protocol": "vless",
+      "settings": {
+        "vnext": [{
+          "address": "78.132.174.249",
+          "port": 8443,
+          "users": [{ "id": "{UUID}", "encryption": "none", "flow": "xtls-rprx-vision" }]
+        }]
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "security": "reality",
+        "realitySettings": {
+          "serverName": "mc.yandex.ru",
+          "fingerprint": "chrome",
+          "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
+          "shortId": "707f9f44e2b21d87",
+          "spiderX": "/"
+        }
+      }
+    },
+    {
+      "tag": "lte-maps",
+      "protocol": "vless",
+      "settings": {
+        "vnext": [{
+          "address": "78.132.174.249",
+          "port": 8443,
+          "users": [{ "id": "{UUID}", "encryption": "none", "flow": "xtls-rprx-vision" }]
+        }]
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "security": "reality",
+        "realitySettings": {
+          "serverName": "proxy.mob.maps.yandex.net",
+          "fingerprint": "edge",
+          "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
+          "shortId": "707f9f44e2b21d87",
+          "spiderX": "/"
+        }
+      }
+    },
+    {
+      "tag": "lte-vkqueue",
+      "protocol": "vless",
+      "settings": {
+        "vnext": [{
+          "address": "78.132.174.249",
+          "port": 8443,
+          "users": [{ "id": "{UUID}", "encryption": "none", "flow": "xtls-rprx-vision" }]
+        }]
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "security": "reality",
+        "realitySettings": {
+          "serverName": "queuev4.vk.com",
+          "fingerprint": "firefox",
+          "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
+          "shortId": "707f9f44e2b21d87",
+          "spiderX": "/"
+        }
+      }
+    },
+    {
+      "tag": "lte-mts",
+      "protocol": "vless",
+      "settings": {
+        "vnext": [{
+          "address": "78.132.174.249",
+          "port": 8443,
+          "users": [{ "id": "{UUID}", "encryption": "none", "flow": "xtls-rprx-vision" }]
+        }]
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "security": "reality",
+        "realitySettings": {
+          "serverName": "freecom-app.mts.ru",
+          "fingerprint": "randomized",
+          "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
+          "shortId": "707f9f44e2b21d87",
+          "spiderX": "/"
+        }
+      }
+    },
+    {
+      "tag": "lte-passport",
+      "protocol": "vless",
+      "settings": {
+        "vnext": [{
+          "address": "78.132.174.249",
+          "port": 8443,
+          "users": [{ "id": "{UUID}", "encryption": "none", "flow": "xtls-rprx-vision" }]
+        }]
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "security": "reality",
+        "realitySettings": {
+          "serverName": "sso.passport.yandex.ru",
+          "fingerprint": "ios",
           "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
           "shortId": "707f9f44e2b21d87",
           "spiderX": "/"
@@ -73,6 +366,40 @@
     {
       "tag": "direct",
       "protocol": "freedom"
+    },
+    {
+      "tag": "block",
+      "protocol": "blackhole"
+    }
+  ],
+  "balancers": [
+    {
+      "tag": "balancer-tor",
+      "selector": [
+        "tor-vk", "tor-ok", "tor-yamusic", "tor-metrica",
+        "tor-maps", "tor-vkqueue", "tor-mts", "tor-passport"
+      ],
+      "strategy": {
+        "type": "leastPing",
+        "observation": {
+          "enable": true,
+          "interval": "10s"
+        }
+      }
+    },
+    {
+      "tag": "balancer-lte",
+      "selector": [
+        "lte-vk", "lte-ok", "lte-yamusic", "lte-metrica",
+        "lte-maps", "lte-vkqueue", "lte-mts", "lte-passport"
+      ],
+      "strategy": {
+        "type": "leastPing",
+        "observation": {
+          "enable": true,
+          "interval": "10s"
+        }
+      }
     }
   ],
   "routing": {
@@ -92,7 +419,7 @@
           "domain:telegram.me",
           "domain:telegram.dog"
         ],
-        "outboundTag": "proxy-tor"
+        "balancerTag": "balancer-tor"
       },
       {
         "type": "field",
@@ -101,12 +428,12 @@
           "91.108.4.0/22",
           "149.154.160.0/20"
         ],
-        "outboundTag": "proxy-tor"
+        "balancerTag": "balancer-tor"
       },
       {
         "type": "field",
         "network": "tcp,udp",
-        "outboundTag": "proxy-direct"
+        "balancerTag": "balancer-lte"
       }
     ]
   }
