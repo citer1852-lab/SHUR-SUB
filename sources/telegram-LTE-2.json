@@ -24,7 +24,7 @@
     "observatory": {
         "enableConcurrency": true,
         "probeInterval": "1m",
-        "probeUrl": "http://ping.eu-fffast.com/generate_204",
+        "probeUrl": "https://www.gstatic.com/generate_204",
         "subjectSelector": [
             "tor-vk", "tor-ok", "tor-yamusic", "tor-metrica",
             "tor-maps", "tor-vkqueue", "tor-mts", "tor-passport",
