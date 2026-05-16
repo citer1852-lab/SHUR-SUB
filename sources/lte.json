@@ -218,9 +218,11 @@
         ],
         "strategy": {
           "type": "leastPing",
-          "observation": {
-            "enable": true,
-            "interval": "1m"
+          "settings": {
+            "observation": {
+              "enable": true,
+              "interval": "1m"
+            }
           }
         }
       }
