@@ -1,10 +1,6 @@
 {
   "remarks": "🇷🇺 LTE AUTO",
   "log": { "loglevel": "warning" },
-  "dns": {
-    "queryStrategy": "UseIP",
-    "servers": ["1.1.1.1", "8.8.8.8"]
-  },
   "inbounds": [
     {
       "tag": "socks",
@@ -21,7 +17,7 @@
       "protocol": "vless",
       "settings": {
         "vnext": [{
-          "address": "shur-vpn.duckdns.org",
+          "address": "78.132.174.249",
           "port": 8443,
           "users": [{ "id": "{UUID}", "encryption": "none", "flow": "xtls-rprx-vision" }]
         }]
@@ -43,7 +39,7 @@
       "protocol": "vless",
       "settings": {
         "vnext": [{
-          "address": "shur-vpn.duckdns.org",
+          "address": "78.132.174.249",
           "port": 8443,
           "users": [{ "id": "{UUID}", "encryption": "none", "flow": "xtls-rprx-vision" }]
         }]
@@ -65,7 +61,7 @@
       "protocol": "vless",
       "settings": {
         "vnext": [{
-          "address": "shur-vpn.duckdns.org",
+          "address": "78.132.174.249",
           "port": 8443,
           "users": [{ "id": "{UUID}", "encryption": "none", "flow": "xtls-rprx-vision" }]
         }]
@@ -87,7 +83,7 @@
       "protocol": "vless",
       "settings": {
         "vnext": [{
-          "address": "shur-vpn.duckdns.org",
+          "address": "78.132.174.249",
           "port": 8443,
           "users": [{ "id": "{UUID}", "encryption": "none", "flow": "xtls-rprx-vision" }]
         }]
@@ -109,7 +105,7 @@
       "protocol": "vless",
       "settings": {
         "vnext": [{
-          "address": "shur-vpn.duckdns.org",
+          "address": "78.132.174.249",
           "port": 8443,
           "users": [{ "id": "{UUID}", "encryption": "none", "flow": "xtls-rprx-vision" }]
         }]
@@ -131,7 +127,7 @@
       "protocol": "vless",
       "settings": {
         "vnext": [{
-          "address": "shur-vpn.duckdns.org",
+          "address": "78.132.174.249",
           "port": 8443,
           "users": [{ "id": "{UUID}", "encryption": "none", "flow": "xtls-rprx-vision" }]
         }]
@@ -153,7 +149,7 @@
       "protocol": "vless",
       "settings": {
         "vnext": [{
-          "address": "shur-vpn.duckdns.org",
+          "address": "78.132.174.249",
           "port": 8443,
           "users": [{ "id": "{UUID}", "encryption": "none", "flow": "xtls-rprx-vision" }]
         }]
@@ -175,7 +171,7 @@
       "protocol": "vless",
       "settings": {
         "vnext": [{
-          "address": "shur-vpn.duckdns.org",
+          "address": "78.132.174.249",
           "port": 8443,
           "users": [{ "id": "{UUID}", "encryption": "none", "flow": "xtls-rprx-vision" }]
         }]
@@ -216,14 +212,9 @@
           "lte-mts",
           "lte-passport"
         ],
+        "fallbackTag": "direct",
         "strategy": {
-          "type": "leastPing",
-          "settings": {
-            "observation": {
-              "enable": true,
-              "interval": "1m"
-            }
-          }
+          "type": "roundRobin"
         }
       }
     ],
