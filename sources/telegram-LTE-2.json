@@ -23,7 +23,7 @@
       "protocol": "vless",
       "settings": {
         "vnext": [{
-          "address": "78.132.174.249",
+          "address": "shur-vpn.duckdns.org",
           "port": 1443,
           "users": [{
             "id": "{UUID}",
