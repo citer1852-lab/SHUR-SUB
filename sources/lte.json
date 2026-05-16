@@ -213,7 +213,7 @@
         "type": "leastPing",
         "observation": {
           "enable": true,
-          "interval": "1m"
+          "interval": "10s"
         }
       }
     }
