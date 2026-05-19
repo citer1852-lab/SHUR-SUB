@@ -1,20 +1,13 @@
 {
   "remarks": "🇬🇧 ВЕЛИКОБРИТАНИЯ",
-  "log": {
-    "loglevel": "warning"
-  },
+  "log": { "loglevel": "warning" },
   "inbounds": [
     {
       "tag": "socks",
       "port": 10808,
       "protocol": "socks",
-      "settings": {
-        "udp": true
-      },
-      "sniffing": {
-        "enabled": true,
-        "destOverride": ["http", "tls"]
-      }
+      "settings": { "udp": true },
+      "sniffing": { "enabled": true, "destOverride": ["http", "tls"] }
     }
   ],
   "outbounds": [
@@ -23,13 +16,9 @@
       "protocol": "vless",
       "settings": {
         "vnext": [{
-          "address": "shur-vpn.duckdns.org",
+          "address": "78.132.174.249",
           "port": 13443,
-          "users": [{
-            "id": "{UUID}",
-            "encryption": "none",
-            "flow": "xtls-rprx-vision"
-          }]
+          "users": [{ "id": "{UUID}", "encryption": "none", "flow": "xtls-rprx-vision" }]
         }]
       },
       "streamSettings": {
@@ -41,22 +30,18 @@
           "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
           "shortId": "707f9f44e2b21d87",
           "spiderX": "/"
+        },
+        "fragment": {
+          "packets": "tlshello",
+          "length": "100-200",
+          "interval": "10-20"
         }
       }
     },
-    {
-      "tag": "direct",
-      "protocol": "freedom"
-    }
+    { "tag": "direct", "protocol": "freedom" }
   ],
   "routing": {
     "domainStrategy": "IPIfNonMatch",
-    "rules": [
-      {
-        "type": "field",
-        "network": "tcp,udp",
-        "outboundTag": "proxy"
-      }
-    ]
+    "rules": [{ "type": "field", "network": "tcp,udp", "outboundTag": "proxy" }]
   }
 }
