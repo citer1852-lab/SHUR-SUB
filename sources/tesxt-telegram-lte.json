@@ -1,4 +1,5 @@
 {
+  "remarks": "🇷🇺 TEST TELEGRAM + LTE AUTO"
   "log": { "loglevel": "warning" },
   "dns": {
     "queryStrategy": "UseIPv4",
