@@ -69,7 +69,7 @@
       "settings": {
         "vnext": [{
           "address": "178.75.122.125",
-          "port": 443,
+          "port": 1443,
           "users": [{
             "id": "{UUID}",
             "encryption": "none",
@@ -95,7 +95,7 @@
       "settings": {
         "vnext": [{
           "address": "tcp.cloudpub.ru",
-          "port": 37535,
+          "port": 53270,
           "users": [{
             "id": "{UUID}",
             "encryption": "none",
@@ -121,7 +121,7 @@
       "settings": {
         "vnext": [{
           "address": "tcp.cloudpub.ru",
-          "port": 25293,
+          "port": 10767,
           "users": [{
             "id": "{UUID}",
             "encryption": "none",
