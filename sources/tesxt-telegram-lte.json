@@ -1,0 +1,232 @@
+{
+  "log": { "loglevel": "warning" },
+  "dns": {
+    "queryStrategy": "UseIPv4",
+    "servers": [
+      "1.1.1.1",
+      "8.8.8.8",
+      {
+        "address": "77.88.8.8",
+        "domains": ["geosite:category-ru"]
+      }
+    ]
+  },
+  "inbounds": [
+    {
+      "listen": "127.0.0.1",
+      "port": 10808,
+      "protocol": "socks",
+      "settings": { "auth": "noauth", "udp": true },
+      "sniffing": { "enabled": true, "destOverride": ["http", "tls", "quic"] },
+      "tag": "socks"
+    },
+    {
+      "listen": "127.0.0.1",
+      "port": 10809,
+      "protocol": "http",
+      "settings": { "allowTransparent": false },
+      "sniffing": { "enabled": true, "destOverride": ["http", "tls", "quic"] },
+      "tag": "http"
+    }
+  ],
+  "observatory": {
+    "enableConcurrency": true,
+    "probeInterval": "30s",
+    "probeUrl": "https://www.gstatic.com/generate_204",
+    "subjectSelector": ["vps", "home", "cloudpub-pc", "cloudpub-vps", "serveo-pc", "serveo-vps"]
+  },
+  "outbounds": [
+    {
+      "tag": "vps",
+      "protocol": "vless",
+      "settings": {
+        "vnext": [{
+          "address": "51.250.123.71",
+          "port": 443,
+          "users": [{
+            "id": "{UUID}",
+            "encryption": "none",
+            "flow": "xtls-rprx-vision"
+          }]
+        }]
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "security": "reality",
+        "realitySettings": {
+          "serverName": "login.vk.com",
+          "fingerprint": "randomized",
+          "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
+          "shortId": "707f9f44e2b21d87",
+          "spiderX": "/"
+        }
+      }
+    },
+    {
+      "tag": "home",
+      "protocol": "vless",
+      "settings": {
+        "vnext": [{
+          "address": "178.75.122.125",
+          "port": 443,
+          "users": [{
+            "id": "{UUID}",
+            "encryption": "none",
+            "flow": "xtls-rprx-vision"
+          }]
+        }]
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "security": "reality",
+        "realitySettings": {
+          "serverName": "login.vk.com",
+          "fingerprint": "randomized",
+          "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
+          "shortId": "707f9f44e2b21d87",
+          "spiderX": "/"
+        }
+      }
+    },
+    {
+      "tag": "cloudpub-pc",
+      "protocol": "vless",
+      "settings": {
+        "vnext": [{
+          "address": "tcp.cloudpub.ru",
+          "port": 37535,
+          "users": [{
+            "id": "{UUID}",
+            "encryption": "none",
+            "flow": "xtls-rprx-vision"
+          }]
+        }]
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "security": "reality",
+        "realitySettings": {
+          "serverName": "login.vk.com",
+          "fingerprint": "randomized",
+          "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
+          "shortId": "707f9f44e2b21d87",
+          "spiderX": "/"
+        }
+      }
+    },
+    {
+      "tag": "cloudpub-vps",
+      "protocol": "vless",
+      "settings": {
+        "vnext": [{
+          "address": "tcp.cloudpub.ru",
+          "port": 25293,
+          "users": [{
+            "id": "{UUID}",
+            "encryption": "none",
+            "flow": "xtls-rprx-vision"
+          }]
+        }]
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "security": "reality",
+        "realitySettings": {
+          "serverName": "login.vk.com",
+          "fingerprint": "randomized",
+          "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
+          "shortId": "707f9f44e2b21d87",
+          "spiderX": "/"
+        }
+      }
+    },
+    {
+      "tag": "serveo-pc",
+      "protocol": "vless",
+      "settings": {
+        "vnext": [{
+          "address": "shur-vpn.serveo.net",
+          "port": 7723,
+          "users": [{
+            "id": "{UUID}",
+            "encryption": "none",
+            "flow": "xtls-rprx-vision"
+          }]
+        }]
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "security": "reality",
+        "realitySettings": {
+          "serverName": "login.vk.com",
+          "fingerprint": "randomized",
+          "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
+          "shortId": "707f9f44e2b21d87",
+          "spiderX": "/"
+        }
+      }
+    },
+    {
+      "tag": "serveo-vps",
+      "protocol": "vless",
+      "settings": {
+        "vnext": [{
+          "address": "shur-vpn.serveo.net",
+          "port": 7623,
+          "users": [{
+            "id": "{UUID}",
+            "encryption": "none",
+            "flow": "xtls-rprx-vision"
+          }]
+        }]
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "security": "reality",
+        "realitySettings": {
+          "serverName": "login.vk.com",
+          "fingerprint": "randomized",
+          "publicKey": "xMLmloCjTnGFy3mz32k54Ynq_JCIc28ju2Ajb3xX9Co",
+          "shortId": "707f9f44e2b21d87",
+          "spiderX": "/"
+        }
+      }
+    },
+    { "tag": "direct", "protocol": "freedom" },
+    { "tag": "block", "protocol": "blackhole" }
+  ],
+  "routing": {
+    "domainStrategy": "IPIfNonMatch",
+    "balancers": [
+      {
+        "tag": "bal_main",
+        "selector": ["vps", "home", "cloudpub-pc", "cloudpub-vps", "serveo-pc", "serveo-vps"],
+        "fallbackTag": "vps",
+        "strategy": {
+          "type": "leastPing",
+          "settings": {
+            "expected": 1,
+            "maxRTT": "1000ms",
+            "baselines": ["500ms"],
+            "costs": [
+              { "match": "vps", "value": 1 },
+              { "match": "home", "value": 1 },
+              { "match": "cloudpub-pc", "value": 2 },
+              { "match": "cloudpub-vps", "value": 2 },
+              { "match": "serveo-pc", "value": 3 },
+              { "match": "serveo-vps", "value": 3 }
+            ]
+          }
+        }
+      }
+    ],
+    "rules": [
+      {
+        "type": "field",
+        "inboundTag": ["socks", "http"],
+        "network": "tcp,udp",
+        "balancerTag": "bal_main"
+      }
+    ]
+  }
+}
