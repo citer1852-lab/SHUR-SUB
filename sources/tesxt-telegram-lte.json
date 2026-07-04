@@ -68,7 +68,7 @@
       "protocol": "vless",
       "settings": {
         "vnext": [{
-          "address": "178.75.122.125",
+          "address": "	213.135.157.134",
           "port": 1443,
           "users": [{
             "id": "{UUID}",
